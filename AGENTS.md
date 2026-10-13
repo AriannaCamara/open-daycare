@@ -53,5 +53,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Default branch is `master`. Do not commit unless explicitly asked.
 
 ## Spec Driven Development - Skills
+
 - /spec usaremos esta habilidad para crear las especificaciones.
 - /spec-impl usaremos esta skill para hacer las implementaciones.
+
+## Reglas de codigo
+
+- Usar codigo limpio, nombres, funciones, variables, etc. en ingles.
