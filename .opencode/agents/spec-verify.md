@@ -2,7 +2,7 @@
 name: spec-verify
 description: Verifica, corrige y marca los criterios de aceptación de un spec. Usa Context7 para Next.js y Playwright para pantallas.
 mode: subagent
-model: openai/gpt-4o
+model: opencode/gpt-5.4
 steps: 120
 permission:
   edit: allow

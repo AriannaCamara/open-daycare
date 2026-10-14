@@ -1,6 +1,6 @@
 # SPEC 01 — Feed como Home (`/`)
 
-**Estado:** Aprobado
+**Estado:** Implementado
 **Fecha:** 2026-10-13
 **Depende de:** —
 **Objetivo:** Portar la pantalla `references/pantallas/feed.dc.html` a la ruta `/` de Next.js con estilo visual idéntico, usando datos mock tipados y sin autenticación ni base de datos.
@@ -86,16 +86,16 @@ Los colores de avatar y de las pills se derivan de `kind` en el componente (no s
 
 ## Criterios de aceptación
 
-- [ ] `/` renderiza sin errores de consola ni de build.
-- [ ] Sidebar con logo, subtítulo "Sala Soles", botón "Nueva publicación", nav con Feed en estado activo (fondo `#FBE3D8`, texto `#D9583C`) y footer "Caro Giménez / Maestra · Soles".
-- [ ] Header muestra "GUARDERÍA · SALA SOLES", "Buenas, Caro" y "12 niños · martes 17 jun".
-- [ ] Composer "Compartí un momento…" presente.
-- [ ] 3 posts con pill correcta (LOGRO verde, ACTIVIDAD celeste, ANUNCIO azul), audience, cuerpo, likes (3/5/8) y comentarios (1/2/0).
-- [ ] Post de actividad muestra placeholder "Foto · pintando con témperas".
-- [ ] Main con ancho máx ~760px y bg `#F6ECDF`; tarjetas bg `#FFFDF9`, borde `#ECE0D0`, radio 20px.
-- [ ] Tipografías: títulos Fredoka 600, cuerpo Nunito.
-- [ ] Links del sidebar apuntan a rutas reales (`/ninos`, etc.), no `#`.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/` renderiza sin errores de consola ni de build.
+- [x] Sidebar con logo, subtítulo "Sala Soles", botón "Nueva publicación", nav con Feed en estado activo (fondo `#FBE3D8`, texto `#D9583C`) y footer "Caro Giménez / Maestra · Soles".
+- [x] Header muestra "GUARDERÍA · SALA SOLES", "Buenas, Caro" y "12 niños · martes 17 jun".
+- [x] Composer "Compartí un momento…" presente.
+- [x] 3 posts con pill correcta (LOGRO verde, ACTIVIDAD celeste, ANUNCIO azul), audience, cuerpo, likes (3/5/8) y comentarios (1/2/0).
+- [x] Post de actividad muestra placeholder "Foto · pintando con témperas".
+- [x] Main con ancho máx ~760px y bg `#F6ECDF`; tarjetas bg `#FFFDF9`, borde `#ECE0D0`, radio 20px.
+- [x] Tipografías: títulos Fredoka 600, cuerpo Nunito.
+- [x] Links del sidebar apuntan a rutas reales (`/ninos`, etc.), no `#`.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
