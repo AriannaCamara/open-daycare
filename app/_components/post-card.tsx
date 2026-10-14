@@ -1,5 +1,6 @@
 import type { Post, PostKind } from "@/app/_data/feed";
 import { postKindLabels } from "@/app/_data/feed";
+import Link from "next/link";
 
 interface PostCardProps {
   post: Post;
@@ -138,13 +139,13 @@ export function PostCard({ post }: PostCardProps) {
       </p>
 
       {post.photoLabel && (
-        <a
+        <Link
           href="/foto"
           className="mt-3.5 flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-[#DBCDBA] bg-[#F4ECE1] text-[#B0A290]"
         >
           <ImageIcon />
           <span className="text-[13.5px]">{post.photoLabel}</span>
-        </a>
+        </Link>
       )}
 
       <div className="mt-4 flex items-center gap-[18px] border-t border-line pt-3.5">
@@ -152,20 +153,20 @@ export function PostCard({ post }: PostCardProps) {
           <HeartIcon />
           {post.likes}
         </span>
-        <a
+        <Link
           href="/detalle-publicacion"
           className="flex items-center gap-[7px] text-[14px] font-bold text-muted"
         >
           <CommentIcon />
           {post.comments}
-        </a>
+        </Link>
         <span className="flex-1" />
-        <a
+        <Link
           href="/crear-publicacion"
           className="text-[14px] font-extrabold text-[#C5503A]"
         >
           Editar
-        </a>
+        </Link>
       </div>
     </article>
   );

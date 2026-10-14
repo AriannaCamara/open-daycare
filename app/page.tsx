@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Sidebar } from "@/app/_components/sidebar";
 import { PostCard } from "@/app/_components/post-card";
 import { posts, room, sessionUser } from "@/app/_data/feed";
@@ -39,7 +40,7 @@ export default function Home() {
             </p>
           </div>
 
-          <a
+          <Link
             href="/crear-publicacion"
             className="mb-6 flex items-center gap-3.5 rounded-[18px] border border-border bg-surface px-[18px] py-3.5 shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)]"
           >
@@ -52,7 +53,7 @@ export default function Home() {
             <span className="flex size-[38px] items-center justify-center rounded-xl bg-accent-ghost text-[#E0654A]">
               <CameraIcon />
             </span>
-          </a>
+          </Link>
 
           <div className="mb-3.5 flex items-center gap-3.5">
             <span className="text-[12.5px] font-extrabold tracking-[0.8px] text-[#8A7C6D]">

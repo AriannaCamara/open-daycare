@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import type { RoomSummary, SessionUser } from "@/app/_data/feed";
 
 interface SidebarProps {
@@ -146,7 +147,7 @@ const navItems: NavItem[] = [
 export function Sidebar({ user, room, activeHref }: SidebarProps) {
   return (
     <aside className="sticky top-0 flex h-screen w-[248px] flex-none flex-col border-r border-border bg-surface px-4 py-6">
-      <a
+      <Link
         href="/"
         className="flex items-center gap-[11px] px-2 pb-[22px] pt-1"
       >
@@ -161,21 +162,21 @@ export function Sidebar({ user, room, activeHref }: SidebarProps) {
             {room.roomName}
           </div>
         </div>
-      </a>
+      </Link>
 
-      <a
+      <Link
         href="/crear-publicacion"
         className="mb-[18px] flex w-full items-center justify-center gap-2 rounded-[14px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] p-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)]"
       >
         <PlusIcon />
         Nueva publicación
-      </a>
+      </Link>
 
       <nav className="flex flex-1 flex-col gap-1">
         {navItems.map((item) => {
           const isActive = activeHref === item.href;
           return (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className={
@@ -186,7 +187,7 @@ export function Sidebar({ user, room, activeHref }: SidebarProps) {
             >
               {item.icon}
               {item.label}
-            </a>
+            </Link>
           );
         })}
       </nav>
@@ -202,13 +203,13 @@ export function Sidebar({ user, room, activeHref }: SidebarProps) {
             </div>
             <div className="text-[12px] text-muted-strong">{user.role}</div>
           </div>
-          <a
+          <Link
             href="/login"
             title="Cerrar sesión"
             className="flex size-8 flex-none items-center justify-center rounded-[10px] bg-cream text-[#94887B]"
           >
             <LogoutIcon />
-          </a>
+          </Link>
         </div>
       </div>
     </aside>
