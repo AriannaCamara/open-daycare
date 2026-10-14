@@ -45,6 +45,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Repo ships spec-driven skills at `.agents/skills/spec` (`/spec`) and `.agents/skills/spec-impl` (`/spec-impl`).
 - Specs live in `specs/NN-slug.md`. The folder does not exist yet — `/spec` creates it and seeds `specs/.spec-config.yml`.
 - Never implement a spec unless its state means **Approved**; `/spec-impl` also never commits on its own and pauses after each step. Match these rules when working in that flow.
+- Verification agent: `.opencode/agents/spec-verify.md` (subagent `spec-verify`, model `opencode/gpt-5.4`). It checks/fixes the acceptance criteria of an Approved spec: Playwright for screens, Context7 for Next.js APIs, `npm run lint` + `npx tsc --noEmit` for tooling. It only toggles `- [ ]`/`- [x]`, never commits or creates branches.
 
 ## Conventions / gotchas
 
@@ -56,6 +57,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - /spec usaremos esta habilidad para crear las especificaciones.
 - /spec-impl usaremos esta skill para hacer las implementaciones.
+- /spec-verify (`.opencode/command/spec-verify.md`) invoca al subagente `spec-verify` para verificar/corregir criterios de aceptación de un spec aprobado.
 
 ## Reglas de codigo
 
