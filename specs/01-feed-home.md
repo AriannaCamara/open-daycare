@@ -1,6 +1,6 @@
 # SPEC 01 — Feed como Home (`/`)
 
-**Estado:** Borrador
+**Estado:** Aprobado
 **Fecha:** 2026-10-13
 **Depende de:** —
 **Objetivo:** Portar la pantalla `references/pantallas/feed.dc.html` a la ruta `/` de Next.js con estilo visual idéntico, usando datos mock tipados y sin autenticación ni base de datos.
