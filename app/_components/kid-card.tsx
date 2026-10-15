@@ -36,7 +36,12 @@ export function KidCard({ child }: KidCardProps) {
       href={`/kids/${child.id}`}
       className="flex min-w-0 items-center gap-3.5 rounded-[18px] border border-border bg-surface p-4 shadow-[0_4px_14px_-12px_rgba(120,90,60,0.5)] transition-all duration-150 hover:-translate-y-0.5 hover:border-[#F2A78E]"
     >
-      <Avatar initial={child.initial} tone={child.tone} variant="child" />
+      <Avatar
+        initial={child.initial}
+        tone={child.tone}
+        variant="child"
+        className="size-12 text-[19px]"
+      />
       <div className="min-w-0 flex-1">
         <div className="truncate font-display text-[16px] font-semibold text-ink">
           {child.fullName}

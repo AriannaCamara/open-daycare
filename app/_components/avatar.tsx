@@ -13,7 +13,7 @@ export function Avatar({ initial, tone, variant, className = "" }: AvatarProps) 
 
   return (
     <div
-      className={`flex size-12 flex-none items-center justify-center rounded-full font-display text-[19px] font-semibold ${className}`}
+      className={`flex flex-none items-center justify-center rounded-full font-display font-semibold ${className}`}
       style={{ background: toneStyle.background, color }}
     >
       {initial}
