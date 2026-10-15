@@ -1,6 +1,6 @@
 # SPEC 02 — Lista de niños y perfil de niño (`/kids`, `/kids/[id]`)
 
-**Estado:** Aprobado
+**Estado:** Implementado
 **Fecha:** 2026-10-15
 **Depende de:** SPEC 01
 **Objetivo:** Portar las pantallas `ninos.dc.html` y `perfil-nino.dc.html` a las rutas `/kids` y `/kids/[id]` con diseño responsive, búsqueda en cliente y datos mock tipados.
