@@ -73,14 +73,14 @@ async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
   return (
     <div className="flex flex-wrap items-start gap-[26px]">
       <div className="flex min-w-[300px] flex-1 flex-col gap-[18px]">
-        <div className="flex items-center gap-[18px]">
+        <div className="flex flex-wrap items-center gap-[18px]">
           <Avatar
             initial={child.initial}
             tone={child.tone}
             variant="child"
             className="size-[84px] text-[34px]"
           />
-          <div className="min-w-0 flex-1">
+          <div className="min-w-[150px] flex-1">
             <h1 className="m-0 font-display text-[28px] font-semibold text-ink">
               {child.fullName}
             </h1>
