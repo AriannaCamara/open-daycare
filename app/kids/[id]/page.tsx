@@ -150,7 +150,7 @@ export default function KidProfilePage({
     <div className="flex min-h-screen bg-cream">
       <Sidebar user={sessionUser} room={room} activeHref="/kids" />
 
-      <main className="h-screen min-w-0 flex-1 overflow-y-auto">
+      <main className="h-screen min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
         <div className="mx-auto w-full max-w-[820px] px-10 pb-20 pt-[34px]">
           <Link
             href="/kids"

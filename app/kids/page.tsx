@@ -26,7 +26,7 @@ export default function KidsPage() {
     <div className="flex min-h-screen bg-cream">
       <Sidebar user={sessionUser} room={room} activeHref="/kids" />
 
-      <main className="h-screen min-w-0 flex-1 overflow-y-auto">
+      <main className="h-screen min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
         <div className="mx-auto w-full max-w-[880px] px-10 pb-20 pt-[34px]">
           <div className="mb-[22px] flex items-end justify-between gap-4">
             <div>

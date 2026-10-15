@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import type { RoomSummary, SessionUser } from "@/app/_data/feed";
 
@@ -6,6 +8,10 @@ interface SidebarProps {
   user: SessionUser;
   room: RoomSummary;
   activeHref: string;
+}
+
+interface SidebarContentProps extends SidebarProps {
+  onNavigate?: () => void;
 }
 
 interface NavItem {
@@ -45,6 +51,23 @@ function PlusIcon() {
       strokeLinejoin="round"
     >
       <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 6h16M4 12h16M4 18h16" />
     </svg>
   );
 }
@@ -144,11 +167,17 @@ const navItems: NavItem[] = [
   { href: "/account", label: "Mi cuenta", icon: <AccountIcon /> },
 ];
 
-export function Sidebar({ user, room, activeHref }: SidebarProps) {
+function SidebarContent({
+  user,
+  room,
+  activeHref,
+  onNavigate,
+}: SidebarContentProps) {
   return (
-    <aside className="sticky top-0 flex h-screen w-[248px] flex-none flex-col border-r border-border bg-surface px-4 py-6">
+    <>
       <Link
         href="/"
+        onClick={onNavigate}
         className="flex items-center gap-[11px] px-2 pb-[22px] pt-1"
       >
         <div className="flex size-[38px] flex-none items-center justify-center rounded-xl bg-[linear-gradient(155deg,#F8C3A8,#F2937A)]">
@@ -166,6 +195,7 @@ export function Sidebar({ user, room, activeHref }: SidebarProps) {
 
       <Link
         href="/create-post"
+        onClick={onNavigate}
         className="mb-[18px] flex w-full items-center justify-center gap-2 rounded-[14px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] p-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)]"
       >
         <PlusIcon />
@@ -179,6 +209,7 @@ export function Sidebar({ user, room, activeHref }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={
                 isActive
                   ? "flex items-center gap-3 rounded-xl bg-accent-ghost px-3 py-[11px] text-[14.5px] font-extrabold text-accent"
@@ -212,6 +243,59 @@ export function Sidebar({ user, room, activeHref }: SidebarProps) {
           </Link>
         </div>
       </div>
-    </aside>
+    </>
+  );
+}
+
+export function Sidebar({ user, room, activeHref }: SidebarProps) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-surface px-4 lg:hidden">
+        <button
+          type="button"
+          aria-label="Abrir menú"
+          aria-expanded={open}
+          onClick={() => setOpen(true)}
+          className="flex size-9 flex-none items-center justify-center rounded-[10px] text-[#6E6359]"
+        >
+          <MenuIcon />
+        </button>
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex size-8 flex-none items-center justify-center rounded-lg bg-[linear-gradient(155deg,#F8C3A8,#F2937A)]">
+            <SunIcon />
+          </div>
+          <span className="font-display text-[16px] font-semibold text-ink">
+            OpenDayCare
+          </span>
+        </Link>
+      </header>
+
+      {open && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setOpen(false)}
+          />
+          <div className="absolute inset-y-0 left-0 flex w-[248px] flex-col border-r border-border bg-surface px-4 py-6">
+            <SidebarContent
+              user={user}
+              room={room}
+              activeHref={activeHref}
+              onNavigate={() => setOpen(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      <aside className="sticky top-0 hidden h-screen w-[248px] flex-none flex-col border-r border-border bg-surface px-4 py-6 lg:flex">
+        <SidebarContent
+          user={user}
+          room={room}
+          activeHref={activeHref}
+        />
+      </aside>
+    </>
   );
 }

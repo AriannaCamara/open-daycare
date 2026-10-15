@@ -26,7 +26,7 @@ export default function Home() {
     <div className="flex min-h-screen bg-cream">
       <Sidebar user={sessionUser} room={room} activeHref="/" />
 
-      <main className="h-screen min-w-0 flex-1 overflow-y-auto">
+      <main className="h-screen min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
         <div className="mx-auto w-full max-w-[760px] px-10 pb-20 pt-[34px]">
           <div className="mb-6">
             <div className="mb-1 text-[12.5px] font-extrabold tracking-[0.8px] text-accent">
