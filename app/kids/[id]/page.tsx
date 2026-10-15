@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Sidebar } from "@/app/_components/sidebar";
 import { Avatar } from "@/app/_components/avatar";
+import { ParentsPanel } from "@/app/_components/parents-panel";
 import { children, getChildById } from "@/app/_data/children";
 import { room, sessionUser } from "@/app/_data/feed";
 
@@ -133,6 +134,10 @@ async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
             </span>
           </div>
         </div>
+      </div>
+
+      <div className="flex w-[300px] max-w-full flex-none flex-col gap-3.5">
+        <ParentsPanel parents={child.parents} />
       </div>
     </div>
   );
