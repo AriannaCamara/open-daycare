@@ -162,7 +162,7 @@ export function PostCard({ post }: PostCardProps) {
         </Link>
         <span className="flex-1" />
         <Link
-          href="/crear-publicacion"
+          href="/create-post"
           className="text-[14px] font-extrabold text-[#C5503A]"
         >
           Editar

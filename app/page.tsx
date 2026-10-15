@@ -26,7 +26,7 @@ export default function Home() {
     <div className="flex min-h-screen bg-cream">
       <Sidebar user={sessionUser} room={room} activeHref="/" />
 
-      <main className="h-screen min-w-0 flex-1 overflow-y-auto">
+      <main className="h-screen min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
         <div className="mx-auto w-full max-w-[760px] px-10 pb-20 pt-[34px]">
           <div className="mb-6">
             <div className="mb-1 text-[12.5px] font-extrabold tracking-[0.8px] text-accent">
@@ -41,7 +41,7 @@ export default function Home() {
           </div>
 
           <Link
-            href="/crear-publicacion"
+            href="/create-post"
             className="mb-6 flex items-center gap-3.5 rounded-[18px] border border-border bg-surface px-[18px] py-3.5 shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)]"
           >
             <div className="flex size-10 flex-none items-center justify-center rounded-full bg-[#F2937A] font-display text-[16px] font-semibold text-white">
