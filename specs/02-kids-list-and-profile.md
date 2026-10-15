@@ -82,19 +82,19 @@ Los hex de avatares y pills viven en los mapas de estilos, no en los datos (mism
 
 ## Criterios de aceptación
 
-- [ ] `/kids` y `/kids/[id]` renderizan sin errores de consola ni de build.
-- [ ] Sidebar desktop idéntico al template; nav "Niños" activa (bg `#FBE3D8`, texto `#D9583C`).
-- [ ] Links del sidebar en inglés: `/kids`, `/announcements`, `/account`, `/create-post`; el feed ya no apunta a `/crear-publicacion`.
-- [ ] Header de lista: "GESTIÓN" + "Niños" + botón "Agregar niño".
-- [ ] Buscar "sofia" encuentra "Sofía Méndez" (filtro sin acentos ni mayúsculas, en cliente).
-- [ ] Grid de 2 columnas con las 8 tarjetas: avatar con color correcto, nombre, "N años · X padres vinculados", pill "MANÍ"/"LACTOSA", pill "VINCULAR" (Valentina) o chevron.
-- [ ] Hover de tarjeta: borde `#F2A78E` y desplazamiento `-2px`.
-- [ ] Búsqueda sin resultados muestra estado vacío con el texto buscado y botón limpiar.
-- [ ] Cada tarjeta navega a `/kids/[id]` con su `id`.
-- [ ] `/kids/mateo-fernandez` muestra alerta de alergias (`#FBDAD6`), ficha (12 mar 2022 / Soles / feb 2025), botón "Resumen del día" y los 2 padres con pills ACTIVA/PENDIENTE + "Vincular otro padre".
-- [ ] `/kids/id-inexistente` devuelve 404.
-- [ ] A 375px: sidebar oculta, hamburguesa abre drawer con overlay, contenido apilado en 1 columna.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/kids` y `/kids/[id]` renderizan sin errores de consola ni de build.
+- [x] Sidebar desktop idéntico al template; nav "Niños" activa (bg `#FBE3D8`, texto `#D9583C`).
+- [x] Links del sidebar en inglés: `/kids`, `/announcements`, `/account`, `/create-post`; el feed ya no apunta a `/crear-publicacion`.
+- [x] Header de lista: "GESTIÓN" + "Niños" + botón "Agregar niño".
+- [x] Buscar "sofia" encuentra "Sofía Méndez" (filtro sin acentos ni mayúsculas, en cliente).
+- [x] Grid de 2 columnas con las 8 tarjetas: avatar con color correcto, nombre, "N años · X padres vinculados", pill "MANÍ"/"LACTOSA", pill "VINCULAR" (Valentina) o chevron.
+- [x] Hover de tarjeta: borde `#F2A78E` y desplazamiento `-2px`.
+- [x] Búsqueda sin resultados muestra estado vacío con el texto buscado y botón limpiar.
+- [x] Cada tarjeta navega a `/kids/[id]` con su `id`.
+- [x] `/kids/mateo-fernandez` muestra alerta de alergias (`#FBDAD6`), ficha (12 mar 2022 / Soles / feb 2025), botón "Resumen del día" y los 2 padres con pills ACTIVA/PENDIENTE + "Vincular otro padre".
+- [x] `/kids/id-inexistente` devuelve 404.
+- [x] A 375px: sidebar oculta, hamburguesa abre drawer con overlay, contenido apilado en 1 columna.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
