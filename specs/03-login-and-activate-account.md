@@ -1,6 +1,6 @@
 # SPEC 03 — Login y activación de cuenta (`/login`, `/activate-account`)
 
-**Estado:** Aprobado
+**Estado:** Implementado
 **Fecha:** 2026-10-16
 **Depende de:** SPEC 01, SPEC 02
 **Objetivo:** Portar `login.dc.html` y `activar-cuenta.dc.html` a las rutas `/login` y `/activate-account` con formularios validados en cliente, sin selector de rol Personal/Familia.
@@ -74,23 +74,23 @@ Reglas de validación (al enviar):
 
 ## Criterios de aceptación
 
-- [ ] `/login` y `/activate-account` renderizan sin errores de consola ni de build.
-- [ ] `/login` no muestra el bloque "INGRESO COMO" ni los botones Personal/Familia.
-- [ ] `/login` muestra el panel promo con el título "El día de cada niño, compartido con su familia." y "🌿 Guardería Sala Soles".
-- [ ] Al cargar `/login`, email y contraseña están vacíos.
-- [ ] Submit vacío muestra "Ingresá tu email." e "Ingresá tu contraseña." y no navega.
-- [ ] Email `caro@` muestra "El email no tiene un formato válido."
-- [ ] Con credenciales válidas, "Iniciar sesión" navega a `/`.
-- [ ] "¿Olvidaste tu contraseña?" no navega ni ejecuta ninguna acción.
-- [ ] El link "Activá tu cuenta" lleva a `/activate-account`.
-- [ ] `/activate-account` muestra la card "Te invitaron a seguir a / Mateo · Sala Soles" con el avatar de Mateo desde `children.ts`.
-- [ ] Código `7K4P9` y email `lucia.fernandez@gmail.com` vienen prellenados; "Crear contraseña" arranca vacío.
-- [ ] Submit con el checkbox desmarcado muestra "Necesitamos tu autorización para continuar." y no navega.
-- [ ] Contraseña de 7 caracteres muestra "Usá al menos 8 caracteres."
-- [ ] Con código, email, contraseña ≥8 y checkbox marcado, "Activar mi cuenta" navega a `/`.
-- [ ] "Iniciar sesión" desde `/activate-account` lleva a `/login`.
-- [ ] A 375px el panel promo está oculto, el formulario ocupa el ancho completo y no hay scroll horizontal.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/login` y `/activate-account` renderizan sin errores de consola ni de build.
+- [x] `/login` no muestra el bloque "INGRESO COMO" ni los botones Personal/Familia.
+- [x] `/login` muestra el panel promo con el título "El día de cada niño, compartido con su familia." y "🌿 Guardería Sala Soles".
+- [x] Al cargar `/login`, email y contraseña están vacíos.
+- [x] Submit vacío muestra "Ingresá tu email." e "Ingresá tu contraseña." y no navega.
+- [x] Email `caro@` muestra "El email no tiene un formato válido."
+- [x] Con credenciales válidas, "Iniciar sesión" navega a `/`.
+- [x] "¿Olvidaste tu contraseña?" no navega ni ejecuta ninguna acción.
+- [x] El link "Activá tu cuenta" lleva a `/activate-account`.
+- [x] `/activate-account` muestra la card "Te invitaron a seguir a / Mateo · Sala Soles" con el avatar de Mateo desde `children.ts`.
+- [x] Código `7K4P9` y email `lucia.fernandez@gmail.com` vienen prellenados; "Crear contraseña" arranca vacío.
+- [x] Submit con el checkbox desmarcado muestra "Necesitamos tu autorización para continuar." y no navega.
+- [x] Contraseña de 7 caracteres muestra "Usá al menos 8 caracteres."
+- [x] Con código, email, contraseña ≥8 y checkbox marcado, "Activar mi cuenta" navega a `/`.
+- [x] "Iniciar sesión" desde `/activate-account` lleva a `/login`.
+- [x] A 375px el panel promo está oculto, el formulario ocupa el ancho completo y no hay scroll horizontal.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
