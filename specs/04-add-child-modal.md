@@ -1,6 +1,6 @@
 # SPEC 04 — Modal "Agregar niño" en `/kids`
 
-**Estado:** Aprobado
+**Estado:** Implementado
 **Fecha:** 2026-10-16
 **Depende de:** SPEC 02
 **Objetivo:** Implementar el formulario de `agregar-nino.dc.html` como modal sobre `/kids`, con nombre, fecha de nacimiento y sala obligatorios, que al guardar agrega el niño a la lista visible.
