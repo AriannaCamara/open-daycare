@@ -34,7 +34,7 @@ const initialValues: AddChildValues = {
 const rooms = ["Soles"];
 
 const labelClassName =
-  "mb-2 block text-[12px] font-extrabold tracking-[0.7px] text-accent";
+  "mb-2 block text-[12px] font-bold tracking-[0.7px] text-muted";
 const baseInputClassName =
   "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A]";
 const errorTextClassName =
@@ -70,17 +70,12 @@ export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
 
   useEffect(() => {
     if (!open) {
-      setValues(initialValues);
-      setErrors({});
-    }
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) {
       return;
     }
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
+        setValues(initialValues);
+        setErrors({});
         onClose();
       }
     }
@@ -90,6 +85,12 @@ export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
 
   if (!open) {
     return null;
+  }
+
+  function handleClose() {
+    setValues(initialValues);
+    setErrors({});
+    onClose();
   }
 
   function updateField(
@@ -113,13 +114,15 @@ export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length === 0) {
       onSave(values);
+      setValues(initialValues);
+      setErrors({});
     }
   }
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(63,54,46,0.45)] px-6 py-10"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <form
         noValidate
@@ -130,7 +133,7 @@ export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
         <div className="flex items-center justify-between border-b border-[#ECE0D0] px-[26px] py-5">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="cursor-pointer text-[15px] font-bold text-muted-strong"
           >
             Cancelar
