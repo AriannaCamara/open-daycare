@@ -1,5 +1,5 @@
 import type { Parent, ParentRelation, ParentStatus } from "@/app/_data/children";
-import { parentStatusLabels, parentStatusStyles } from "@/app/_data/children";
+import { parentStatusLabel, parentStatusStyles } from "@/app/_data/children";
 import { Avatar } from "@/app/_components/avatar";
 import Link from "next/link";
 
@@ -10,6 +10,7 @@ interface ParentsPanelProps {
 const relationLabels: Record<ParentRelation, string> = {
   mother: "Mamá",
   father: "Papá",
+  tutor: "Tutor/a",
 };
 
 function statusSubtitle(relation: ParentRelation, status: ParentStatus) {
@@ -94,7 +95,7 @@ export function ParentsPanel({ parents }: ParentsPanelProps) {
                     color: statusStyle.text,
                   }}
                 >
-                  {parentStatusLabels[parent.status]}
+                  {parentStatusLabel(parent.relation, parent.status)}
                 </span>
               </div>
             );
