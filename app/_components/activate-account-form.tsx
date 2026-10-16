@@ -78,7 +78,7 @@ export function ActivateAccountForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#FBF4EC] px-10 py-10">
-      <form onSubmit={handleSubmit} className="w-full max-w-[440px]">
+      <form noValidate onSubmit={handleSubmit} className="w-full max-w-[440px]">
         <div className="mb-[22px] flex h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-[linear-gradient(155deg,#F8C3A8,#F2937A)] shadow-[0_12px_26px_-10px_rgba(238,129,100,.65)]">
           <SunIcon />
         </div>

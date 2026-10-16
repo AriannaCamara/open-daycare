@@ -87,7 +87,7 @@ export function LoginForm() {
       </div>
 
       <div className="flex items-center justify-center px-10 py-10">
-        <form onSubmit={handleSubmit} className="w-full max-w-[392px]">
+        <form noValidate onSubmit={handleSubmit} className="w-full max-w-[392px]">
           <h2 className="mb-1.5 font-display text-[30px] font-semibold text-ink">
             Iniciar sesión
           </h2>
