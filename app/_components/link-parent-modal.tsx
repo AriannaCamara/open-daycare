@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import type { ParentRelation } from "@/app/_data/children";
 
 export type LinkParentValues = {
@@ -8,6 +8,8 @@ export type LinkParentValues = {
   email: string;
   relation: ParentRelation;
 };
+
+type FieldErrors = Partial<Record<keyof LinkParentValues, string>>;
 
 interface LinkParentModalProps {
   open: boolean;
@@ -33,7 +35,33 @@ const inviteCode = "7K4P9";
 const labelClassName =
   "mb-2 block text-[12px] font-bold tracking-[0.7px] text-muted";
 const baseInputClassName =
-  "w-full rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-[13px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A]";
+  "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A]";
+const errorTextClassName =
+  "mb-2 mt-1 text-[13px] font-semibold text-[#C5503A]";
+
+function inputClassName(hasError: boolean): string {
+  return `${baseInputClassName} ${hasError ? "border-[#D9583C]" : "border-[#EADFD0]"}`;
+}
+
+function validate(values: LinkParentValues): FieldErrors {
+  const errors: FieldErrors = {};
+
+  if (!values.fullName.trim()) {
+    errors.fullName = "Ingresá el nombre completo.";
+  }
+
+  if (!values.email) {
+    errors.email = "Ingresá el email.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+    errors.email = "El email no tiene un formato válido.";
+  }
+
+  if (!values.relation) {
+    errors.relation = "Elegí un parentesco.";
+  }
+
+  return errors;
+}
 
 function XIcon() {
   return (
@@ -96,22 +124,64 @@ export function LinkParentModal({
   childName,
 }: LinkParentModalProps) {
   const [values, setValues] = useState<LinkParentValues>(initialValues);
+  const [errors, setErrors] = useState<FieldErrors>({});
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setValues(initialValues);
+        setErrors({});
+        onClose();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
 
   if (!open) {
     return null;
   }
 
+  function handleClose() {
+    setValues(initialValues);
+    setErrors({});
+    onClose();
+  }
+
   function updateText(field: "fullName" | "email", value: string) {
     setValues((current) => ({ ...current, [field]: value }));
+    setErrors((current) => {
+      if (!current[field]) {
+        return current;
+      }
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
   }
 
   function selectRelation(relation: ParentRelation) {
     setValues((current) => ({ ...current, relation }));
+    setErrors((current) => {
+      if (!current.relation) {
+        return current;
+      }
+      const next = { ...current };
+      delete next.relation;
+      return next;
+    });
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    onInvite(values);
+    const nextErrors = validate(values);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length === 0) {
+      onInvite(values);
+    }
   }
 
   return (
@@ -134,7 +204,7 @@ export function LinkParentModal({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="flex size-[34px] flex-none cursor-pointer items-center justify-center rounded-[10px] bg-[#F0E6D8] text-[#94887B]"
           >
             <XIcon />
@@ -159,8 +229,11 @@ export function LinkParentModal({
             value={values.fullName}
             onChange={(event) => updateText("fullName", event.target.value)}
             placeholder="Ej. Diego Fernández"
-            className={`${baseInputClassName} mb-[18px]`}
+            className={`${inputClassName(Boolean(errors.fullName))} mb-[18px]`}
           />
+          {errors.fullName && (
+            <p className={errorTextClassName}>{errors.fullName}</p>
+          )}
 
           <label className={labelClassName} htmlFor="link-parent-email">
             EMAIL
@@ -171,8 +244,11 @@ export function LinkParentModal({
             value={values.email}
             onChange={(event) => updateText("email", event.target.value)}
             placeholder="correo@ejemplo.com"
-            className={`${baseInputClassName} mb-[18px]`}
+            className={`${inputClassName(Boolean(errors.email))} mb-[18px]`}
           />
+          {errors.email && (
+            <p className={errorTextClassName}>{errors.email}</p>
+          )}
 
           <div className="mb-[10px] text-[12px] font-extrabold tracking-[0.7px] text-[#94887B]">
             PARENTESCO
@@ -196,6 +272,9 @@ export function LinkParentModal({
               );
             })}
           </div>
+          {errors.relation && (
+            <p className={errorTextClassName}>{errors.relation}</p>
+          )}
 
           <div className="mb-5 rounded-[16px] border-[1.5px] border-dashed border-[#E6D08A] bg-[#FBF1D6] px-[18px] py-[18px] text-center">
             <div className="mb-2 text-[12px] font-extrabold tracking-[0.7px] text-[#A88526]">
