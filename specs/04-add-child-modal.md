@@ -77,21 +77,21 @@ Construcción del `Child` al guardar:
 
 ## Criterios de aceptación
 
-- [ ] `/kids` renderiza sin errores de consola ni de build.
-- [ ] El botón "Agregar niño" abre el modal y no navega a `/add-child`.
-- [ ] El modal muestra los 5 campos en el orden del template y "Soles" preseleccionado en SALA.
-- [ ] Submit con nombre vacío muestra "Ingresá el nombre completo." y no agrega ni cierra.
-- [ ] Submit con fecha vacía muestra "Ingresá la fecha de nacimiento." y no agrega ni cierra.
-- [ ] Una fecha futura muestra "La fecha no puede ser futura." y no agrega ni cierra.
-- [ ] Con nombre y fecha válidos, Guardar cierra el modal y agrega la tarjeta al grid con nombre, edad calculada, "sin padres vinculados" y pill VINCULAR.
-- [ ] El contador del separador pasa de 8 a 9 tras guardar.
-- [ ] Si se completó ALERGIAS, la tarjeta muestra la pill con ese texto en mayúsculas.
-- [ ] Cancelar cierra el modal sin agregar nada.
-- [ ] Clic en el overlay cierra el modal sin agregar nada.
-- [ ] Presionar Esc cierra el modal sin agregar nada.
-- [ ] Tras guardar (o cancelar), reabrir el modal muestra nombre/fecha vacíos y SALA en "Soles".
-- [ ] A 375px el modal cabe en pantalla sin scroll horizontal.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/kids` renderiza sin errores de consola ni de build.
+- [x] El botón "Agregar niño" abre el modal y no navega a `/add-child`.
+- [x] El modal muestra los 5 campos en el orden del template y "Soles" preseleccionado en SALA.
+- [x] Submit con nombre vacío muestra "Ingresá el nombre completo." y no agrega ni cierra.
+- [x] Submit con fecha vacía muestra "Ingresá la fecha de nacimiento." y no agrega ni cierra.
+- [x] Una fecha futura muestra "La fecha no puede ser futura." y no agrega ni cierra.
+- [x] Con nombre y fecha válidos, Guardar cierra el modal y agrega la tarjeta al grid con nombre, edad calculada, "sin padres vinculados" y pill VINCULAR.
+- [x] El contador del separador pasa de 8 a 9 tras guardar.
+- [x] Si se completó ALERGIAS, la tarjeta muestra la pill con ese texto en mayúsculas.
+- [x] Cancelar cierra el modal sin agregar nada.
+- [x] Clic en el overlay cierra el modal sin agregar nada.
+- [x] Presionar Esc cierra el modal sin agregar nada.
+- [x] Tras guardar (o cancelar), reabrir el modal muestra nombre/fecha vacíos y SALA en "Soles".
+- [x] A 375px el modal cabe en pantalla sin scroll horizontal.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
