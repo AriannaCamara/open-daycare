@@ -6,6 +6,12 @@
     "template": "Carga y sigue la skill spec en .agents/skills/spec/SKILL.md.\n\nFeature: $ARGUMENTS"
   }
 },
+"permission": {
+  "external_directory": {
+    "/tmp/**": "allow"
+  },
+  "bash": "allow"
+},
   "mcp": {
     "playwright": {
       "type": "local",
