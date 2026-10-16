@@ -1,6 +1,11 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 
 export type AddChildValues = {
   fullName: string;
@@ -62,6 +67,26 @@ function validate(values: AddChildValues): FieldErrors {
 export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
   const [values, setValues] = useState<AddChildValues>(initialValues);
   const [errors, setErrors] = useState<FieldErrors>({});
+
+  useEffect(() => {
+    if (!open) {
+      setValues(initialValues);
+      setErrors({});
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
 
   if (!open) {
     return null;
