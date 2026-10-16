@@ -1,10 +1,27 @@
-import type { Parent, ParentRelation, ParentStatus } from "@/app/_data/children";
-import { parentStatusLabel, parentStatusStyles } from "@/app/_data/children";
+"use client";
+
+import { useState } from "react";
+import type {
+  AvatarTone,
+  Parent,
+  ParentRelation,
+  ParentStatus,
+} from "@/app/_data/children";
+import {
+  avatarToneStyles,
+  parentStatusLabel,
+  parentStatusStyles,
+} from "@/app/_data/children";
 import { Avatar } from "@/app/_components/avatar";
 import Link from "next/link";
+import {
+  LinkParentModal,
+  type LinkParentValues,
+} from "@/app/_components/link-parent-modal";
 
 interface ParentsPanelProps {
   parents: Parent[];
+  childName: string;
 }
 
 const relationLabels: Record<ParentRelation, string> = {
@@ -13,9 +30,31 @@ const relationLabels: Record<ParentRelation, string> = {
   tutor: "Tutor/a",
 };
 
+const toneOptions = Object.keys(avatarToneStyles) as AvatarTone[];
+
 function statusSubtitle(relation: ParentRelation, status: ParentStatus) {
   if (status === "pending") return "invitación enviada";
   return relation === "mother" ? "activa" : "activo";
+}
+
+function slugify(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+function buildParentId(baseId: string, existing: Parent[]): string {
+  if (!existing.some((parent) => parent.id === baseId)) {
+    return baseId;
+  }
+  let suffix = 2;
+  while (existing.some((parent) => parent.id === `${baseId}-${suffix}`)) {
+    suffix += 1;
+  }
+  return `${baseId}-${suffix}`;
 }
 
 function SunIcon() {
@@ -53,7 +92,23 @@ function PlusIcon() {
   );
 }
 
-export function ParentsPanel({ parents }: ParentsPanelProps) {
+export function ParentsPanel({ parents, childName }: ParentsPanelProps) {
+  const [linkedParents, setLinkedParents] = useState<Parent[]>(parents);
+  const [open, setOpen] = useState(false);
+
+  function handleInvite(values: LinkParentValues) {
+    const newParent: Parent = {
+      id: buildParentId(slugify(values.fullName), linkedParents),
+      fullName: values.fullName.trim(),
+      relation: values.relation,
+      initial: values.fullName.trim().charAt(0).toUpperCase(),
+      tone: toneOptions[linkedParents.length % toneOptions.length],
+      status: "pending",
+    };
+    setLinkedParents((current) => [...current, newParent]);
+    setOpen(false);
+  }
+
   return (
     <>
       <Link
@@ -69,7 +124,7 @@ export function ParentsPanel({ parents }: ParentsPanelProps) {
           PADRES VINCULADOS
         </div>
         <div className="flex flex-col gap-3.5">
-          {parents.map((parent) => {
+          {linkedParents.map((parent) => {
             const statusStyle = parentStatusStyles[parent.status];
             return (
               <div key={parent.id} className="flex items-center gap-3">
@@ -101,9 +156,10 @@ export function ParentsPanel({ parents }: ParentsPanelProps) {
             );
           })}
 
-          <Link
-            href="/link-parent"
-            className="flex items-center gap-3 pt-2"
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="flex cursor-pointer items-center gap-3 pt-2"
           >
             <span className="flex size-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
               <PlusIcon />
@@ -111,9 +167,16 @@ export function ParentsPanel({ parents }: ParentsPanelProps) {
             <span className="text-[14.5px] font-extrabold text-[#C5503A]">
               Vincular otro padre
             </span>
-          </Link>
+          </button>
         </div>
       </div>
+
+      <LinkParentModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onInvite={handleInvite}
+        childName={childName}
+      />
     </>
   );
 }
