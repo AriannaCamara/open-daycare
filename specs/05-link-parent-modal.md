@@ -1,6 +1,6 @@
 # SPEC 05 — Modal "Vincular padre" en `/kids/[id]`
 
-**Estado:** Aprobado
+**Estado:** Implementado
 **Fecha:** 2026-10-16
 **Depende de:** SPEC 02
 **Objetivo:** Implementar la pantalla `vincular-padre.dc.html` como modal que se abre al hacer clic en "Vincular otro padre" del perfil del niño, y que al enviar la invitación agrega el nuevo padre a la lista con estado PENDIENTE.
