@@ -137,7 +137,7 @@ async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
       </div>
 
       <div className="flex w-[300px] max-w-full flex-none flex-col gap-3.5">
-        <ParentsPanel parents={child.parents} />
+        <ParentsPanel parents={child.parents} childName={child.fullName} />
       </div>
     </div>
   );

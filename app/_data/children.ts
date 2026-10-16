@@ -7,7 +7,7 @@ export type AvatarTone =
   | "blue";
 
 export type ParentStatus = "active" | "pending";
-export type ParentRelation = "mother" | "father";
+export type ParentRelation = "mother" | "father" | "tutor";
 
 export interface Parent {
   id: string;
@@ -44,10 +44,14 @@ export const avatarToneStyles: Record<
   blue: { background: "#A9C7E8", text: "#3A6EA5" },
 };
 
-export const parentStatusLabels: Record<ParentStatus, string> = {
-  active: "ACTIVA",
-  pending: "PENDIENTE",
-};
+export function parentStatusLabel(
+  relation: ParentRelation,
+  status: ParentStatus,
+): string {
+  if (status === "pending") return "PENDIENTE";
+  if (relation === "mother") return "ACTIVA";
+  return "ACTIVO";
+}
 
 export const parentStatusStyles: Record<
   ParentStatus,
