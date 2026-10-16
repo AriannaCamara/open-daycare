@@ -78,22 +78,22 @@ Construcción del `Parent` al enviar:
 
 ## Criterios de aceptación
 
-- [ ] `/kids/mateo-fernandez` renderiza sin errores de consola ni de build.
-- [ ] "Vincular otro padre" abre el modal y no navega (no existe el `Link` a `/link-parent`).
-- [ ] Header muestra "Vincular padre" y "a Mateo Fernández".
-- [ ] Banner azul muestra "...Solo verá el feed de Mateo."
-- [ ] PARENTESCO arranca con "Mamá" seleccionado.
-- [ ] Caja de código muestra "7K4P9" y "Vence en 7 días".
-- [ ] Submit con nombre vacío muestra "Ingresá el nombre completo." y no agrega ni cierra.
-- [ ] Submit con email vacío muestra "Ingresá el email." y no agrega ni cierra.
-- [ ] Email `caro@` muestra "El email no tiene un formato válido."
-- [ ] Enviar con datos válidos cierra el modal y agrega el padre con pill PENDIENTE y subtítulo "invitación enviada".
-- [ ] Enviando con "Tutor/a", el padre nuevo muestra "Tutor/a · invitación enviada".
-- [ ] Overlay, Esc y la X cierran sin agregar nada.
-- [ ] Tras cerrar, reabrir muestra nombre/email vacíos y "Mamá" preseleccionado.
-- [ ] Padres activos: mamá "ACTIVA", papá/tutor "ACTIVO" (Pablo Ruiz ya no muestra "ACTIVA").
-- [ ] A 375px el modal cabe sin scroll horizontal.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/kids/mateo-fernandez` renderiza sin errores de consola ni de build.
+- [x] "Vincular otro padre" abre el modal y no navega (no existe el `Link` a `/link-parent`).
+- [x] Header muestra "Vincular padre" y "a Mateo Fernández".
+- [x] Banner azul muestra "...Solo verá el feed de Mateo."
+- [x] PARENTESCO arranca con "Mamá" seleccionado.
+- [x] Caja de código muestra "7K4P9" y "Vence en 7 días".
+- [x] Submit con nombre vacío muestra "Ingresá el nombre completo." y no agrega ni cierra.
+- [x] Submit con email vacío muestra "Ingresá el email." y no agrega ni cierra.
+- [x] Email `caro@` muestra "El email no tiene un formato válido."
+- [x] Enviar con datos válidos cierra el modal y agrega el padre con pill PENDIENTE y subtítulo "invitación enviada".
+- [x] Enviando con "Tutor/a", el padre nuevo muestra "Tutor/a · invitación enviada".
+- [x] Overlay, Esc y la X cierran sin agregar nada.
+- [x] Tras cerrar, reabrir muestra nombre/email vacíos y "Mamá" preseleccionado.
+- [x] Padres activos: mamá "ACTIVA", papá/tutor "ACTIVO" (Pablo Ruiz ya no muestra "ACTIVA").
+- [x] A 375px el modal cabe sin scroll horizontal.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 

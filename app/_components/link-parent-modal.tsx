@@ -181,13 +181,15 @@ export function LinkParentModal({
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length === 0) {
       onInvite(values);
+      setValues(initialValues);
+      setErrors({});
     }
   }
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(63,54,46,0.45)] px-6 py-10"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <form
         noValidate
