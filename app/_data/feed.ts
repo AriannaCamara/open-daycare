@@ -27,7 +27,7 @@ export const postKindStyles: Record<
 > = {
   meal: {
     label: postKindLabels.meal,
-    solid: { bg: "#9A7B1E", text: "#fff" },
+    solid: { bg: "#F4DC8E", text: "#9A7B1E" },
     pill: { bg: "#F3E7C4", text: "#9A7B1E" },
   },
   nap: {

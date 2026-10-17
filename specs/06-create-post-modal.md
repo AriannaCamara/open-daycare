@@ -93,7 +93,7 @@ Colores de TIPO (solid modal / pill feed):
 
 | Tipo | solid | pill |
 | --- | --- | --- |
-| Comida | `#9A7B1E` / `#fff` | `#F3E7C4` / `#9A7B1E` |
+| Comida | `#F4DC8E` / `#9A7B1E` | `#F3E7C4` / `#9A7B1E` |
 | Siesta | `#E7DCF6` / `#7B5FC0` | igual |
 | Actividad | `#2E89A6` / `#fff` | `#C7E7F1` / `#1F7A93` |
 | Logro | `#CFEBD8` / `#3E9B6C` | igual |
