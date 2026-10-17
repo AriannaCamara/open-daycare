@@ -1,6 +1,6 @@
 # SPEC 06 — Modal "Nueva publicación" en el feed
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01
 > **Fecha:** 2026-10-17
 > **Objetivo:** Implementar la pantalla `crear-publicacion.dc.html` como modal sobre el feed, con selección múltiple de niños y los 7 tipos de publicación, que al publicar agrega la publicación arriba del feed.
