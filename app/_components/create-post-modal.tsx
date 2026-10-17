@@ -2,6 +2,7 @@
 
 import { avatarToneStyles, children } from "@/app/_data/children";
 import { postKindStyles, type PostKind } from "@/app/_data/feed";
+import { useState } from "react";
 
 export interface NewPostValues {
   kind: PostKind;
@@ -33,9 +34,42 @@ const childPillClassName =
   "flex cursor-pointer items-center gap-2 rounded-full border-[1.5px] px-3.5 py-1.5 text-[14px] font-bold";
 
 export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [room, setRoom] = useState(false);
+  const [kind, setKind] = useState<PostKind | null>(null);
+
+  const forcedRoom = kind === "announcement";
+  const effectiveRoom = room || forcedRoom;
+
   if (!open) {
     return null;
   }
+
+  function toggleChild(childId: string) {
+    if (forcedRoom) {
+      return;
+    }
+    setRoom(false);
+    setSelectedIds((current) =>
+      current.includes(childId)
+        ? current.filter((id) => id !== childId)
+        : [...current, childId],
+    );
+  }
+
+  function toggleRoom() {
+    if (forcedRoom) {
+      return;
+    }
+    setRoom((current) => {
+      if (!current) {
+        setSelectedIds([]);
+      }
+      return !current;
+    });
+  }
+
+  const activePillClassName = "border-[#3F362E] bg-[#3F362E] text-white";
 
   return (
     <div
@@ -71,11 +105,14 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
           <div className="mb-[22px] flex flex-wrap gap-[9px]">
             {children.map((child) => {
               const tone = avatarToneStyles[child.tone];
+              const isActive = selectedIds.includes(child.id);
               return (
                 <button
                   key={child.id}
                   type="button"
-                  className={`${childPillClassName} border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]`}
+                  disabled={forcedRoom}
+                  onClick={() => toggleChild(child.id)}
+                  className={`${childPillClassName} ${isActive ? activePillClassName : "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"} ${forcedRoom ? "cursor-not-allowed opacity-60" : ""}`}
                 >
                   <span
                     className="flex size-[26px] items-center justify-center rounded-full font-display text-[13px] font-semibold"
@@ -89,7 +126,9 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
             })}
             <button
               type="button"
-              className={`${childPillClassName} border-[#ECE0D0] bg-[#FFFDF9] px-4 text-[#6E6359]`}
+              disabled={forcedRoom}
+              onClick={toggleRoom}
+              className={`${childPillClassName} ${effectiveRoom ? activePillClassName : "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"} px-4 ${forcedRoom ? "cursor-not-allowed" : ""}`}
             >
               Toda la sala
             </button>
@@ -97,13 +136,15 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
 
           <div className={sectionLabelClassName}>TIPO</div>
           <div className="mb-[22px] flex flex-wrap gap-[9px]">
-            {kindOrder.map(({ kind, label }) => {
-              const style = postKindStyles[kind].solid;
+            {kindOrder.map(({ kind: option, label }) => {
+              const style = postKindStyles[option].solid;
+              const isActive = kind === option;
               return (
                 <button
-                  key={kind}
+                  key={option}
                   type="button"
-                  className="cursor-pointer rounded-full border-none px-4 py-2 text-[13.5px] font-extrabold"
+                  onClick={() => setKind(option)}
+                  className={`cursor-pointer rounded-full border-none px-4 py-2 text-[13.5px] font-extrabold ${isActive ? "shadow-[0_0_0_2px_#3F362E]" : ""}`}
                   style={{ backgroundColor: style.bg, color: style.text }}
                 >
                   {label}
