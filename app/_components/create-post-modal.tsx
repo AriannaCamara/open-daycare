@@ -50,17 +50,24 @@ export function CreatePostModal({
   const [room, setRoom] = useState(false);
   const [kind, setKind] = useState<PostKind | null>(null);
   const [body, setBody] = useState("");
+  const [photos, setPhotos] = useState<string[]>([]);
   const [errors, setErrors] = useState<FieldErrors>({});
 
   const forcedRoom = kind === "announcement";
   const effectiveRoom = room || forcedRoom;
 
-  function reset() {
+  function clearForm() {
     setSelectedIds([]);
     setRoom(false);
     setKind(null);
     setBody("");
     setErrors({});
+  }
+
+  function reset() {
+    photos.forEach((url) => URL.revokeObjectURL(url));
+    setPhotos([]);
+    clearForm();
   }
 
   function handleClose() {
@@ -128,6 +135,20 @@ export function CreatePostModal({
     setBody(event.target.value);
   }
 
+  function handlePhotosChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    setPhotos((current) => [
+      ...current,
+      ...files.map((file) => URL.createObjectURL(file)),
+    ]);
+    event.target.value = "";
+  }
+
+  function removePhoto(url: string) {
+    URL.revokeObjectURL(url);
+    setPhotos((current) => current.filter((item) => item !== url));
+  }
+
   function validate(): FieldErrors {
     const nextErrors: FieldErrors = {};
     if (!kind) {
@@ -152,8 +173,10 @@ export function CreatePostModal({
     const givenNames = children
       .filter((child) => selectedIds.includes(child.id))
       .map((child) => child.fullName.split(" ")[0]);
-    onPublish({ kind, givenNames, body: body.trim(), photoUrls: [] });
-    reset();
+    onPublish({ kind, givenNames, body: body.trim(), photoUrls: photos });
+    // Las URLs publicadas siguen vivas en el feed: no se revocan acá.
+    setPhotos([]);
+    clearForm();
   }
 
   const activePillClassName = "border-[#3F362E] bg-[#3F362E] text-white";
@@ -265,10 +288,41 @@ export function CreatePostModal({
 
           <div className={sectionLabelClassName}>FOTOS</div>
           <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              className="flex size-24 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[14px] border-[1.5px] border-dashed border-[#DBCDBA] bg-[#F4ECE1] text-[#B0A290]"
-            >
+            {photos.map((url) => (
+              <div key={url} className="relative size-24">
+                <img
+                  src={url}
+                  alt="Foto seleccionada"
+                  className="size-24 rounded-[14px] border border-[#ECE0D0] object-cover"
+                />
+                <button
+                  type="button"
+                  aria-label="Quitar foto"
+                  onClick={() => removePhoto(url)}
+                  className="absolute -right-2 -top-2 flex size-6 cursor-pointer items-center justify-center rounded-full border border-[#ECE0D0] bg-white text-[#C5503A] shadow-sm"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+            <label className="flex size-24 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[14px] border-[1.5px] border-dashed border-[#DBCDBA] bg-[#F4ECE1] text-[#B0A290]">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                className="hidden"
+                onChange={handlePhotosChange}
+              />
               <svg
                 width="22"
                 height="22"
@@ -282,7 +336,7 @@ export function CreatePostModal({
                 <path d="M12 5v14M5 12h14" />
               </svg>
               <span className="text-[12px]">Agregar</span>
-            </button>
+            </label>
           </div>
         </div>
       </form>
