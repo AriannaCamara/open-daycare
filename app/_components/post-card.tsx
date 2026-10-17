@@ -1,30 +1,42 @@
 import type { Post, PostKind } from "@/app/_data/feed";
-import { postKindLabels } from "@/app/_data/feed";
+import { postKindLabels, postKindStyles } from "@/app/_data/feed";
 import Link from "next/link";
 
 interface PostCardProps {
   post: Post;
 }
 
-interface KindStyle {
-  pill: string;
+interface KindVisual {
   dot: string;
   avatar: string;
 }
 
-const kindStyles: Record<PostKind, KindStyle> = {
-  achievement: {
-    pill: "bg-[#CFEBD8] text-[#3E9B6C]",
-    dot: "bg-[#3E9B6C]",
+const kindVisuals: Record<PostKind, KindVisual> = {
+  meal: {
+    dot: "bg-[#9A7B1E]",
+    avatar: "bg-[#A9D9E8] text-[#1F7A93]",
+  },
+  nap: {
+    dot: "bg-[#7B5FC0]",
     avatar: "bg-[#A9D9E8] text-[#1F7A93]",
   },
   activity: {
-    pill: "bg-[#C7E7F1] text-[#2E89A6]",
     dot: "bg-[#2E89A6]",
     avatar: "bg-[#A9D9E8] text-[#1F7A93]",
   },
+  achievement: {
+    dot: "bg-[#3E9B6C]",
+    avatar: "bg-[#A9D9E8] text-[#1F7A93]",
+  },
+  mood: {
+    dot: "bg-[#C56486]",
+    avatar: "bg-[#A9D9E8] text-[#1F7A93]",
+  },
+  photo: {
+    dot: "bg-[#D9684A]",
+    avatar: "bg-[#A9D9E8] text-[#1F7A93]",
+  },
   announcement: {
-    pill: "bg-[#CCD8F4] text-[#4E72C8]",
     dot: "bg-[#4E72C8]",
     avatar: "bg-[#CCD8F4] text-[#4E72C8]",
   },
@@ -101,29 +113,40 @@ function MegaphoneIcon() {
 }
 
 export function PostCard({ post }: PostCardProps) {
-  const style = kindStyles[post.kind];
+  const visual = kindVisuals[post.kind];
+  const kindStyle = postKindStyles[post.kind];
   const isAnnouncement = post.kind === "announcement";
+  const hasNames = post.givenNames.length > 0;
+  const headerName = hasNames
+    ? post.givenNames.join(", ")
+    : isAnnouncement
+      ? "Anuncio general"
+      : "Toda la sala";
 
   return (
     <article className="rounded-[20px] border border-border bg-surface px-[22px] py-5 shadow-[0_4px_16px_-12px_rgba(120,90,60,0.5)]">
       <div className="mb-3.5 flex items-center gap-3">
         <div
-          className={`flex size-11 flex-none items-center justify-center rounded-full font-display text-[17px] font-semibold ${style.avatar}`}
+          className={`flex size-11 flex-none items-center justify-center rounded-full font-display text-[17px] font-semibold ${visual.avatar}`}
         >
-          {isAnnouncement ? <MegaphoneIcon /> : post.childName?.charAt(0)}
+          {hasNames ? post.givenNames[0].charAt(0) : <MegaphoneIcon />}
         </div>
         <div className="flex-1">
           <div className="font-display text-[16.5px] font-semibold text-ink">
-            {isAnnouncement ? "Anuncio general" : post.childName}
+            {headerName}
           </div>
           <div className="text-[12.5px] text-muted-strong">
             {post.time} · publicado por vos
           </div>
         </div>
         <div
-          className={`flex items-center gap-[7px] rounded-full px-3 py-1.5 ${style.pill}`}
+          className="flex items-center gap-[7px] rounded-full px-3 py-1.5"
+          style={{
+            backgroundColor: kindStyle.pill.bg,
+            color: kindStyle.pill.text,
+          }}
         >
-          <span className={`size-2 rounded-full ${style.dot}`} />
+          <span className={`size-2 rounded-full ${visual.dot}`} />
           <span className="text-[12px] font-extrabold tracking-[0.5px]">
             {postKindLabels[post.kind]}
           </span>
@@ -138,14 +161,22 @@ export function PostCard({ post }: PostCardProps) {
         {post.body}
       </p>
 
-      {post.photoLabel && (
-        <Link
-          href="/foto"
-          className="mt-3.5 flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-[#DBCDBA] bg-[#F4ECE1] text-[#B0A290]"
-        >
-          <ImageIcon />
-          <span className="text-[13.5px]">{post.photoLabel}</span>
-        </Link>
+      {post.photoUrl ? (
+        <img
+          src={post.photoUrl}
+          alt={post.photoLabel ?? "Foto de la publicación"}
+          className="mt-3.5 h-[200px] w-full rounded-2xl object-cover"
+        />
+      ) : (
+        post.photoLabel && (
+          <Link
+            href="/foto"
+            className="mt-3.5 flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-[#DBCDBA] bg-[#F4ECE1] text-[#B0A290]"
+          >
+            <ImageIcon />
+            <span className="text-[13.5px]">{post.photoLabel}</span>
+          </Link>
+        )
       )}
 
       <div className="mt-4 flex items-center gap-[18px] border-t border-line pt-3.5">
