@@ -115,26 +115,26 @@ Colores de TIPO (solid modal / pill feed):
 
 ## Criterios de aceptación
 
-- [ ] `/` renderiza sin errores de consola ni de build.
-- [ ] El botón "+Nueva publicación" del sidebar abre el modal y no navega.
-- [ ] El composer "Compartí un momento…" abre el modal.
-- [ ] El modal muestra header Cancelar/Nueva publicación/Publicar y las secciones PARA, TIPO (7 pills), DESCRIPCIÓN, FOTOS.
-- [ ] TIPO arranca sin ninguna pill seleccionada.
-- [ ] Se pueden seleccionar 3 niños a la vez y las 3 pills quedan activas.
-- [ ] Clic en un niño ya seleccionado lo deselecciona.
-- [ ] Activar "Toda la sala" deselecciona todos los niños; elegir un niño desactiva "Toda la sala".
-- [ ] Submit sin tipo muestra "Elegí un tipo." y no publica ni cierra.
-- [ ] Submit con descripción vacía muestra "Escribí una descripción."
-- [ ] Submit sin niños ni sala muestra "Elegí al menos un niño o Toda la sala."
-- [ ] Con tipo Anuncio, PARA queda en "Toda la sala" deshabilitado; al volver a "Actividad" se conserva la selección previa de niños.
-- [ ] Publicar válido cierra el modal y agrega el post arriba del feed con hora actual, `likes 0`, pill del tipo elegido y "Para: familia de Mateo, Sofía…".
-- [ ] Publicando un Anuncio, el post muestra "Para: toda la sala" y el ícono megáfono.
-- [ ] Elegir una foto muestra la miniatura en el modal y la imagen en el post del feed.
-- [ ] Quitar la miniatura antes de publicar → el post sale sin imagen.
-- [ ] Cancelar, clic en overlay y Esc cierran y resetean (reabrir: vacío, sin tipo, sin fotos).
-- [ ] A 375px el modal cabe sin scroll horizontal.
-- [ ] En `/kids` el botón del sidebar linkea a `/` (no rompe).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/` renderiza sin errores de consola ni de build.
+- [x] El botón "+Nueva publicación" del sidebar abre el modal y no navega.
+- [x] El composer "Compartí un momento…" abre el modal.
+- [x] El modal muestra header Cancelar/Nueva publicación/Publicar y las secciones PARA, TIPO (7 pills), DESCRIPCIÓN, FOTOS.
+- [x] TIPO arranca sin ninguna pill seleccionada.
+- [x] Se pueden seleccionar 3 niños a la vez y las 3 pills quedan activas.
+- [x] Clic en un niño ya seleccionado lo deselecciona.
+- [x] Activar "Toda la sala" deselecciona todos los niños; elegir un niño desactiva "Toda la sala".
+- [x] Submit sin tipo muestra "Elegí un tipo." y no publica ni cierra.
+- [x] Submit con descripción vacía muestra "Escribí una descripción."
+- [x] Submit sin niños ni sala muestra "Elegí al menos un niño o Toda la sala."
+- [x] Con tipo Anuncio, PARA queda en "Toda la sala" deshabilitado; al volver a "Actividad" se conserva la selección previa de niños.
+- [x] Publicar válido cierra el modal y agrega el post arriba del feed con hora actual, `likes 0`, pill del tipo elegido y "Para: familia de Mateo, Sofía…".
+- [x] Publicando un Anuncio, el post muestra "Para: toda la sala" y el ícono megáfono.
+- [x] Elegir una foto muestra la miniatura en el modal y la imagen en el post del feed.
+- [x] Quitar la miniatura antes de publicar → el post sale sin imagen.
+- [x] Cancelar, clic en overlay y Esc cierran y resetean (reabrir: vacío, sin tipo, sin fotos).
+- [x] A 375px el modal cabe sin scroll horizontal.
+- [x] En `/kids` el botón del sidebar linkea a `/` (no rompe).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
