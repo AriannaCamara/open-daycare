@@ -1,6 +1,6 @@
 # SPEC 07 — Crear tabla `daycares` en Supabase
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** — (primera spec de BD)
 > **Fecha:** 2026-10-18
 > **Objetivo:** Crear la tabla `public.daycares` en Supabase vía `apply_migration`, con RLS habilitado sin policies y una fila seed de prueba.
@@ -51,15 +51,15 @@ insert into public.daycares (name) values ('Guardería Sala Soles');
 
 ## Criterios de aceptación
 
-- [ ] `public.daycares` existe con columnas `id`, `name`, `created_at`.
-- [ ] `id` es `uuid` PK con default `gen_random_uuid()`.
-- [ ] `name` es `text` y no admite nulos.
-- [ ] `created_at` es `timestamptz` con default `now()`.
-- [ ] RLS está habilitado en la tabla.
-- [ ] No hay policies creadas.
-- [ ] Existe exactamente una fila: `name = 'Guardería Sala Soles'`.
-- [ ] La migración `create_daycares` aparece en el historial de migraciones.
-- [ ] Advisors de seguridad sin issues nuevos por esta tabla.
+- [x] `public.daycares` existe con columnas `id`, `name`, `created_at`.
+- [x] `id` es `uuid` PK con default `gen_random_uuid()`.
+- [x] `name` es `text` y no admite nulos.
+- [x] `created_at` es `timestamptz` con default `now()`.
+- [x] RLS está habilitado en la tabla.
+- [x] No hay policies creadas.
+- [x] Existe exactamente una fila: `name = 'Guardería Sala Soles'`.
+- [x] La migración `create_daycares` aparece en el historial de migraciones.
+- [x] Advisors de seguridad sin issues nuevos por esta tabla.
 
 ## Decisiones tomadas y descartadas
 
