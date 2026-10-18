@@ -29,10 +29,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Supabase
 
 - Backend: **Supabase**, project `mkiubklmyoxxojdyxnbx` (URL `https://mkiubklmyoxxojdyxnbx.supabase.co`), connected via the **Supabase MCP** server. Use MCP tools (`list_tables`, `execute_sql`, `apply_migration`, logs, advisors…) instead of raw CLI when possible.
-- Current state: `public` schema is **empty** (no tables created yet). `@supabase/supabase-js` / `@supabase/ssr` are **not installed yet**; no local `supabase/` CLI folder exists.
+- Current state: `public` schema has `daycares` only. `@supabase/supabase-js` / `@supabase/ssr` are **not installed yet**. Local `supabase/` exists with `supabase/migrations/` (migration files only — no Supabase CLI, no `config.toml`).
 - `.env` holds `SUPABASE_DB_PASSWORD` — never commit or print secrets.
 - DB schema reference (not implemented yet): `../07-DB-Schema/opendaycare-database-schema.md` (mounted as the `docs` reference in `opencode.json`).
-- Workflow: design schema from the reference doc → apply via MCP migrations → verify with test queries → enable **RLS on every exposed table** before granting `anon`/`authenticated` access.
+- Workflow: design schema from the reference doc → write the SQL in `supabase/migrations/YYYYMMDDHHMMSS_name.sql` → **commit the migration file** → apply via MCP `apply_migration` (same name as the file) → verify with test queries → enable **RLS on every exposed table** before granting `anon`/`authenticated` access.
+- **Migration rule (mandatory):** every database change (DDL, policies, functions, seeds) goes through a `.sql` file in `supabase/migrations/` named `YYYYMMDDHHMMSS_name.sql` (mirror Supabase's version format). The file is the source of truth: write it first, commit it, then apply it with `apply_migration`. Never manipulate the database without a committed migration file in the repo.
 
 ## Commands
 
