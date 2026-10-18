@@ -26,6 +26,14 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Path alias `@/*` maps to repo root (`./*`), not `src/`.
 - Generated global types `PageProps<'/route'>`, `LayoutProps<'/'>`, `RouteContext` come from `next typegen` (see `app/layout.tsx`). Regenerate with `npx next typegen` if they error.
 
+## Supabase
+
+- Backend: **Supabase**, project `mkiubklmyoxxojdyxnbx` (URL `https://mkiubklmyoxxojdyxnbx.supabase.co`), connected via the **Supabase MCP** server. Use MCP tools (`list_tables`, `execute_sql`, `apply_migration`, logs, advisors…) instead of raw CLI when possible.
+- Current state: `public` schema is **empty** (no tables created yet). `@supabase/supabase-js` / `@supabase/ssr` are **not installed yet**; no local `supabase/` CLI folder exists.
+- `.env` holds `SUPABASE_DB_PASSWORD` — never commit or print secrets.
+- DB schema reference (not implemented yet): `../07-DB-Schema/opendaycare-database-schema.md` (mounted as the `docs` reference in `opencode.json`).
+- Workflow: design schema from the reference doc → apply via MCP migrations → verify with test queries → enable **RLS on every exposed table** before granting `anon`/`authenticated` access.
+
 ## Commands
 
 - `npm run dev` — dev server on :3000.
@@ -58,6 +66,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - /spec usaremos esta habilidad para crear las especificaciones.
 - /spec-impl usaremos esta skill para hacer las implementaciones.
 - /spec-verify (`.opencode/command/spec-verify.md`) invoca al subagente `spec-verify` para verificar/corregir criterios de aceptación de un spec aprobado.
+
+## Supabase Skills (instaladas)
+
+- `.agents/skills/supabase` (fuente: `supabase/agent-skills`) — cargarla con el skill tool en **cualquier** tarea Supabase: schema/migraciones, Auth, RLS, Edge Functions, Realtime, Storage, `@supabase/ssr` en Next.js, debugging con logs/advisors. Verifica cambios contra el changelog y docs actuales; no confíes en datos de entrenamiento.
+- `.agents/skills/supabase-postgres-best-practices` (fuente: `supabase/agent-skills`) — cargarla **antes** de escribir o modificar algo en Postgres: tablas/columnas, migraciones, RLS policies + sus tests, índices, funciones, pg_cron/pgmq, rendimiento (EXPLAIN, conexiones, bloat).
+- Reglas clave de la skill supabase: habilitar RLS en toda tabla expuesta al Data API; nunca usar `user_metadata` para autorización; verificar cada fix con una query de prueba.
 
 ## Reglas de codigo
 
