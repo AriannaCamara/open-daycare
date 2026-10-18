@@ -1,6 +1,6 @@
-# SPEC 08 — Carpeta `supabase/migrations/` y regla de migraciones en AGENTS.md
+﻿# SPEC 08 — Carpeta `supabase/migrations/` y regla de migraciones en AGENTS.md
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 07
 > **Fecha:** 2026-10-18
 > **Objetivo:** Crear la carpeta `supabase/migrations/` con la migración `create_daycares` exportada y documentar en AGENTS.md que todo cambio de base de datos pasa por un archivo `.sql` commiteado aplicado con `apply_migration`.
@@ -44,14 +44,14 @@ Contenido = SQL de SPEC 07 (`create table public.daycares …`, RLS sin policies
 
 ## Criterios de aceptación
 
-- [ ] Existe `supabase/migrations/20261018164749_create_daycares.sql`.
-- [ ] Su contenido coincide con la migración aplicada `create_daycares` (versión `20261018164749` del historial Supabase).
-- [ ] `AGENTS.md` ya no afirma que "no local `supabase/` CLI folder exists".
-- [ ] `AGENTS.md` exige un `.sql` en `supabase/migrations/` con formato `YYYYMMDDHHMMSS_nombre.sql` para todo cambio de BD.
-- [ ] `AGENTS.md` exige commitear el `.sql` y aplicarlo con `apply_migration` (mismo nombre entre archivo y migración).
-- [ ] No se instaló el Supabase CLI ni se creó `config.toml`.
-- [ ] `.gitignore` no fue modificado.
-- [ ] No se aplicó ninguna migración nueva a la BD.
+- [x] Existe `supabase/migrations/20261018164749_create_daycares.sql`.
+- [x] Su contenido coincide con la migración aplicada `create_daycares` (versión `20261018164749` del historial Supabase).
+- [x] `AGENTS.md` ya no afirma que "no local `supabase/` CLI folder exists".
+- [x] `AGENTS.md` exige un `.sql` en `supabase/migrations/` con formato `YYYYMMDDHHMMSS_nombre.sql` para todo cambio de BD.
+- [x] `AGENTS.md` exige commitear el `.sql` y aplicarlo con `apply_migration` (mismo nombre entre archivo y migración).
+- [x] No se instaló el Supabase CLI ni se creó `config.toml`.
+- [x] `.gitignore` no fue modificado.
+- [x] No se aplicó ninguna migración nueva a la BD.
 
 ## Decisiones tomadas y descartadas
 
