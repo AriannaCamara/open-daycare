@@ -53,6 +53,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - Repo ships spec-driven skills at `.agents/skills/spec` (`/spec`) and `.agents/skills/spec-impl` (`/spec-impl`).
 - Specs live in `specs/NN-slug.md`. The folder does not exist yet — `/spec` creates it and seeds `specs/.spec-config.yml`.
+- **Specs de base de datos:** cualquier spec relacionada con la base de datos (schema, migraciones, RLS, funciones, seeds, etc.) se crea en `specs/database/` en lugar de la raíz de `specs/` (ej. `specs/database/NN-slug.md`). Si `/spec` la creó en la raíz, moverla a `specs/database/`.
 - Never implement a spec unless its state means **Approved**; `/spec-impl` also never commits on its own and pauses after each step. Match these rules when working in that flow.
 - Verification agent: `.opencode/agents/spec-verify.md` (subagent `spec-verify`, model `opencode/gpt-5.4`). It checks/fixes the acceptance criteria of an Approved spec: Playwright for screens, Context7 for Next.js APIs, `npm run lint` + `npx tsc --noEmit` for tooling. It only toggles `- [ ]`/`- [x]`, never commits or creates branches.
 
