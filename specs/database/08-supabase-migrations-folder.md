@@ -1,6 +1,6 @@
 ﻿# SPEC 08 — Carpeta `supabase/migrations/` y regla de migraciones en AGENTS.md
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 07
 > **Fecha:** 2026-10-18
 > **Objetivo:** Crear la carpeta `supabase/migrations/` con la migración `create_daycares` exportada y documentar en AGENTS.md que todo cambio de base de datos pasa por un archivo `.sql` commiteado aplicado con `apply_migration`.

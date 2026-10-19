@@ -1,6 +1,6 @@
 # SPEC 01 — Tabla users y enums de usuario
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** — (requiere `public.daycares`, ya creada en migración `20261018164749`)
 > **Date:** 2026-10-19
 > **Objective:** Crear la tabla `public.users` con sus enums (`user_role`, `user_status`), un trigger que crea el perfil al registrarse vía Supabase Auth, RLS de filas propias y un usuario staff de prueba loginable.
