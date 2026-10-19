@@ -1,6 +1,6 @@
 # SPEC 01 — Tabla users y enums de usuario
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** — (requiere `public.daycares`, ya creada en migración `20261018164749`)
 > **Date:** 2026-10-19
 > **Objective:** Crear la tabla `public.users` con sus enums (`user_role`, `user_status`), un trigger que crea el perfil al registrarse vía Supabase Auth, RLS de filas propias y un usuario staff de prueba loginable.
@@ -59,16 +59,16 @@ Convenciones: identificadores y valores de enum en inglés; el trigger usa `coal
 
 ## Acceptance criteria
 
-- [ ] Existen los enums `user_role` y `user_status` con los valores del diccionario.
-- [ ] Existe `public.users` con las columnas del diccionario, `daycare_id NOT NULL` con FK a `daycares` y el índice `users_daycare_id_idx`.
-- [ ] RLS está habilitado en `public.users`.
-- [ ] Insertar en `auth.users` con metadata válida crea automáticamente la fila en `public.users` (trigger).
-- [ ] Un `authenticated` con `sub` = uuid del staff ve exactamente su propia fila con `select * from users`.
-- [ ] Un `authenticated` con otro uuid no ve ninguna fila del staff.
-- [ ] `update` de la propia fila como `authenticated` funciona y actualiza `updated_at`.
-- [ ] El staff seed tiene filas en `auth.users` (email confirmado), `auth.identities` y `public.users` con `role='staff'` y el `daycare_id` existente.
+- [x] Existen los enums `user_role` y `user_status` con los valores del diccionario.
+- [x] Existe `public.users` con las columnas del diccionario, `daycare_id NOT NULL` con FK a `daycares` y el índice `users_daycare_id_idx`.
+- [x] RLS está habilitado en `public.users`.
+- [x] Insertar en `auth.users` con metadata válida crea automáticamente la fila en `public.users` (trigger).
+- [x] Un `authenticated` con `sub` = uuid del staff ve exactamente su propia fila con `select * from users`.
+- [x] Un `authenticated` con otro uuid no ve ninguna fila del staff.
+- [x] `update` de la propia fila como `authenticated` funciona y actualiza `updated_at`.
+- [x] El staff seed tiene filas en `auth.users` (email confirmado), `auth.identities` y `public.users` con `role='staff'` y el `daycare_id` existente.
 - [ ] La migración está commiteada en `supabase/migrations/` y aplicada vía MCP con el mismo nombre.
-- [ ] `npm run lint` y `npx tsc --noEmit` pasan sin errores.
+- [x] `npm run lint` y `npx tsc --noEmit` pasan sin errores.
 
 ## Decisions
 
