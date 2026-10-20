@@ -29,7 +29,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Supabase
 
 - Backend: **Supabase**, project `mkiubklmyoxxojdyxnbx` (URL `https://mkiubklmyoxxojdyxnbx.supabase.co`), connected via the **Supabase MCP** server. Use MCP tools (`list_tables`, `execute_sql`, `apply_migration`, logs, advisors…) instead of raw CLI when possible.
-- Current state: `public` schema has `daycares` only. `@supabase/supabase-js` / `@supabase/ssr` are **not installed yet**. Local `supabase/` exists with `supabase/migrations/` (migration files only — no Supabase CLI, no `config.toml`).
+- Current state: `public` schema has `daycares` only. Local `supabase/` exists with `supabase/migrations/` (migration files only — no Supabase CLI, no `config.toml`).
+- **Client libraries (instalados):** toda interacción con la base de datos desde la app usa los paquetes oficiales de Supabase para Next.js — `@supabase/supabase-js` + `@supabase/ssr`. Nunca usar `fetch` directo a la REST API ni drivers de Postgres desde el frontend.
+  - Helpers en `utils/supabase/`: `server.ts` (`createClient()` — Server Components, Server Actions, Route Handlers; hace `await` porque lee `cookies()`), `client.ts` (`createClient()` — Client Components, singleton en navegador), `middleware.ts` (`updateSession(request)`).
+  - `proxy.ts` (raíz) refresca la sesión en cada request con `supabase.auth.getClaims()` y propaga las cookies (convención `middleware` → `proxy` en Next 16).
+  - Env vars en `.env.local` (gitignored): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Cualquier `NEXT_PUBLIC_` es público en el navegador — nunca exponer `service_role`/secret keys.
+  - Docs de referencia: skill `.agents/skills/supabase` y `https://supabase.com/docs/guides/auth/server-side/nextjs` (patrón `getClaims()`, no `getSession()` para autorizar en el servidor).
 - `.env` holds `SUPABASE_DB_PASSWORD` — never commit or print secrets.
 - DB schema reference (not implemented yet): `../07-DB-Schema/opendaycare-database-schema.md` (mounted as the `docs` reference in `opencode.json`).
 - Workflow: design schema from the reference doc → write the SQL in `supabase/migrations/YYYYMMDDHHMMSS_name.sql` → **commit the migration file** → apply via MCP `apply_migration` (same name as the file) → verify with test queries → enable **RLS on every exposed table** before granting `anon`/`authenticated` access.
