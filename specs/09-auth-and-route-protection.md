@@ -57,19 +57,19 @@ const PUBLIC_PATHS = ["/login", "/activate-account"];
 
 ## Criterios de aceptación
 
-- [ ] Sin sesión, abrir `/`, `/kids` y `/kids/[id]` redirige a `/login`.
-- [ ] Sin sesión, `/login` y `/activate-account` renderizan sin redirección.
-- [ ] El formulario vacío muestra "Ingresá tu email." e "Ingresá tu contraseña." (validación de SPEC 03 intacta).
-- [ ] Email sin `@` muestra "El email no tiene un formato válido." y no llama a Supabase.
-- [ ] Con `staff@opendaycare.dev` / `StaffTest123!` el login navega a `/` y la sesión persiste al recargar.
-- [ ] Con credenciales incorrectas se muestra "Email o contraseña incorrectos." y no navega.
-- [ ] El botón "Iniciar sesión" queda deshabilitado mientras se envía.
-- [ ] Con sesión, abrir `/login` redirige a `/`.
-- [ ] "Cerrar sesión" en la sidebar borra la sesión, queda en `/login` y `/` vuelve a redirigir a `/login`.
-- [ ] El logout funciona desde `/`, `/kids` y `/kids/[id]`.
-- [ ] `/activate-account` sigue sin crear ninguna cuenta (maqueta).
-- [ ] El nombre/initial del usuario en la sidebar sigue siendo el mock `sessionUser`.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] Sin sesión, abrir `/`, `/kids` y `/kids/[id]` redirige a `/login`.
+- [x] Sin sesión, `/login` y `/activate-account` renderizan sin redirección.
+- [x] El formulario vacío muestra "Ingresá tu email." e "Ingresá tu contraseña." (validación de SPEC 03 intacta).
+- [x] Email sin `@` muestra "El email no tiene un formato válido." y no llama a Supabase.
+- [x] Con `staff@opendaycare.dev` / `StaffTest123!` el login navega a `/` y la sesión persiste al recargar.
+- [x] Con credenciales incorrectas se muestra "Email o contraseña incorrectos." y no navega.
+- [x] El botón "Iniciar sesión" queda deshabilitado mientras se envía.
+- [x] Con sesión, abrir `/login` redirige a `/`.
+- [x] "Cerrar sesión" en la sidebar borra la sesión, queda en `/login` y `/` vuelve a redirigir a `/login`.
+- [x] El logout funciona desde `/`, `/kids` y `/kids/[id]`.
+- [x] `/activate-account` sigue sin crear ninguna cuenta (maqueta).
+- [x] El nombre/initial del usuario en la sidebar sigue siendo el mock `sessionUser`.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 

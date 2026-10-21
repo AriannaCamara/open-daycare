@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
@@ -21,30 +21,6 @@ interface NavItem {
   href: string;
   label: string;
   icon: ReactNode;
-}
-
-const ROLE_LABELS: Record<string, string> = {
-  staff: "Staff",
-  parent: "Familia",
-  admin: "Admin",
-};
-
-// Construye el usuario de sesión real desde Supabase Auth; null si no hay sesión.
-async function fetchSessionUser(room: RoomSummary): Promise<SessionUser | null> {
-  const { data } = await createClient().auth.getUser();
-  const user = data.user;
-  if (!user) return null;
-
-  const metadata = user.user_metadata as Record<string, unknown> | null;
-  const name =
-    String(metadata?.full_name || user.email?.split("@")[0] || "").trim();
-  if (!name) return null;
-
-  const roleLabel = ROLE_LABELS[String(metadata?.role)] ?? "";
-  const roomShort = room.roomName.replace(/^Sala\s+/, "");
-  const role = [roleLabel, roomShort].filter(Boolean).join(" · ");
-
-  return { name, initial: name.charAt(0).toUpperCase(), role };
 }
 
 function SunIcon() {
@@ -300,23 +276,6 @@ function SidebarContent({
 
 export function Sidebar({ user, room, activeHref, onNewPost }: SidebarProps) {
   const [open, setOpen] = useState(false);
-  const [authUser, setAuthUser] = useState<SessionUser | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchSessionUser(room)
-      .then((session) => {
-        if (!cancelled) setAuthUser(session);
-      })
-      .catch(() => {
-        // Sin sesión o sin red: se conserva el usuario mock del prop.
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [room]);
-
-  const displayUser = authUser ?? user;
 
   return (
     <>
@@ -348,7 +307,7 @@ export function Sidebar({ user, room, activeHref, onNewPost }: SidebarProps) {
           />
           <div className="absolute inset-y-0 left-0 flex w-[248px] flex-col border-r border-border bg-surface px-4 py-6">
             <SidebarContent
-              user={displayUser}
+              user={user}
               room={room}
               activeHref={activeHref}
               onNewPost={onNewPost}
@@ -360,7 +319,7 @@ export function Sidebar({ user, room, activeHref, onNewPost }: SidebarProps) {
 
       <aside className="sticky top-0 hidden h-screen w-[248px] flex-none flex-col border-r border-border bg-surface px-4 py-6 lg:flex">
         <SidebarContent
-          user={displayUser}
+          user={user}
           room={room}
           activeHref={activeHref}
           onNewPost={onNewPost}
