@@ -1,6 +1,6 @@
 # SPEC 09 — Autenticación real (email/password) y protección de rutas
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 03 (login UI), SPEC 01 `users` (usuario seed loginable)
 > **Fecha:** 2026-10-21
 > **Objetivo:** Conectar el login a Supabase Auth con email y contraseña, cerrar sesión real desde la sidebar y proteger todas las rutas de la app con el guard del proxy.
