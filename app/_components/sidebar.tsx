@@ -2,6 +2,8 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import type { RoomSummary, SessionUser } from "@/app/_data/feed";
 
 interface SidebarProps {
@@ -175,6 +177,14 @@ function SidebarContent({
   onNewPost,
   onNavigate,
 }: SidebarContentProps) {
+  const router = useRouter();
+
+  async function handleLogout() {
+    await createClient().auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
+
   return (
     <>
       <Link
@@ -250,13 +260,14 @@ function SidebarContent({
             </div>
             <div className="text-[12px] text-muted-strong">{user.role}</div>
           </div>
-          <Link
-            href="/login"
+          <button
+            type="button"
             title="Cerrar sesión"
-            className="flex size-8 flex-none items-center justify-center rounded-[10px] bg-cream text-[#94887B]"
+            onClick={handleLogout}
+            className="flex size-8 flex-none cursor-pointer items-center justify-center rounded-[10px] bg-cream text-[#94887B]"
           >
             <LogoutIcon />
-          </Link>
+          </button>
         </div>
       </div>
     </>

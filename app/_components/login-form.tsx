@@ -3,11 +3,23 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import type { AuthError } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/client";
 
 type LoginValues = { email: string; password: string };
 type FieldErrors<K extends string> = Partial<Record<K, string>>;
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function mapAuthError(error: AuthError): string {
+  if (error.code === "invalid_credentials") {
+    return "Email o contraseña incorrectos.";
+  }
+  if (error.code === "email_not_confirmed") {
+    return "Tu email aún no está confirmado.";
+  }
+  return "No pudimos iniciar sesión. Intentá de nuevo.";
+}
 
 function SunIcon() {
   return (
@@ -33,9 +45,12 @@ export function LoginForm() {
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState<FieldErrors<keyof LoginValues>>({});
+  const [errors, setErrors] = useState<FieldErrors<keyof LoginValues | "form">>(
+    {},
+  );
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const nextErrors: FieldErrors<keyof LoginValues> = {};
@@ -48,10 +63,33 @@ export function LoginForm() {
       nextErrors.password = "Ingresá tu contraseña.";
     }
 
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length === 0) {
-      router.push("/");
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      return;
     }
+
+    setErrors({});
+    setSubmitting(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithPassword({
+      email: values.email.trim(),
+      password: values.password,
+    });
+    setSubmitting(false);
+
+    if (error) {
+      setErrors({ form: mapAuthError(error) });
+      return;
+    }
+
+    router.push("/");
+    router.refresh();
+  }
+
+  function clearFormError() {
+    setErrors((current) =>
+      current.form ? { ...current, form: undefined } : current,
+    );
   }
 
   return (
@@ -101,9 +139,10 @@ export function LoginForm() {
           <input
             type="email"
             value={values.email}
-            onChange={(event) =>
-              setValues((current) => ({ ...current, email: event.target.value }))
-            }
+            onChange={(event) => {
+              clearFormError();
+              setValues((current) => ({ ...current, email: event.target.value }));
+            }}
             placeholder="tu@email.com"
             className={`mb-1 w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A] ${
               errors.email ? "border-[#D9583C]" : "border-[#EADFD0]"
@@ -121,12 +160,13 @@ export function LoginForm() {
           <input
             type="password"
             value={values.password}
-            onChange={(event) =>
+            onChange={(event) => {
+              clearFormError();
               setValues((current) => ({
                 ...current,
                 password: event.target.value,
-              }))
-            }
+              }));
+            }}
             placeholder="••••••••"
             className={`w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A] ${
               errors.password ? "border-[#D9583C]" : "border-[#EADFD0]"
@@ -143,9 +183,16 @@ export function LoginForm() {
             </span>
           </div>
 
+          {errors.form && (
+            <p className="mb-3 text-[13.5px] font-semibold text-[#C5503A]">
+              {errors.form}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="block w-full cursor-pointer rounded-[15px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] py-[15px] text-[16px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,.7)]"
+            disabled={submitting}
+            className="block w-full cursor-pointer rounded-[15px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] py-[15px] text-[16px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,.7)] disabled:cursor-not-allowed disabled:opacity-70"
           >
             Iniciar sesión
           </button>
