@@ -1,6 +1,6 @@
 # SPEC 10 — Mantenimiento de niños y salas (`/kids` + tablas `rooms` / `children`)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 02 (UI de `/kids`), SPEC 04 (modal "Agregar niño"), SPEC 07 (`daycares`), SPEC 09 (auth/guard)
 > **Fecha:** 2026-10-22
 > **Objetivo:** Crear las tablas `rooms` y `children` con 3 salas por defecto (Soles, Estrellas, Lunas), sin niños seed, y conectar `/kids` y el modal "Agregar niño" a Supabase para que el alta y el listado sean reales.
@@ -101,17 +101,17 @@ supabase.from("children").insert({ full_name, birth_date, room_id,
 
 ## Criterios de aceptación
 
-- [ ] Existe `supabase/migrations/<ts>_create_rooms_children.sql` y su contenido coincide con la BD.
-- [ ] `rooms` y `children` existen con RLS habilitada; `children` tiene 0 filas tras la migración.
-- [ ] Hay exactamente 3 salas: Soles, Estrellas, Lunas (en la guardería seed).
-- [ ] `/kids` (con sesión) muestra el dropdown de salas con "Soles" por defecto, el estado vacío global con 0 niños y el estado vacío de la sala al cambiar a una vacía.
-- [ ] El modal muestra SALA con las 3 opciones y "Soles" preseleccionado.
-- [ ] Guardar un niño válido inserta la fila en `children` (verificable con `execute_sql`) y la tarjeta aparece con nombre, edad, sala y pill VINCULAR.
-- [ ] Tras recargar `/kids`, el niño sigue en la lista (persistencia real).
-- [ ] Las validaciones del modal (nombre, fecha no futura, sala) siguen mostrando sus mensajes y no insertan.
-- [ ] Sin sesión, `/kids` redirige a `/login` (SPEC 09 intacta).
-- [ ] Buscar sin resultados muestra "Sin resultados"; el filtrado por sala se aplica sobre la búsqueda.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] Existe `supabase/migrations/<ts>_create_rooms_children.sql` y su contenido coincide con la BD.
+- [x] `rooms` y `children` existen con RLS habilitada; `children` tiene 0 filas tras la migración.
+- [x] Hay exactamente 3 salas: Soles, Estrellas, Lunas (en la guardería seed).
+- [x] `/kids` (con sesión) muestra el dropdown de salas con "Soles" por defecto, el estado vacío global con 0 niños y el estado vacío de la sala al cambiar a una vacía.
+- [x] El modal muestra SALA con las 3 opciones y "Soles" preseleccionado.
+- [x] Guardar un niño válido inserta la fila en `children` (verificable con `execute_sql`) y la tarjeta aparece con nombre, edad, sala y pill VINCULAR.
+- [x] Tras recargar `/kids`, el niño sigue en la lista (persistencia real).
+- [x] Las validaciones del modal (nombre, fecha no futura, sala) siguen mostrando sus mensajes y no insertan.
+- [x] Sin sesión, `/kids` redirige a `/login` (SPEC 09 intacta).
+- [x] Buscar sin resultados muestra "Sin resultados"; el filtrado por sala se aplica sobre la búsqueda.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
