@@ -1,6 +1,6 @@
 # SPEC 11 — Perfil de niño con datos reales (`/kids/[id]`)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 02 (UI del perfil), SPEC 10 (tablas `rooms`/`children` + `/kids` real)
 > **Fecha:** 2026-10-22
 > **Objetivo:** Conectar `/kids/[id]` a Supabase para que el perfil muestre al niño real de la DB (hoy: Martina López) en lugar de los mocks.
