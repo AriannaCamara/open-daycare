@@ -42,14 +42,14 @@ children: Martina López (uuid), birth_date 2024-03-12, enrolled_at 2026-10-22,
 
 ## Criterios de aceptación
 
-- [ ] Desde `/kids`, la tarjeta de Martina navega a `/kids/<su uuid>` y el perfil muestra "Martina López", la edad calculada de `birth_date` (2 años) y "Sala Soles".
-- [ ] La ficha muestra "12 mar 2024" (nacimiento), "Soles" (sala) y "oct 2026" (ingreso).
-- [ ] No se muestra la caja roja de alergias (Martina tiene `allergy_tags` pero `medical_notes` es null).
-- [ ] "PADRES VINCULADOS" muestra la card sin padres y el CTA "Vincular otro padre"; el modal abre y agrega el padre en memoria (se pierde al recargar).
-- [ ] "Editar" linkea a `/add-child` y "Resumen del día" a `/daily-summary` (sin páginas, links intactos).
-- [ ] `/kids/<uuid-inexistente>` y `/kids/mateo-fernandez` devuelven 404.
-- [ ] Sin sesión, `/kids/<uuid>` redirige a `/login` (guard de SPEC 09 intacto).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] Desde `/kids`, la tarjeta de Martina navega a `/kids/<su uuid>` y el perfil muestra "Martina López", la edad calculada de `birth_date` (2 años) y "Sala Soles".
+- [x] La ficha muestra "12 mar 2024" (nacimiento), "Soles" (sala) y "oct 2026" (ingreso).
+- [x] No se muestra la caja roja de alergias (Martina tiene `allergy_tags` pero `medical_notes` es null).
+- [x] "PADRES VINCULADOS" muestra la card sin padres y el CTA "Vincular otro padre"; el modal abre y agrega el padre en memoria (se pierde al recargar).
+- [x] "Editar" linkea a `/add-child` y "Resumen del día" a `/daily-summary` (sin páginas, links intactos).
+- [x] `/kids/<uuid-inexistente>` y `/kids/mateo-fernandez` devuelven 404.
+- [x] Sin sesión, `/kids/<uuid>` redirige a `/login` (guard de SPEC 09 intacto).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
