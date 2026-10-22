@@ -1,15 +1,13 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Sidebar } from "@/app/_components/sidebar";
 import { Avatar } from "@/app/_components/avatar";
 import { ParentsPanel } from "@/app/_components/parents-panel";
-import { children, getChildById } from "@/app/_data/children";
+import { mapChildRow, type ChildRow } from "@/app/_data/child-mapper";
 import { room, sessionUser } from "@/app/_data/feed";
-
-export async function generateStaticParams() {
-  return children.map((child) => ({ id: child.id }));
-}
+import { createClient } from "@/utils/supabase/server";
 
 function ArrowLeftIcon() {
   return (
@@ -64,11 +62,27 @@ function ProfileSkeleton() {
 
 async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
   const { id } = await params;
-  const child = getChildById(id);
 
-  if (!child) {
+  // Excluye el fetch y new Date() (edad) del prerender estático (cacheComponents).
+  await connection();
+
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("children")
+    .select(
+      "id, full_name, birth_date, enrolled_at, medical_notes, allergy_tags, rooms(name)"
+    )
+    .eq("id", id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  // Id no-uuid o niño inexistente/archivado → 404.
+  if (error || !data) {
     notFound();
   }
+
+  const child = mapChildRow(data as unknown as ChildRow, 0);
 
   return (
     <div className="flex flex-wrap items-start gap-[26px]">
