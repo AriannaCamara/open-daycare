@@ -1,6 +1,6 @@
 # SPEC 10 — Mantenimiento de niños y salas (`/kids` + tablas `rooms` / `children`)
 
-> **Estado:** Draft
+> **Estado:** Aprobado
 > **Depende de:** SPEC 02 (UI de `/kids`), SPEC 04 (modal "Agregar niño"), SPEC 07 (`daycares`), SPEC 09 (auth/guard)
 > **Fecha:** 2026-10-22
 > **Objetivo:** Crear las tablas `rooms` y `children` con 3 salas por defecto (Soles, Estrellas, Lunas), sin niños seed, y conectar `/kids` y el modal "Agregar niño" a Supabase para que el alta y el listado sean reales.
