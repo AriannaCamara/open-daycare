@@ -21,7 +21,7 @@
     - `children`: `select` para `authenticated`; `insert`/`update` solo para staff/admin vía helper `public.is_staff()` (`security definer`, evita recursión con RLS de `users`).
     - Grants: `select` a `authenticated`; `insert, update` en `children` a `authenticated` (RLS acota a staff).
 - **Lectura real en `/kids`:** `app/kids/page.tsx` consulta `children` (status `active`) + `rooms` con el cliente server (`utils/supabase/server.ts`), dentro de un `<Suspense>` (obligatorio por `cacheComponents: true`), y pasa datos + salas a `KidsView`.
-- **Listado agrupado por sala:** una sección por sala con su separador `SALA SOLES · N niños` (las 3 salas siempre visibles, aunque tengan 0); estado vacío global nuevo ("Todavía no hay niños…") cuando no hay ningún niño; el estado vacío de búsqueda ("Sin resultados") se mantiene.
+- **Listado con filtro de sala:** dropdown custom (`RoomDropdown` en `kids-directory.tsx`, no `<select>` nativo — el popup del SO no se puede estilizar) al lado del buscador; muestra la sala seleccionada con chevron que rota al abrir; el menú es un popover pastel (fondo `#FBF4EC`, borde `#ECE0D0`, opciones redondeadas, hover crema, selección con `accent-ghost`/`accent` (mismo resaltado que el item activo del sidebar); "Soles" es la sala por defecto siempre; se cierra con click afuera o Escape. La grilla muestra solo los niños de la sala elegida. Estados vacíos: global "Todavía no hay niños…" (cero niños en total), "No hay niños en {sala}" (sala vacía), "Sin resultados" (búsqueda sin coincidencias). En móvil (<640px) buscador y dropdown apilados; desde `sm` en fila.
 - **Alta real desde el modal:** `AddChildModal` recibe `rooms: { id, name }[]` (select con value = `room_id`, "Soles" preseleccionado); al guardar hace `insert` en `children` con el cliente browser (`utils/supabase/client.ts`), agrega la fila devuelta a la lista y cierra el modal. Errores de Supabase → mensaje inline genérico ("No pudimos guardar el niño. Intentá de nuevo.").
 - **Mapeo DB → vista:** `full_name`, nombre de sala, `birth_date` → edad + etiqueta, `enrolled_at` → etiqueta de ingreso, `allergy_tags[0]` en mayúsculas como pill, `medical_notes`, `parents: []` (pill VINCULAR), `tone` por rotación de índice (no se persiste).
 - `app/_data/children.ts`: el array mock de 8 deja de usarse en `/kids` (el archivo se conserva intacto para `/kids/[id]`, fuera de alcance).
@@ -94,8 +94,8 @@ supabase.from("children").insert({ full_name, birth_date, room_id,
 ## Plan de implementación
 
 1. **Migración SQL.** Escribir el `.sql` completo (enums, tablas, índices, trigger, `is_staff()`, policies, grants, seed de 3 salas), commitearlo y aplicarlo con `apply_migration` (mismo nombre). → `list_tables` muestra `rooms` y `children` con RLS on; 3 filas en `rooms`, 0 en `children`.
-2. **Query server + Suspense.** Crear `app/kids/kids-view-server.tsx` (async: fetch rooms + children, mapear a `Child` + `rooms`) y reescribir `app/kids/page.tsx`: Sidebar + `<Suspense fallback>` → `KidsViewServer`. → `/kids` renderiza sin mocks.
-3. **Agrupar por sala + estado vacío.** Ajustar `kids-view.tsx` y `kids-directory.tsx`: secciones por sala con su separador y contador, estado vacío global. → 3 secciones visibles (Soles/Estrellas/Lunas con 0).
+2. **Query server + Suspense.** Crear `app/kids/kids-view-server.tsx` (async: `await connection()` antes del fetch — obligatorio porque el mapeo usa `new Date()` y `cacheComponents` falla el prerender con `Date.now()` inestable —; fetch rooms + children, mapear a `Child` + `rooms`) y reescribir `app/kids/page.tsx`: Sidebar + `<Suspense fallback>` → `KidsViewServer`. → `/kids` renderiza sin mocks.
+3. **Filtro de sala + estados vacíos.** Ajustar `kids-view.tsx` y `kids-directory.tsx`: `RoomDropdown` custom (popover pastel, "Soles" por defecto) al lado del buscador, grilla filtrada por sala, estados vacíos global / sala vacía / sin resultados. → dropdown con las 3 salas y listado filtrado.
 4. **Modal con salas reales + insert.** `add-child-modal.tsx` con select de `rooms` (props); `kids-view.tsx` `handleSave` inserta con cliente browser, agrega la fila devuelta y cierra. → alta persistente.
 5. **Verificación.** Playwright a 1440/768/375 (lista vacía, alta, recarga con persistencia, validaciones del modal intactas); `execute_sql` confirma la fila; `npm run lint` y `npx tsc --noEmit`.
 
@@ -104,18 +104,18 @@ supabase.from("children").insert({ full_name, birth_date, room_id,
 - [ ] Existe `supabase/migrations/<ts>_create_rooms_children.sql` y su contenido coincide con la BD.
 - [ ] `rooms` y `children` existen con RLS habilitada; `children` tiene 0 filas tras la migración.
 - [ ] Hay exactamente 3 salas: Soles, Estrellas, Lunas (en la guardería seed).
-- [ ] `/kids` (con sesión) muestra 3 secciones con su separador y contador "0 niños", y el estado vacío global.
+- [ ] `/kids` (con sesión) muestra el dropdown de salas con "Soles" por defecto, el estado vacío global con 0 niños y el estado vacío de la sala al cambiar a una vacía.
 - [ ] El modal muestra SALA con las 3 opciones y "Soles" preseleccionado.
 - [ ] Guardar un niño válido inserta la fila en `children` (verificable con `execute_sql`) y la tarjeta aparece con nombre, edad, sala y pill VINCULAR.
 - [ ] Tras recargar `/kids`, el niño sigue en la lista (persistencia real).
 - [ ] Las validaciones del modal (nombre, fecha no futura, sala) siguen mostrando sus mensajes y no insertan.
 - [ ] Sin sesión, `/kids` redirige a `/login` (SPEC 09 intacta).
-- [ ] Buscar sin resultados muestra "Sin resultados"; la búsqueda agrupa igual por sala.
+- [ ] Buscar sin resultados muestra "Sin resultados"; el filtrado por sala se aplica sobre la búsqueda.
 - [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
-- **Sí:** 3 secciones de sala siempre visibles aunque estén vacías — visibilidad de las salas por defecto y del contador real.
+- **Sí (cambio post-aprobación, pedido del usuario):** reemplazar las 3 secciones con separador por un dropdown custom de sala ("Soles" por defecto) — el separador `SALA · N niños` con la línea se veía feo; el `<select>` nativo mostraba un popup azul de esquinas rectas sin armonía con la paleta pastel, así que se implementa un popover propio. Descartada la variante de secciones siempre visibles.
 - **Sí:** mantener el mock de `children.ts` para `/kids/[id]` — decisión del usuario ("vamos paso a paso"); el perfil real va en otra spec.
 - **Sí:** insert con cliente browser + append de la fila devuelta — mismo patrón que el login (SPEC 09); evita sincronizar props de server tras `refresh()`.
 - **Sí:** `is_staff()` `security definer` para las policies de escritura — evita recursión RLS con la tabla `users`.
@@ -129,7 +129,7 @@ supabase.from("children").insert({ full_name, birth_date, room_id,
 
 | Riesgo | Mitigación |
 | --- | --- |
-| `cacheComponents: true` falla el build si hay fetch uncached fuera de `<Suspense>` | Query vive en `KidsViewServer` montado bajo `<Suspense>`; fallback mínimo |
+| `cacheComponents: true` falla el build/prerender con `Date.now()` inestable (`mapChildRow` calcula la edad) | Query vive en `KidsViewServer` bajo `<Suspense>` + `await connection()` antes del fetch; fallback mínimo |
 | RLS recursion: policy de `children` consultando `users` | Helper `is_staff()` `security definer` |
 | Tarjeta de niño real linkea a `/kids/[id]` (uuid) → 404 | Limitación aceptada y documentada; el perfil es otra spec |
 | Fallo de red/permiso al insertar | Mensaje inline genérico; la lista no se altera si el insert falla |

@@ -10,7 +10,7 @@ import {
 export type AddChildValues = {
   fullName: string;
   birthDate: string;
-  roomName: string;
+  roomId: string;
   allergies: string;
   medicalNotes: string;
 };
@@ -19,19 +19,10 @@ type FieldErrors = Partial<Record<keyof AddChildValues, string>>;
 
 interface AddChildModalProps {
   open: boolean;
+  rooms: { id: string; name: string }[];
   onClose: () => void;
-  onSave: (values: AddChildValues) => void;
+  onSave: (values: AddChildValues) => Promise<boolean>;
 }
-
-const initialValues: AddChildValues = {
-  fullName: "",
-  birthDate: "",
-  roomName: "Soles",
-  allergies: "",
-  medicalNotes: "",
-};
-
-const rooms = ["Soles"];
 
 const labelClassName =
   "mb-2 block text-[12px] font-bold tracking-[0.7px] text-muted";
@@ -39,6 +30,17 @@ const baseInputClassName =
   "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A]";
 const errorTextClassName =
   "mb-2 mt-1 text-[13px] font-semibold text-[#C5503A]";
+
+function defaultValues(rooms: { id: string; name: string }[]): AddChildValues {
+  const soles = rooms.find((room) => room.name === "Soles") ?? rooms[0];
+  return {
+    fullName: "",
+    birthDate: "",
+    roomId: soles?.id ?? "",
+    allergies: "",
+    medicalNotes: "",
+  };
+}
 
 function inputClassName(hasError: boolean): string {
   return `${baseInputClassName} ${hasError ? "border-[#D9583C]" : "border-[#EADFD0]"}`;
@@ -57,16 +59,25 @@ function validate(values: AddChildValues): FieldErrors {
     errors.birthDate = "La fecha no puede ser futura.";
   }
 
-  if (!values.roomName) {
-    errors.roomName = "Elegí una sala.";
+  if (!values.roomId) {
+    errors.roomId = "Elegí una sala.";
   }
 
   return errors;
 }
 
-export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
-  const [values, setValues] = useState<AddChildValues>(initialValues);
+export function AddChildModal({
+  open,
+  rooms,
+  onClose,
+  onSave,
+}: AddChildModalProps) {
+  const [values, setValues] = useState<AddChildValues>(() =>
+    defaultValues(rooms),
+  );
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -74,22 +85,24 @@ export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
     }
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setValues(initialValues);
+        setValues(defaultValues(rooms));
         setErrors({});
+        setSaveError(null);
         onClose();
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, onClose]);
+  }, [open, onClose, rooms]);
 
   if (!open) {
     return null;
   }
 
   function handleClose() {
-    setValues(initialValues);
+    setValues(defaultValues(rooms));
     setErrors({});
+    setSaveError(null);
     onClose();
   }
 
@@ -98,6 +111,7 @@ export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) {
     setValues((current) => ({ ...current, [field]: event.target.value }));
+    setSaveError(null);
     setErrors((current) => {
       if (!current[field]) {
         return current;
@@ -108,15 +122,26 @@ export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
     });
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextErrors = validate(values);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length === 0) {
-      onSave(values);
-      setValues(initialValues);
-      setErrors({});
+    if (Object.keys(nextErrors).length > 0) {
+      return;
     }
+
+    setSaving(true);
+    setSaveError(null);
+    const saved = await onSave(values);
+    setSaving(false);
+
+    if (!saved) {
+      setSaveError("No pudimos guardar el niño. Intentá de nuevo.");
+      return;
+    }
+
+    setValues(defaultValues(rooms));
+    setErrors({});
   }
 
   return (
@@ -143,13 +168,20 @@ export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
           </span>
           <button
             type="submit"
-            className="cursor-pointer text-[15px] font-extrabold text-[#D9583C]"
+            disabled={saving}
+            className="cursor-pointer text-[15px] font-extrabold text-[#D9583C] disabled:opacity-60"
           >
-            Guardar
+            {saving ? "Guardando…" : "Guardar"}
           </button>
         </div>
 
         <div className="px-[26px] py-6">
+          {saveError && (
+            <p className="mb-4 rounded-[12px] border border-[#F0B4A4] bg-[#F9D2DE] px-4 py-3 text-[13.5px] font-semibold text-[#C5503A]">
+              {saveError}
+            </p>
+          )}
+
           <label className={labelClassName} htmlFor="add-child-name">
             NOMBRE COMPLETO
           </label>
@@ -187,18 +219,18 @@ export function AddChildModal({ open, onClose, onSave }: AddChildModalProps) {
               </label>
               <select
                 id="add-child-room"
-                value={values.roomName}
-                onChange={(event) => updateField("roomName", event)}
-                className={`${inputClassName(Boolean(errors.roomName))} font-bold appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23B0A290%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[right_16px_center] bg-no-repeat pr-10`}
+                value={values.roomId}
+                onChange={(event) => updateField("roomId", event)}
+                className={`${inputClassName(Boolean(errors.roomId))} font-bold appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23B0A290%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[right_16px_center] bg-no-repeat pr-10`}
               >
                 {rooms.map((room) => (
-                  <option key={room} value={room}>
-                    {room}
+                  <option key={room.id} value={room.id}>
+                    {room.name}
                   </option>
                 ))}
               </select>
-              {errors.roomName && (
-                <p className={errorTextClassName}>{errors.roomName}</p>
+              {errors.roomId && (
+                <p className={errorTextClassName}>{errors.roomId}</p>
               )}
             </div>
           </div>
