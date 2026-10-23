@@ -1,6 +1,6 @@
 # SPEC 12 — Vinculación real de padres: invitación por email y activación de cuenta
 
-> **Estado:** Draft
+> **Estado:** Aprobado
 > **Depende de:** SPEC 01 (`users` + trigger), SPEC 03 (UI `/activate-account`), SPEC 05 (modal vincular), SPEC 09 (auth + guard), SPEC 11 (perfil con panel de padres)
 > **Fecha:** 2026-10-23
 > **Objetivo:** Vincular un padre a un niño de forma real: el staff envía una invitación por email con Resend desde el modal y el padre se registra con el código para quedar guardado en `parent_children`.
