@@ -25,6 +25,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="es"
       className={`${fredoka.variable} ${nunito.variable} h-full antialiased`}
+      // Las extensiones de navegador (p. ej. Dark Reader) inyectan atributos
+      // en <html> antes de hidratar; evita el mismatch sin ocultar otros.
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
