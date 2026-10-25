@@ -78,19 +78,19 @@ RLS:
 
 ## Criterios de aceptación
 
-- [ ] La migración está commiteada y aplicada; `parent_children`/`invitations` existen con RLS habilitado.
-- [ ] `/kids/[id]` muestra los padres reales de la DB (vacío al inicio) y las invitaciones `pending` como PENDIENTE; persiste al recargar.
-- [ ] El modal valida igual que antes (nombre/email obligatorios, formato email) y el botón queda deshabilitado mientras envía.
-- [ ] Con `RESEND_API_KEY` configurada, "Enviar invitación" crea una invitación `pending` con `expires_at` de 7 días y código único de 5 caracteres, y el correo llega al email ingresado con el código y el link.
-- [ ] Si falta la key o Resend rechaza el envío, se muestra `No pudimos enviar el correo. Intentá de nuevo.` y no se crea ninguna invitación.
-- [ ] Enviar otra invitación al mismo email+niño cancela la anterior `pending`.
-- [ ] `/activate-account?code=<código válido>` muestra la card con el niño real y el email en solo lectura.
-- [ ] Código inexistente o vencido muestra un mensaje claro en español y no permite activar.
-- [ ] Activar con contraseña ≥8 y checkbox crea la cuenta (`auth.users` + `public.users` con `role='parent'`), inserta `parent_children`, marca la invitación `accepted` y navega a `/`.
-- [ ] El email del padre aterriziza en `/` autenticado y la sesión persiste al recargar.
-- [ ] Intentar activar con un email ya registrado muestra `Este email ya tiene una cuenta. Iniciá sesión.`
-- [ ] "Confirm email" está desactivado en el dashboard de Supabase (checklist manual).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] La migración está commiteada y aplicada; `parent_children`/`invitations` existen con RLS habilitado.
+- [x] `/kids/[id]` muestra los padres reales de la DB (vacío al inicio) y las invitaciones `pending` como PENDIENTE; persiste al recargar.
+- [x] El modal valida igual que antes (nombre/email obligatorios, formato email) y el botón queda deshabilitado mientras envía.
+- [x] Con `RESEND_API_KEY` configurada, "Enviar invitación" crea una invitación `pending` con `expires_at` de 7 días y código único de 5 caracteres, y el correo llega al email ingresado con el código y el link.
+- [x] Si falta la key o Resend rechaza el envío, se muestra `No pudimos enviar el correo. Intentá de nuevo.` y no se crea ninguna invitación.
+- [x] Enviar otra invitación al mismo email+niño cancela la anterior `pending`.
+- [x] `/activate-account?code=<código válido>` muestra la card con el niño real y el email en solo lectura.
+- [x] Código inexistente o vencido muestra un mensaje claro en español y no permite activar.
+- [x] Activar con contraseña ≥8 y checkbox crea la cuenta (`auth.users` + `public.users` con `role='parent'`), inserta `parent_children`, marca la invitación `accepted` y navega a `/`.
+- [x] El email del padre aterriziza en `/` autenticado y la sesión persiste al recargar.
+- [x] Intentar activar con un email ya registrado muestra `Este email ya tiene una cuenta. Iniciá sesión.`
+- [x] "Confirm email" está desactivado en el dashboard de Supabase (checklist manual).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 

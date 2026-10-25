@@ -18,7 +18,8 @@ type FieldErrors = Partial<Record<keyof ActivateValues | "form", string>>;
 const GENERIC_SIGNUP_ERROR = "No pudimos crear la cuenta. Intentá de nuevo.";
 
 function mapAuthError(error: AuthError): string {
-  if (error.code === "email_exists") {
+  // GoTrue moderno responde `user_already_exists`; versiones viejas, `email_exists`.
+  if (error.code === "user_already_exists" || error.code === "email_exists") {
     return "Este email ya tiene una cuenta. Iniciá sesión.";
   }
   if (error.code === "email_not_confirmed") {
