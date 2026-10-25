@@ -6,6 +6,7 @@ import { Sidebar } from "@/app/_components/sidebar";
 import { Avatar } from "@/app/_components/avatar";
 import { ParentsPanel } from "@/app/_components/parents-panel";
 import { mapChildRow, type ChildRow } from "@/app/_data/child-mapper";
+import { fetchChildParents } from "@/app/_data/parents";
 import { room, sessionUser } from "@/app/_data/feed";
 import { createClient } from "@/utils/supabase/server";
 
@@ -83,6 +84,7 @@ async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
   }
 
   const child = mapChildRow(data as unknown as ChildRow, 0);
+  const parents = await fetchChildParents(id);
 
   return (
     <div className="flex flex-wrap items-start gap-[26px]">
@@ -151,7 +153,7 @@ async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
       </div>
 
       <div className="flex w-[300px] max-w-full flex-none flex-col gap-3.5">
-        <ParentsPanel parents={child.parents} childName={child.fullName} />
+        <ParentsPanel parents={parents} childId={child.id} childName={child.fullName} />
       </div>
     </div>
   );

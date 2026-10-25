@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { createParentInvitation } from "@/app/_actions/parent-invitation";
 import type { ParentRelation } from "@/app/_data/children";
 
 export type LinkParentValues = {
@@ -14,7 +15,8 @@ type FieldErrors = Partial<Record<keyof LinkParentValues, string>>;
 interface LinkParentModalProps {
   open: boolean;
   onClose: () => void;
-  onInvite: (values: LinkParentValues) => void;
+  onSuccess: () => void;
+  childId: string;
   childName: string;
 }
 
@@ -29,8 +31,6 @@ const relationOptions: { value: ParentRelation; label: string }[] = [
   { value: "father", label: "Papá" },
   { value: "tutor", label: "Tutor/a" },
 ];
-
-const inviteCode = "7K4P9";
 
 const labelClassName =
   "mb-2 block text-[12px] font-bold tracking-[0.7px] text-muted";
@@ -120,34 +120,42 @@ function PlaneIcon() {
 export function LinkParentModal({
   open,
   onClose,
-  onInvite,
+  onSuccess,
+  childId,
   childName,
 }: LinkParentModalProps) {
   const [values, setValues] = useState<LinkParentValues>(initialValues);
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) {
       return;
     }
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !submitting) {
         setValues(initialValues);
         setErrors({});
+        setSubmitError(null);
         onClose();
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, onClose]);
+  }, [open, onClose, submitting]);
 
   if (!open) {
     return null;
   }
 
   function handleClose() {
+    if (submitting) {
+      return;
+    }
     setValues(initialValues);
     setErrors({});
+    setSubmitError(null);
     onClose();
   }
 
@@ -175,14 +183,35 @@ export function LinkParentModal({
     });
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextErrors = validate(values);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length === 0) {
-      onInvite(values);
+    setSubmitError(null);
+    if (Object.keys(nextErrors).length > 0) {
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const result = await createParentInvitation({
+        childId,
+        fullName: values.fullName,
+        email: values.email,
+        relation: values.relation,
+      });
+
+      if (!result.ok) {
+        setSubmitError(result.error);
+        return;
+      }
+
       setValues(initialValues);
       setErrors({});
+      onSuccess();
+      onClose();
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -278,24 +307,17 @@ export function LinkParentModal({
             <p className={errorTextClassName}>{errors.relation}</p>
           )}
 
-          <div className="mb-5 rounded-[16px] border-[1.5px] border-dashed border-[#E6D08A] bg-[#FBF1D6] px-[18px] py-[18px] text-center">
-            <div className="mb-2 text-[12px] font-extrabold tracking-[0.7px] text-[#A88526]">
-              CÓDIGO DE INVITACIÓN
-            </div>
-            <div className="font-display text-[34px] font-semibold tracking-[7px] text-[#8A7234]">
-              {inviteCode}
-            </div>
-            <div className="mt-1.5 text-[13px] text-[#A88526]">
-              Vence en 7 días
-            </div>
-          </div>
+          {submitError && (
+            <p className={errorTextClassName}>{submitError}</p>
+          )}
 
           <button
             type="submit"
-            className="flex w-full cursor-pointer items-center justify-center gap-[9px] rounded-[14px] bg-gradient-to-b from-[#F4977E] to-[#EE8164] px-[14px] py-[14px] text-[15.5px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,0.7)]"
+            disabled={submitting}
+            className="flex w-full cursor-pointer items-center justify-center gap-[9px] rounded-[14px] bg-gradient-to-b from-[#F4977E] to-[#EE8164] px-[14px] py-[14px] text-[15.5px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,0.7)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <PlaneIcon />
-            Enviar invitación
+            {submitting ? "Enviando…" : "Enviar invitación"}
           </button>
         </div>
       </form>

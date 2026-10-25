@@ -1,26 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type {
-  AvatarTone,
   Parent,
   ParentRelation,
-  ParentStatus,
 } from "@/app/_data/children";
 import {
-  avatarToneStyles,
   parentStatusLabel,
   parentStatusStyles,
 } from "@/app/_data/children";
 import { Avatar } from "@/app/_components/avatar";
 import Link from "next/link";
-import {
-  LinkParentModal,
-  type LinkParentValues,
-} from "@/app/_components/link-parent-modal";
+import { LinkParentModal } from "@/app/_components/link-parent-modal";
 
 interface ParentsPanelProps {
   parents: Parent[];
+  childId: string;
   childName: string;
 }
 
@@ -30,31 +26,9 @@ const relationLabels: Record<ParentRelation, string> = {
   tutor: "Tutor/a",
 };
 
-const toneOptions = Object.keys(avatarToneStyles) as AvatarTone[];
-
-function statusSubtitle(relation: ParentRelation, status: ParentStatus) {
+function statusSubtitle(relation: ParentRelation, status: Parent["status"]) {
   if (status === "pending") return "invitación enviada";
   return relation === "mother" ? "activa" : "activo";
-}
-
-function slugify(name: string): string {
-  return name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-");
-}
-
-function buildParentId(baseId: string, existing: Parent[]): string {
-  if (!existing.some((parent) => parent.id === baseId)) {
-    return baseId;
-  }
-  let suffix = 2;
-  while (existing.some((parent) => parent.id === `${baseId}-${suffix}`)) {
-    suffix += 1;
-  }
-  return `${baseId}-${suffix}`;
 }
 
 function SunIcon() {
@@ -92,22 +66,13 @@ function PlusIcon() {
   );
 }
 
-export function ParentsPanel({ parents, childName }: ParentsPanelProps) {
-  const [linkedParents, setLinkedParents] = useState<Parent[]>(parents);
+export function ParentsPanel({
+  parents,
+  childId,
+  childName,
+}: ParentsPanelProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-
-  function handleInvite(values: LinkParentValues) {
-    const newParent: Parent = {
-      id: buildParentId(slugify(values.fullName), linkedParents),
-      fullName: values.fullName.trim(),
-      relation: values.relation,
-      initial: values.fullName.trim().charAt(0).toUpperCase(),
-      tone: toneOptions[linkedParents.length % toneOptions.length],
-      status: "pending",
-    };
-    setLinkedParents((current) => [...current, newParent]);
-    setOpen(false);
-  }
 
   return (
     <>
@@ -124,7 +89,7 @@ export function ParentsPanel({ parents, childName }: ParentsPanelProps) {
           PADRES VINCULADOS
         </div>
         <div className="flex flex-col gap-3.5">
-          {linkedParents.map((parent) => {
+          {parents.map((parent) => {
             const statusStyle = parentStatusStyles[parent.status];
             return (
               <div key={parent.id} className="flex items-center gap-3">
@@ -174,7 +139,8 @@ export function ParentsPanel({ parents, childName }: ParentsPanelProps) {
       <LinkParentModal
         open={open}
         onClose={() => setOpen(false)}
-        onInvite={handleInvite}
+        onSuccess={() => router.refresh()}
+        childId={childId}
         childName={childName}
       />
     </>
