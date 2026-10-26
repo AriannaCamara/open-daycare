@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { Sidebar } from "@/app/_components/sidebar";
-import { room, sessionUser } from "@/app/_data/feed";
+import { AppSidebar, SidebarFallback } from "@/app/_components/app-sidebar";
+import { room } from "@/app/_data/feed";
 import { KidsViewServer } from "./kids-view-server";
 
 function KidsFallback() {
@@ -16,7 +16,9 @@ function KidsFallback() {
 export default function KidsPage() {
   return (
     <div className="flex min-h-screen bg-cream">
-      <Sidebar user={sessionUser} room={room} activeHref="/kids" />
+      <Suspense fallback={<SidebarFallback />}>
+        <AppSidebar room={room} activeHref="/kids" />
+      </Suspense>
 
       <main className="h-screen min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
         <Suspense fallback={<KidsFallback />}>

@@ -13,6 +13,7 @@ import {
 interface KidsViewProps {
   initialKids: Child[];
   rooms: { id: string; name: string }[];
+  canAddChild: boolean;
 }
 
 function PlusIcon() {
@@ -32,7 +33,7 @@ function PlusIcon() {
   );
 }
 
-export function KidsView({ initialKids, rooms }: KidsViewProps) {
+export function KidsView({ initialKids, rooms, canAddChild }: KidsViewProps) {
   const [kids, setKids] = useState<Child[]>(initialKids);
   const [open, setOpen] = useState(false);
 
@@ -77,14 +78,16 @@ export function KidsView({ initialKids, rooms }: KidsViewProps) {
             Niños
           </h1>
         </div>
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="flex flex-none cursor-pointer items-center gap-2 rounded-[14px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] px-[18px] py-[11px] text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,0.7)]"
-        >
-          <PlusIcon />
-          Agregar niño
-        </button>
+        {canAddChild && (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="flex flex-none cursor-pointer items-center gap-2 rounded-[14px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] px-[18px] py-[11px] text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,0.7)]"
+          >
+            <PlusIcon />
+            Agregar niño
+          </button>
+        )}
       </div>
 
       <KidsDirectory kids={kids} rooms={rooms} />

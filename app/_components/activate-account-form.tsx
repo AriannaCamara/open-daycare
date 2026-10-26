@@ -15,13 +15,16 @@ type ActivateValues = {
 
 type FieldErrors = Partial<Record<keyof ActivateValues | "form", string>>;
 
+// "signUp": crear cuenta nueva. "signIn": la invitación apunta a una cuenta
+// existente; hay que iniciar sesión para aceptarla.
+type Mode = "signUp" | "signIn";
+
 const GENERIC_SIGNUP_ERROR = "No pudimos crear la cuenta. Intentá de nuevo.";
+const GENERIC_ACCEPT_ERROR =
+  "No pudimos aceptar la invitación. Intentá de nuevo.";
+const INVALID_CREDENTIALS_ERROR = "Email o contraseña incorrectos.";
 
 function mapAuthError(error: AuthError): string {
-  // GoTrue moderno responde `user_already_exists`; versiones viejas, `email_exists`.
-  if (error.code === "user_already_exists" || error.code === "email_exists") {
-    return "Este email ya tiene una cuenta. Iniciá sesión.";
-  }
   if (error.code === "email_not_confirmed") {
     return "Tu email aún no está confirmado.";
   }
@@ -77,6 +80,7 @@ export function ActivateAccountForm({
   invitation: ActivationInvitation | null;
 }) {
   const router = useRouter();
+  const [mode, setMode] = useState<Mode>("signUp");
   const [values, setValues] = useState<ActivateValues>({
     password: "",
     photoConsent: false,
@@ -90,8 +94,53 @@ export function ActivateAccountForm({
 
   const invite = invitation;
 
+  async function handleSignIn() {
+    const nextErrors: FieldErrors = {};
+    if (!values.password) {
+      nextErrors.password = "Ingresá tu contraseña.";
+    }
+
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      return;
+    }
+
+    setSubmitting(true);
+    const supabase = createClient();
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: invite.email,
+      password: values.password,
+    });
+
+    if (signInError) {
+      setErrors({ form: INVALID_CREDENTIALS_ERROR });
+      setSubmitting(false);
+      return;
+    }
+
+    const { error: acceptError } = await supabase.rpc(
+      "accept_parent_invitation",
+      { p_invitation_id: invite.id },
+    );
+
+    if (acceptError) {
+      setErrors({ form: GENERIC_ACCEPT_ERROR });
+      setSubmitting(false);
+      return;
+    }
+
+    router.push("/");
+    router.refresh();
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (mode === "signIn") {
+      await handleSignIn();
+      return;
+    }
 
     const nextErrors: FieldErrors = {};
     if (values.password.length < 8) {
@@ -122,6 +171,17 @@ export function ActivateAccountForm({
     });
 
     if (signUpError) {
+      // GoTrue moderno responde `user_already_exists`; versiones viejas,
+      // `email_exists`. La cuenta ya existe → modo iniciar sesión.
+      if (
+        signUpError.code === "user_already_exists" ||
+        signUpError.code === "email_exists"
+      ) {
+        setMode("signIn");
+        setErrors({});
+        setSubmitting(false);
+        return;
+      }
       setErrors({ form: mapAuthError(signUpError) });
       setSubmitting(false);
       return;
@@ -159,11 +219,14 @@ export function ActivateAccountForm({
           <SunIcon />
         </div>
         <h1 className="mb-2 font-display text-[32px] leading-[1.15] font-semibold text-ink">
-          Bienvenida a OpenDayCare
+          {mode === "signIn"
+            ? "Iniciá sesión para aceptar la invitación"
+            : "Bienvenida a OpenDayCare"}
         </h1>
         <p className="mb-[26px] text-[15.5px] leading-[1.55] text-muted">
-          Te invitaron a seguir el día de tu hijo. Creá tu contraseña para
-          activar la cuenta.
+          {mode === "signIn"
+            ? "Este email ya tiene una cuenta en OpenDayCare. Ingresá tu contraseña para aceptar la invitación."
+            : "Te invitaron a seguir el día de tu hijo. Creá tu contraseña para activar la cuenta."}
         </p>
 
         <div className="mb-[22px] flex items-center gap-[14px] rounded-[16px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-[14px]">
@@ -195,7 +258,7 @@ export function ActivateAccountForm({
         />
 
         <label className="mb-2 mt-4 block text-[12px] font-bold tracking-[.7px] text-muted">
-          CREAR CONTRASEÑA
+          {mode === "signIn" ? "CONTRASEÑA" : "CREAR CONTRASEÑA"}
         </label>
         <input
           type="password"
@@ -217,47 +280,51 @@ export function ActivateAccountForm({
           </p>
         )}
 
-        <label className="mb-1 mt-4 flex cursor-pointer items-start gap-3 rounded-[14px] bg-[#FBF1D6] px-4 py-[14px]">
-          <input
-            type="checkbox"
-            checked={values.photoConsent}
-            onChange={(event) =>
-              setValues((current) => ({
-                ...current,
-                photoConsent: event.target.checked,
-              }))
-            }
-            className="peer sr-only"
-          />
-          <span
-            className={`mt-px flex h-6 w-6 flex-none items-center justify-center rounded-[8px] border-[1.5px] bg-white peer-checked:bg-[#5FB97E] peer-focus-visible:ring-2 peer-focus-visible:ring-[#5FB97E]/50 ${
-              errors.photoConsent ? "border-[#D9583C]" : "border-[#D9C88A]"
-            }`}
-          >
-            {values.photoConsent && (
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#fff"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+        {mode !== "signIn" && (
+          <>
+            <label className="mb-1 mt-4 flex cursor-pointer items-start gap-3 rounded-[14px] bg-[#FBF1D6] px-4 py-[14px]">
+              <input
+                type="checkbox"
+                checked={values.photoConsent}
+                onChange={(event) =>
+                  setValues((current) => ({
+                    ...current,
+                    photoConsent: event.target.checked,
+                  }))
+                }
+                className="peer sr-only"
+              />
+              <span
+                className={`mt-px flex h-6 w-6 flex-none items-center justify-center rounded-[8px] border-[1.5px] bg-white peer-checked:bg-[#5FB97E] peer-focus-visible:ring-2 peer-focus-visible:ring-[#5FB97E]/50 ${
+                  errors.photoConsent ? "border-[#D9583C]" : "border-[#D9C88A]"
+                }`}
               >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
+                {values.photoConsent && (
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#fff"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </span>
+              <span className="text-[14px] leading-[1.45] text-[#8A7234]">
+                Autorizo a la guardería a tomar y compartir fotos de mi hijo
+                dentro de la app.
+              </span>
+            </label>
+            {errors.photoConsent && (
+              <p className="mb-2 text-[13px] font-semibold text-[#C5503A]">
+                {errors.photoConsent}
+              </p>
             )}
-          </span>
-          <span className="text-[14px] leading-[1.45] text-[#8A7234]">
-            Autorizo a la guardería a tomar y compartir fotos de mi hijo dentro
-            de la app.
-          </span>
-        </label>
-        {errors.photoConsent && (
-          <p className="mb-2 text-[13px] font-semibold text-[#C5503A]">
-            {errors.photoConsent}
-          </p>
+          </>
         )}
 
         {errors.form && (
@@ -271,15 +338,23 @@ export function ActivateAccountForm({
           disabled={submitting}
           className="mt-4 block w-full cursor-pointer rounded-[15px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] py-[15px] text-[16px] font-extrabold text-white shadow-[0_10px_22px_-8px_rgba(238,129,100,.7)] disabled:cursor-not-allowed disabled:opacity-70"
         >
-          {submitting ? "Activando…" : "Activar mi cuenta"}
+          {submitting
+            ? mode === "signIn"
+              ? "Iniciando…"
+              : "Activando…"
+            : mode === "signIn"
+              ? "Iniciar sesión y aceptar"
+              : "Activar mi cuenta"}
         </button>
 
-        <p className="mt-[22px] text-center text-[14.5px] text-muted">
-          ¿Ya tenés cuenta?{" "}
-          <Link href="/login" className="font-extrabold text-[#C5503A]">
-            Iniciar sesión
-          </Link>
-        </p>
+        {mode !== "signIn" && (
+          <p className="mt-[22px] text-center text-[14.5px] text-muted">
+            ¿Ya tenés cuenta?{" "}
+            <Link href="/login" className="font-extrabold text-[#C5503A]">
+              Iniciar sesión
+            </Link>
+          </p>
+        )}
       </form>
     </div>
   );

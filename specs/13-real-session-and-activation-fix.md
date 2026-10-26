@@ -1,6 +1,6 @@
 # SPEC 13 — Sesión real en la UI, activación con cuenta existente y permisos de padre
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 09 (auth + guard), SPEC 12 (invitaciones + `/activate-account` + `accept_parent_invitation`)
 > **Fecha:** 2026-10-26
 > **Objetivo:** Corregir la activación de invitaciones cuando el email ya tiene cuenta, reemplazar el mock "Caro" por el usuario de la sesión real (nombre, inicial y rol) y ocultar "Agregar niño" a los padres.
@@ -60,17 +60,17 @@ auth.users: 58ff3c2b…, mismo email, cuenta existente (full_name "Harry")
 
 ## Criterios de aceptación
 
-- [ ] `/activate-account?code=CWNPU` (email con cuenta existente) muestra el modo "iniciá sesión para aceptar la invitación" tras enviar el formulario.
-- [ ] Con la contraseña correcta de la cuenta existente, la invitación pasa a `accepted`, se crea `parent_children` y se navega a `/`.
-- [ ] Con contraseña incorrecta se muestra `Email o contraseña incorrectos.` y la invitación sigue `pending`.
-- [ ] Al aceptar con cuenta existente, `users.full_name` no cambia (sigue "Harry").
-- [ ] Con sesión staff, la sidebar muestra "Staff Test" y "Staff"; el feed saluda "Buenas, Staff". No aparece "Caro" en ninguna pantalla.
-- [ ] Con sesión parent, la sidebar muestra el nombre real del padre, su inicial (una letra) y rol "Padre".
-- [ ] El avatar de la sidebar y el del feed muestran la inicial real del usuario logueado.
-- [ ] En `/kids` con sesión parent no se ve el botón "Agregar niño"; con sesión staff sí.
-- [ ] "Vincular otro padre" sigue oculto para padres (comportamiento de SPEC 12 intacto).
-- [ ] Sin cambios de DB: migraciones aplicadas = las que ya existían.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/activate-account?code=CWNPU` (email con cuenta existente) muestra el modo "iniciá sesión para aceptar la invitación" tras enviar el formulario.
+- [x] Con la contraseña correcta de la cuenta existente, la invitación pasa a `accepted`, se crea `parent_children` y se navega a `/`.
+- [x] Con contraseña incorrecta se muestra `Email o contraseña incorrectos.` y la invitación sigue `pending`.
+- [x] Al aceptar con cuenta existente, `users.full_name` no cambia (sigue "Harry").
+- [x] Con sesión staff, la sidebar muestra "Staff Test" y "Staff"; el feed saluda "Buenas, Staff". No aparece "Caro" en ninguna pantalla.
+- [x] Con sesión parent, la sidebar muestra el nombre real del padre, su inicial (una letra) y rol "Padre".
+- [x] El avatar de la sidebar y el del feed muestran la inicial real del usuario logueado.
+- [x] En `/kids` con sesión parent no se ve el botón "Agregar niño"; con sesión staff sí.
+- [x] "Vincular otro padre" sigue oculto para padres (comportamiento de SPEC 12 intacto).
+- [x] Sin cambios de DB: migraciones aplicadas = las que ya existían.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 

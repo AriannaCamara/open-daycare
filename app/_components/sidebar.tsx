@@ -4,10 +4,11 @@ import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import type { RoomSummary, SessionUser } from "@/app/_data/feed";
+import type { RoomSummary } from "@/app/_data/feed";
+import type { SidebarUser } from "@/app/_data/session";
 
 interface SidebarProps {
-  user: SessionUser;
+  user: SidebarUser;
   room: RoomSummary;
   activeHref: string;
   onNewPost?: () => void;
