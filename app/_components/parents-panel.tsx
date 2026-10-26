@@ -18,6 +18,7 @@ interface ParentsPanelProps {
   parents: Parent[];
   childId: string;
   childName: string;
+  canInvite: boolean;
 }
 
 const relationLabels: Record<ParentRelation, string> = {
@@ -70,6 +71,7 @@ export function ParentsPanel({
   parents,
   childId,
   childName,
+  canInvite,
 }: ParentsPanelProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -121,28 +123,32 @@ export function ParentsPanel({
             );
           })}
 
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="flex cursor-pointer items-center gap-3 pt-2"
-          >
-            <span className="flex size-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
-              <PlusIcon />
-            </span>
-            <span className="text-[14.5px] font-extrabold text-[#C5503A]">
-              Vincular otro padre
-            </span>
-          </button>
+          {canInvite && (
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="flex cursor-pointer items-center gap-3 pt-2"
+            >
+              <span className="flex size-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
+                <PlusIcon />
+              </span>
+              <span className="text-[14.5px] font-extrabold text-[#C5503A]">
+                Vincular otro padre
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
-      <LinkParentModal
-        open={open}
-        onClose={() => setOpen(false)}
-        onSuccess={() => router.refresh()}
-        childId={childId}
-        childName={childName}
-      />
+      {canInvite && (
+        <LinkParentModal
+          open={open}
+          onClose={() => setOpen(false)}
+          onSuccess={() => router.refresh()}
+          childId={childId}
+          childName={childName}
+        />
+      )}
     </>
   );
 }

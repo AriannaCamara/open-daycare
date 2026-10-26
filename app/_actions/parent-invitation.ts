@@ -1,6 +1,7 @@
 "use server";
 
 import { Resend } from "resend";
+import { fetchSessionUser, isStaffRole } from "@/app/_data/session";
 import { createClient } from "@/utils/supabase/server";
 
 type RelationInput = "mother" | "father" | "tutor" | "guardian";
@@ -17,6 +18,9 @@ export type ParentInvitationResult =
   | { ok: false; error: string };
 
 const SEND_ERROR = "No pudimos enviar el correo. Intentá de nuevo.";
+const CREATE_ERROR = "No pudimos crear la invitación. Intentá de nuevo.";
+const FORBIDDEN_ERROR =
+  "Solo el personal de la guardería puede enviar invitaciones.";
 const CODE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const CODE_LENGTH = 5;
 const CODE_MAX_ATTEMPTS = 5;
@@ -111,12 +115,15 @@ export async function createParentInvitation(
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await fetchSessionUser(supabase);
 
-  if (!user) {
+  if (!session) {
     return { ok: false, error: "Tu sesión expiró. Iniciá sesión de nuevo." };
+  }
+
+  // La RLS (invitations_insert_staff) también lo exige; acá solo mejoramos el mensaje.
+  if (!isStaffRole(session.role)) {
+    return { ok: false, error: FORBIDDEN_ERROR };
   }
 
   const { data: child } = await supabase
@@ -152,7 +159,7 @@ export async function createParentInvitation(
       .from("invitations")
       .insert({
         child_id: child.id,
-        invited_by: user.id,
+        invited_by: session.id,
         full_name: fullName,
         email,
         relationship,
@@ -168,9 +175,10 @@ export async function createParentInvitation(
     }
 
     if (error.code !== "23505" || attempt === CODE_MAX_ATTEMPTS) {
+      // 42501 = RLS: la policy invitations_insert_staff rechazó la fila.
       return {
         ok: false,
-        error: "No pudimos crear la invitación. Intentá de nuevo.",
+        error: error.code === "42501" ? FORBIDDEN_ERROR : CREATE_ERROR,
       };
     }
   }

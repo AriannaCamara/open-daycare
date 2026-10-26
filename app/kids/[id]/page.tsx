@@ -7,6 +7,7 @@ import { Avatar } from "@/app/_components/avatar";
 import { ParentsPanel } from "@/app/_components/parents-panel";
 import { mapChildRow, type ChildRow } from "@/app/_data/child-mapper";
 import { fetchChildParents } from "@/app/_data/parents";
+import { fetchSessionUser, isStaffRole } from "@/app/_data/session";
 import { room, sessionUser } from "@/app/_data/feed";
 import { createClient } from "@/utils/supabase/server";
 
@@ -69,14 +70,17 @@ async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
 
   const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("children")
-    .select(
-      "id, full_name, birth_date, enrolled_at, medical_notes, allergy_tags, rooms(name)"
-    )
-    .eq("id", id)
-    .eq("status", "active")
-    .maybeSingle();
+  const [session, { data, error }] = await Promise.all([
+    fetchSessionUser(supabase),
+    supabase
+      .from("children")
+      .select(
+        "id, full_name, birth_date, enrolled_at, medical_notes, allergy_tags, rooms(name)"
+      )
+      .eq("id", id)
+      .eq("status", "active")
+      .maybeSingle(),
+  ]);
 
   // Id no-uuid o niño inexistente/archivado → 404.
   if (error || !data) {
@@ -153,7 +157,12 @@ async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
       </div>
 
       <div className="flex w-[300px] max-w-full flex-none flex-col gap-3.5">
-        <ParentsPanel parents={parents} childId={child.id} childName={child.fullName} />
+        <ParentsPanel
+          parents={parents}
+          childId={child.id}
+          childName={child.fullName}
+          canInvite={isStaffRole(session?.role ?? null)}
+        />
       </div>
     </div>
   );
