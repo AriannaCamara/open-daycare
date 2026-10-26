@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Sidebar } from "@/app/_components/sidebar";
 import { PostCard } from "@/app/_components/post-card";
 import { CreatePostModal, type NewPostValues } from "@/app/_components/create-post-modal";
-import type { Post, RoomSummary, SessionUser } from "@/app/_data/feed";
+import type { Post, RoomSummary } from "@/app/_data/feed";
+import type { SidebarUser } from "@/app/_data/session";
 
 interface FeedViewProps {
-  user: SessionUser;
+  user: SidebarUser;
   room: RoomSummary;
   initialPosts: Post[];
 }
@@ -59,14 +59,7 @@ export function FeedView({ user, room, initialPosts }: FeedViewProps) {
   }
 
   return (
-    <div className="flex min-h-screen bg-cream">
-      <Sidebar
-        user={user}
-        room={room}
-        activeHref="/"
-        onNewPost={() => setOpen(true)}
-      />
-
+    <>
       <main className="h-screen min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
         <div className="mx-auto w-full max-w-[760px] px-10 pb-20 pt-[34px]">
           <div className="mb-6">
@@ -74,7 +67,7 @@ export function FeedView({ user, room, initialPosts }: FeedViewProps) {
               GUARDERÍA · {room.roomName.toUpperCase()}
             </div>
             <h1 className="m-0 font-display text-[30px] font-semibold text-ink">
-              Buenas, {room.greetingName}
+              Buenas, {user.name.split(" ")[0]}
             </h1>
             <p className="mt-[5px] text-[14.5px] text-muted">
               {room.childCount} niños · {room.dateLabel}
@@ -117,6 +110,6 @@ export function FeedView({ user, room, initialPosts }: FeedViewProps) {
         onClose={() => setOpen(false)}
         onPublish={handlePublish}
       />
-    </div>
+    </>
   );
 }

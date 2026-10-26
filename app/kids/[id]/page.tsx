@@ -2,13 +2,13 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
-import { Sidebar } from "@/app/_components/sidebar";
+import { AppSidebar, SidebarFallback } from "@/app/_components/app-sidebar";
 import { Avatar } from "@/app/_components/avatar";
 import { ParentsPanel } from "@/app/_components/parents-panel";
 import { mapChildRow, type ChildRow } from "@/app/_data/child-mapper";
 import { fetchChildParents } from "@/app/_data/parents";
 import { fetchSessionUser, isStaffRole } from "@/app/_data/session";
-import { room, sessionUser } from "@/app/_data/feed";
+import { room } from "@/app/_data/feed";
 import { createClient } from "@/utils/supabase/server";
 
 function ArrowLeftIcon() {
@@ -173,7 +173,9 @@ export default function KidProfilePage({
 }: PageProps<"/kids/[id]">) {
   return (
     <div className="flex min-h-screen bg-cream">
-      <Sidebar user={sessionUser} room={room} activeHref="/kids" />
+      <Suspense fallback={<SidebarFallback />}>
+        <AppSidebar room={room} activeHref="/kids" />
+      </Suspense>
 
       <main className="h-screen min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
         <div className="mx-auto w-full max-w-[820px] px-10 pb-20 pt-[34px]">

@@ -75,15 +75,8 @@ export interface Post {
   photoUrl?: string;
 }
 
-export interface SessionUser {
-  name: string;
-  role: string;
-  initial: string;
-}
-
 export interface RoomSummary {
   roomName: string;
-  greetingName: string;
   childCount: number;
   dateLabel: string;
 }
@@ -122,15 +115,8 @@ export const posts: Post[] = [
   },
 ];
 
-export const sessionUser: SessionUser = {
-  name: "Caro Giménez",
-  role: "Maestra · Soles",
-  initial: "C",
-};
-
 export const room: RoomSummary = {
   roomName: "Sala Soles",
-  greetingName: "Caro",
   childCount: 12,
   dateLabel: "martes 17 jun",
 };
