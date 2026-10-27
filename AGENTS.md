@@ -79,6 +79,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - `.agents/skills/supabase` (fuente: `supabase/agent-skills`) — cargarla con el skill tool en **cualquier** tarea Supabase: schema/migraciones, Auth, RLS, Edge Functions, Realtime, Storage, `@supabase/ssr` en Next.js, debugging con logs/advisors. Verifica cambios contra el changelog y docs actuales; no confíes en datos de entrenamiento.
 - `.agents/skills/supabase-postgres-best-practices` (fuente: `supabase/agent-skills`) — cargarla **antes** de escribir o modificar algo en Postgres: tablas/columnas, migraciones, RLS policies + sus tests, índices, funciones, pg_cron/pgmq, rendimiento (EXPLAIN, conexiones, bloat).
 - Reglas clave de la skill supabase: habilitar RLS en toda tabla expuesta al Data API; nunca usar `user_metadata` para autorización; verificar cada fix con una query de prueba.
+- `/db-migrator` (`.opencode/command/db-migrator.md`) invoca al subagente `db-migrator` (`.opencode/agents/db-migrator.md`): inventaria migraciones locales vs `list_migrations`, redacta las que falten según el schema de referencia (`@db-schema`), las aplica vía MCP `apply_migration` y verifica RLS/advisors. No commitea; el usuario hace el commit.
 
 ## Reglas de codigo
 
