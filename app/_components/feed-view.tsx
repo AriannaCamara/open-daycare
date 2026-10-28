@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PostCard } from "@/app/_components/post-card";
 import { CreatePostModal, type NewPostValues } from "@/app/_components/create-post-modal";
+import { setNewPostOpenListener } from "@/app/_components/new-post-trigger";
 import type { Post, RoomSummary } from "@/app/_data/feed";
 import type { SidebarUser } from "@/app/_data/session";
 
@@ -38,6 +39,11 @@ function currentTime(): string {
 export function FeedView({ user, room, initialPosts }: FeedViewProps) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setNewPostOpenListener(() => setOpen(true));
+    return () => setNewPostOpenListener(null);
+  }, []);
 
   function handlePublish(values: NewPostValues) {
     const post: Post = {
