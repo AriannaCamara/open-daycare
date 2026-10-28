@@ -68,3 +68,29 @@ export async function fetchChildParents(childId: string): Promise<Parent[]> {
 
   return [...active, ...pending];
 }
+
+interface ParentsCountRow {
+  child_id: string;
+  users: { status: string } | null;
+}
+
+// Conteo batch de padres activos por niño (una query, sin N+1).
+export async function fetchParentsCountByChild(
+  childIds: string[],
+): Promise<Map<string, number>> {
+  const counts = new Map<string, number>();
+  if (childIds.length === 0) return counts;
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("parent_children")
+    .select("child_id, users(status)")
+    .in("child_id", childIds);
+
+  for (const row of (data ?? []) as unknown as ParentsCountRow[]) {
+    if (row.users?.status !== "active") continue;
+    counts.set(row.child_id, (counts.get(row.child_id) ?? 0) + 1);
+  }
+
+  return counts;
+}

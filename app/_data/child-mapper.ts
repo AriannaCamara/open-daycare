@@ -52,7 +52,11 @@ function formatAdmission(iso: string): string {
 }
 
 // Fila de DB → tipo Child de la vista. tone rota por índice (no se persiste).
-export function mapChildRow(row: ChildRow, index: number): Child {
+export function mapChildRow(
+  row: ChildRow,
+  index: number,
+  parentsCount = 0,
+): Child {
   return {
     id: row.id,
     fullName: row.full_name,
@@ -64,6 +68,6 @@ export function mapChildRow(row: ChildRow, index: number): Child {
     allergiesNote: row.medical_notes || undefined,
     birthDateLabel: formatBirthDate(row.birth_date),
     admissionLabel: formatAdmission(row.enrolled_at),
-    parents: [],
+    parentsCount,
   };
 }

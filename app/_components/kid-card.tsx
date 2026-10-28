@@ -47,14 +47,14 @@ export function KidCard({ child }: KidCardProps) {
           {child.fullName}
         </div>
         <div className="text-[13px] text-muted-strong">
-          {child.ageYears} años · {parentsLabel(child.parents.length)}
+          {child.ageYears} años · {parentsLabel(child.parentsCount)}
         </div>
       </div>
       {child.allergyLabel ? (
         <span className="flex-none rounded-full bg-[#FBD8CC] px-[9px] py-[5px] text-[11px] font-extrabold text-[#D9684A]">
           {child.allergyLabel}
         </span>
-      ) : child.parents.length === 0 ? (
+      ) : child.parentsCount === 0 ? (
         <span className="flex-none rounded-full bg-[#F9D2DE] px-[9px] py-[5px] text-[11px] font-extrabold text-[#C56486]">
           VINCULAR
         </span>

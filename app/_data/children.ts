@@ -29,7 +29,7 @@ export interface Child {
   allergiesNote?: string;
   birthDateLabel: string;
   admissionLabel: string;
-  parents: Parent[];
+  parentsCount: number;
 }
 
 export const avatarToneStyles: Record<
@@ -74,24 +74,7 @@ export const children: Child[] = [
       "Alergia al maní. Evitar frutos secos. Lleva inhalador en la mochila.",
     birthDateLabel: "12 mar 2022",
     admissionLabel: "feb 2025",
-    parents: [
-      {
-        id: "lucia-fernandez",
-        fullName: "Lucía Fernández",
-        relation: "mother",
-        initial: "L",
-        tone: "lilac",
-        status: "active",
-      },
-      {
-        id: "diego-fernandez",
-        fullName: "Diego Fernández",
-        relation: "father",
-        initial: "D",
-        tone: "blue",
-        status: "pending",
-      },
-    ],
+    parentsCount: 1,
   },
   {
     id: "sofia-mendez",
@@ -102,16 +85,7 @@ export const children: Child[] = [
     tone: "pink",
     birthDateLabel: "22 sep 2023",
     admissionLabel: "ago 2025",
-    parents: [
-      {
-        id: "carla-mendez",
-        fullName: "Carla Méndez",
-        relation: "mother",
-        initial: "C",
-        tone: "mint",
-        status: "active",
-      },
-    ],
+    parentsCount: 1,
   },
   {
     id: "benjamin-ruiz",
@@ -122,24 +96,7 @@ export const children: Child[] = [
     tone: "mint",
     birthDateLabel: "03 ene 2022",
     admissionLabel: "ene 2025",
-    parents: [
-      {
-        id: "marina-ruiz",
-        fullName: "Marina Ruiz",
-        relation: "mother",
-        initial: "M",
-        tone: "yellow",
-        status: "active",
-      },
-      {
-        id: "pablo-ruiz",
-        fullName: "Pablo Ruiz",
-        relation: "father",
-        initial: "P",
-        tone: "blue",
-        status: "active",
-      },
-    ],
+    parentsCount: 2,
   },
   {
     id: "valentina-soto",
@@ -150,7 +107,7 @@ export const children: Child[] = [
     tone: "yellow",
     birthDateLabel: "14 nov 2023",
     admissionLabel: "abr 2025",
-    parents: [],
+    parentsCount: 0,
   },
   {
     id: "tomas-diaz",
@@ -164,16 +121,7 @@ export const children: Child[] = [
       "Intolerancia a la lactosa. Evitar lácteos en las colaciones.",
     birthDateLabel: "28 jul 2022",
     admissionLabel: "mar 2025",
-    parents: [
-      {
-        id: "ana-diaz",
-        fullName: "Ana Díaz",
-        relation: "mother",
-        initial: "A",
-        tone: "pink",
-        status: "active",
-      },
-    ],
+    parentsCount: 1,
   },
   {
     id: "emma-castro",
@@ -184,16 +132,7 @@ export const children: Child[] = [
     tone: "pink",
     birthDateLabel: "09 feb 2024",
     admissionLabel: "may 2025",
-    parents: [
-      {
-        id: "julieta-castro",
-        fullName: "Julieta Castro",
-        relation: "mother",
-        initial: "J",
-        tone: "lilac",
-        status: "active",
-      },
-    ],
+    parentsCount: 1,
   },
   {
     id: "lucas-romero",
@@ -204,16 +143,7 @@ export const children: Child[] = [
     tone: "sky",
     birthDateLabel: "17 abr 2023",
     admissionLabel: "sep 2025",
-    parents: [
-      {
-        id: "marcos-romero",
-        fullName: "Marcos Romero",
-        relation: "father",
-        initial: "M",
-        tone: "blue",
-        status: "active",
-      },
-    ],
+    parentsCount: 1,
   },
   {
     id: "olivia-vega",
@@ -224,16 +154,7 @@ export const children: Child[] = [
     tone: "mint",
     birthDateLabel: "30 jun 2024",
     admissionLabel: "oct 2025",
-    parents: [
-      {
-        id: "valeria-vega",
-        fullName: "Valeria Vega",
-        relation: "mother",
-        initial: "V",
-        tone: "yellow",
-        status: "active",
-      },
-    ],
+    parentsCount: 1,
   },
 ];
 
