@@ -36,7 +36,7 @@ function SearchIcon() {
 }
 
 const triggerClassName =
-  "flex w-full cursor-pointer items-center gap-2 rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-3 text-[15px] font-bold text-ink transition-colors hover:border-[#F2937A] focus:border-[#F2937A] focus:outline-none";
+  "flex w-full cursor-pointer items-center gap-2 rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-3 text-[15px] font-bold text-ink transition-colors hover:border-[#B3452E] focus:border-[#B3452E] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E]";
 
 function ChevronIcon({ open }: { open: boolean }) {
   return (
@@ -160,7 +160,7 @@ export function KidsDirectory({ kids, rooms }: KidsDirectoryProps) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Buscar niño…"
-            className="min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-[#B6A99B]"
+            className="min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-[#7E7264]"
           />
         </div>
         <RoomDropdown
@@ -195,7 +195,7 @@ export function KidsDirectory({ kids, rooms }: KidsDirectoryProps) {
             <button
               type="button"
               onClick={() => setQuery("")}
-              className="mt-2 rounded-[12px] border border-border bg-surface px-4 py-2 text-[13.5px] font-bold text-[#C5503A] transition-colors hover:border-[#F2A78E]"
+              className="mt-2 rounded-[12px] border border-border bg-surface px-4 py-2 text-[13.5px] font-bold text-[#B3452E] transition-colors hover:border-[#B3452E]"
             >
               Limpiar búsqueda
             </button>

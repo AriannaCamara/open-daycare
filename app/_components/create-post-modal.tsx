@@ -39,7 +39,7 @@ interface FieldErrors {
   audience?: string;
 }
 
-const errorTextClassName = "mb-[22px] mt-1 text-[13px] font-semibold text-[#C5503A]";
+const errorTextClassName = "mb-[22px] mt-1 text-[13px] font-semibold text-[#B3452E]";
 
 export function CreatePostModal({
   open,
@@ -280,7 +280,7 @@ export function CreatePostModal({
             placeholder="Contá cómo le fue hoy…"
             value={body}
             onChange={handleBodyChange}
-            className={`min-h-[120px] w-full resize-y rounded-[14px] border-[1.5px] bg-white px-4 py-3.5 text-[15px] leading-[1.5] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A] ${errors.body ? "border-[#D9583C]" : "border-[#EADFD0]"} ${errors.body ? "" : "mb-[22px]"}`}
+            className={`min-h-[120px] w-full resize-y rounded-[14px] border-[1.5px] bg-white px-4 py-3.5 text-[15px] leading-[1.5] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${errors.body ? "border-[#D9583C]" : "border-[#EADFD0]"} ${errors.body ? "" : "mb-[22px]"}`}
           />
           {errors.body && (
             <p className={errorTextClassName}>{errors.body}</p>
@@ -299,7 +299,7 @@ export function CreatePostModal({
                   type="button"
                   aria-label="Quitar foto"
                   onClick={() => removePhoto(url)}
-                  className="absolute -right-2 -top-2 flex size-6 cursor-pointer items-center justify-center rounded-full border border-[#ECE0D0] bg-white text-[#C5503A] shadow-sm"
+                  className="absolute -right-2 -top-2 flex size-6 cursor-pointer items-center justify-center rounded-full border border-[#ECE0D0] bg-white text-[#B3452E] shadow-sm"
                 >
                   <svg
                     width="12"
@@ -328,7 +328,7 @@ export function CreatePostModal({
                 height="22"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#C5503A"
+                stroke="#B3452E"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"

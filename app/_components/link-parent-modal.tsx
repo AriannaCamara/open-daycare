@@ -35,9 +35,9 @@ const relationOptions: { value: ParentRelation; label: string }[] = [
 const labelClassName =
   "mb-2 block text-[12px] font-bold tracking-[0.7px] text-muted";
 const baseInputClassName =
-  "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A]";
+  "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E]";
 const errorTextClassName =
-  "mb-2 mt-1 text-[13px] font-semibold text-[#C5503A]";
+  "mb-2 mt-1 text-[13px] font-semibold text-[#B3452E]";
 
 function inputClassName(hasError: boolean): string {
   return `${baseInputClassName} ${hasError ? "border-[#D9583C]" : "border-[#EADFD0]"}`;
