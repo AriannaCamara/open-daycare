@@ -27,9 +27,9 @@ interface AddChildModalProps {
 const labelClassName =
   "mb-2 block text-[12px] font-bold tracking-[0.7px] text-muted";
 const baseInputClassName =
-  "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A]";
+  "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E]";
 const errorTextClassName =
-  "mb-2 mt-1 text-[13px] font-semibold text-[#C5503A]";
+  "mb-2 mt-1 text-[13px] font-semibold text-[#B3452E]";
 
 function defaultValues(rooms: { id: string; name: string }[]): AddChildValues {
   const soles = rooms.find((room) => room.name === "Soles") ?? rooms[0];
@@ -177,7 +177,7 @@ export function AddChildModal({
 
         <div className="px-[26px] py-6">
           {saveError && (
-            <p className="mb-4 rounded-[12px] border border-[#F0B4A4] bg-[#F9D2DE] px-4 py-3 text-[13.5px] font-semibold text-[#C5503A]">
+            <p className="mb-4 rounded-[12px] border border-[#F0B4A4] bg-[#F9D2DE] px-4 py-3 text-[13.5px] font-semibold text-[#B3452E]">
               {saveError}
             </p>
           )}

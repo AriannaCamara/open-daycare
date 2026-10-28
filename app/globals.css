@@ -12,8 +12,10 @@
   --color-divider: #e7dac8;
   --color-ink: #3f362e;
   --color-ink-soft: #4a4038;
-  --color-muted: #94887b;
-  --color-muted-strong: #a89a8b;
+  /* Oscurecido desde #94887b (3.17:1) para cumplir WCAG 1.4.3 AA (≥4.5:1) */
+  --color-muted: #73685b;
+  /* Oscurecido desde #a89a8b (~3.4:1) para cumplir WCAG 1.4.3 AA */
+  --color-muted-strong: #7e7264;
   --color-accent: #d9583c;
   --color-accent-soft: #e0654a;
   --color-accent-ghost: #fbe3d8;

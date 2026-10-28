@@ -124,7 +124,7 @@ export function LoginForm() {
         </div>
       </div>
 
-      <div className="flex items-center justify-center px-10 py-10">
+      <main className="flex items-center justify-center px-10 py-10">
         <form noValidate onSubmit={handleSubmit} className="w-full max-w-[392px]">
           <h2 className="mb-1.5 font-display text-[30px] font-semibold text-ink">
             Iniciar sesión
@@ -133,10 +133,14 @@ export function LoginForm() {
             Ingresá para ver el día de hoy.
           </p>
 
-          <label className="mb-2 block text-[12px] font-bold tracking-[.7px] text-muted">
+          <label
+            htmlFor="login-email"
+            className="mb-2 block text-[12px] font-bold tracking-[.7px] text-muted"
+          >
             EMAIL
           </label>
           <input
+            id="login-email"
             type="email"
             value={values.email}
             onChange={(event) => {
@@ -144,20 +148,30 @@ export function LoginForm() {
               setValues((current) => ({ ...current, email: event.target.value }));
             }}
             placeholder="tu@email.com"
-            className={`mb-1 w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A] ${
+            aria-invalid={errors.email ? true : undefined}
+            aria-describedby={errors.email ? "login-email-error" : undefined}
+            className={`mb-1 w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${
               errors.email ? "border-[#D9583C]" : "border-[#EADFD0]"
             }`}
           />
           {errors.email && (
-            <p className="mb-2 text-[13px] font-semibold text-[#C5503A]">
+            <p
+              id="login-email-error"
+              role="alert"
+              className="mb-2 text-[13px] font-semibold text-[#B3452E]"
+            >
               {errors.email}
             </p>
           )}
 
-          <label className="mb-2 mt-4 block text-[12px] font-bold tracking-[.7px] text-muted">
+          <label
+            htmlFor="login-password"
+            className="mb-2 mt-4 block text-[12px] font-bold tracking-[.7px] text-muted"
+          >
             CONTRASEÑA
           </label>
           <input
+            id="login-password"
             type="password"
             value={values.password}
             onChange={(event) => {
@@ -168,23 +182,32 @@ export function LoginForm() {
               }));
             }}
             placeholder="••••••••"
-            className={`w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A] ${
+            aria-invalid={errors.password ? true : undefined}
+            aria-describedby={errors.password ? "login-password-error" : undefined}
+            className={`w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${
               errors.password ? "border-[#D9583C]" : "border-[#EADFD0]"
             }`}
           />
           {errors.password && (
-            <p className="mb-2 mt-2 text-[13px] font-semibold text-[#C5503A]">
+            <p
+              id="login-password-error"
+              role="alert"
+              className="mb-2 mt-2 text-[13px] font-semibold text-[#B3452E]"
+            >
               {errors.password}
             </p>
           )}
           <div className="mb-5 mt-2 text-right">
-            <span className="cursor-pointer text-[13.5px] font-bold text-[#C5503A]">
+            <span className="text-[13.5px] text-muted">
               ¿Olvidaste tu contraseña?
             </span>
           </div>
 
           {errors.form && (
-            <p className="mb-3 text-[13.5px] font-semibold text-[#C5503A]">
+            <p
+              role="alert"
+              className="mb-3 text-[13.5px] font-semibold text-[#B3452E]"
+            >
               {errors.form}
             </p>
           )}
@@ -201,13 +224,13 @@ export function LoginForm() {
             ¿Te invitó la guardería?{" "}
             <Link
               href="/activate-account"
-              className="font-extrabold text-[#C5503A]"
+              className="font-extrabold text-[#B3452E]"
             >
               Activá tu cuenta
             </Link>
           </p>
         </form>
-      </div>
+      </main>
     </div>
   );
 }

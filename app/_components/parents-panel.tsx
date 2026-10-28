@@ -132,7 +132,7 @@ export function ParentsPanel({
               <span className="flex size-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
                 <PlusIcon />
               </span>
-              <span className="text-[14.5px] font-extrabold text-[#C5503A]">
+              <span className="text-[14.5px] font-extrabold text-[#B3452E]">
                 Vincular otro padre
               </span>
             </button>

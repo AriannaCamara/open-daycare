@@ -65,7 +65,7 @@ function InvalidCodeState() {
         </p>
         <p className="text-[14.5px] text-muted">
           ¿Ya tenés cuenta?{" "}
-          <Link href="/login" className="font-extrabold text-[#C5503A]">
+          <Link href="/login" className="font-extrabold text-[#B3452E]">
             Iniciar sesión
           </Link>
         </p>
@@ -269,13 +269,13 @@ export function ActivateAccountForm({
               password: event.target.value,
             }))
           }
-          className={`mb-1 w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink outline-none placeholder:text-[#B6A99B] focus:border-[#F2937A] ${
+          className={`mb-1 w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${
             errors.password ? "border-[#D9583C]" : "border-[#EADFD0]"
           }`}
           placeholder="••••••••"
         />
         {errors.password && (
-          <p className="mb-2 text-[13px] font-semibold text-[#C5503A]">
+          <p className="mb-2 text-[13px] font-semibold text-[#B3452E]">
             {errors.password}
           </p>
         )}
@@ -320,7 +320,7 @@ export function ActivateAccountForm({
               </span>
             </label>
             {errors.photoConsent && (
-              <p className="mb-2 text-[13px] font-semibold text-[#C5503A]">
+              <p className="mb-2 text-[13px] font-semibold text-[#B3452E]">
                 {errors.photoConsent}
               </p>
             )}
@@ -328,7 +328,7 @@ export function ActivateAccountForm({
         )}
 
         {errors.form && (
-          <p className="mb-3 text-[13.5px] font-semibold text-[#C5503A]">
+          <p className="mb-3 text-[13.5px] font-semibold text-[#B3452E]">
             {errors.form}
           </p>
         )}
@@ -350,7 +350,7 @@ export function ActivateAccountForm({
         {mode !== "signIn" && (
           <p className="mt-[22px] text-center text-[14.5px] text-muted">
             ¿Ya tenés cuenta?{" "}
-            <Link href="/login" className="font-extrabold text-[#C5503A]">
+            <Link href="/login" className="font-extrabold text-[#B3452E]">
               Iniciar sesión
             </Link>
           </p>

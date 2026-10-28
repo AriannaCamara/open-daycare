@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PostCard } from "@/app/_components/post-card";
 import { CreatePostModal, type NewPostValues } from "@/app/_components/create-post-modal";
+import { setNewPostOpenListener } from "@/app/_components/new-post-trigger";
 import type { Post, RoomSummary } from "@/app/_data/feed";
 import type { SidebarUser } from "@/app/_data/session";
 
@@ -39,6 +40,11 @@ export function FeedView({ user, room, initialPosts }: FeedViewProps) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    setNewPostOpenListener(() => setOpen(true));
+    return () => setNewPostOpenListener(null);
+  }, []);
+
   function handlePublish(values: NewPostValues) {
     const post: Post = {
       id: `post-${Date.now()}`,
@@ -70,7 +76,8 @@ export function FeedView({ user, room, initialPosts }: FeedViewProps) {
               Buenas, {user.name.split(" ")[0]}
             </h1>
             <p className="mt-[5px] text-[14.5px] text-muted">
-              {room.childCount} niños · {room.dateLabel}
+              {room.childCount} {room.childCount === 1 ? "niño" : "niños"} ·{" "}
+              {room.dateLabel}
             </p>
           </div>
 

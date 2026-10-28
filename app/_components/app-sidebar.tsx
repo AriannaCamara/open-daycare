@@ -2,10 +2,10 @@ import { connection } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { Sidebar } from "@/app/_components/sidebar";
 import { fetchSessionUser, toSidebarUser } from "@/app/_data/session";
-import type { RoomSummary } from "@/app/_data/feed";
+import type { SidebarRoom } from "@/app/_data/feed";
 
 interface AppSidebarProps {
-  room: RoomSummary;
+  room: SidebarRoom;
   activeHref: string;
 }
 
