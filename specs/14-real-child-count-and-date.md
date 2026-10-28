@@ -1,6 +1,6 @@
 # SPEC 14 — Contador de niños real y fecha actual en el header del feed
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 13 (sesión real + saludo del feed)
 > **Fecha:** 2026-10-28
 > **Objetivo:** Reemplazar el mock "12 niños · martes 17 jun" del header del feed por el conteo real de niños activos en la base de datos y la fecha del día actual.
@@ -52,14 +52,14 @@ El mock exportado `room` pasa a ser solo `{ roomName: "Sala Soles" }`.
 
 ## Criterios de aceptación
 
-- [ ] `/` muestra el resultado de `select count(*) from children where status = 'active'` (hoy: 2).
-- [ ] La fecha es la del día actual en `America/Argentina/Buenos_Aires` con formato exacto `"martes 28 oct"`.
-- [ ] Con 1 niño activo el texto es `1 niño`; con 0 es `0 niños`.
-- [ ] `"12 niños"` y `"martes 17 jun"` ya no están hardcodeados en el código.
-- [ ] La sidebar y el header siguen mostrando "Sala Soles" (mock intacto).
-- [ ] Al crear un niño activo y recargar `/`, el contador sube.
-- [ ] Con sesión parent el contador da el mismo número que con staff.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/` muestra el resultado de `select count(*) from children where status = 'active'` (hoy: 2).
+- [x] La fecha es la del día actual en `America/Argentina/Buenos_Aires` con formato exacto `"martes 28 oct"`.
+- [x] Con 1 niño activo el texto es `1 niño`; con 0 es `0 niños`.
+- [x] `"12 niños"` y `"martes 17 jun"` ya no están hardcodeados en el código.
+- [x] La sidebar y el header siguen mostrando "Sala Soles" (mock intacto).
+- [x] Al crear un niño activo y recargar `/`, el contador sube.
+- [x] Con sesión parent el contador da el mismo número que con staff.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 

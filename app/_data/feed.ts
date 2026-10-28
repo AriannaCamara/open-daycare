@@ -1,3 +1,5 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 export type PostKind =
   | "meal"
   | "nap"
@@ -75,10 +77,49 @@ export interface Post {
   photoUrl?: string;
 }
 
-export interface RoomSummary {
+// Lo único que la sidebar necesita del cuarto: sin contadores mock.
+export interface SidebarRoom {
   roomName: string;
+}
+
+export interface RoomSummary extends SidebarRoom {
   childCount: number;
   dateLabel: string;
+}
+
+// "martes, 28 oct." → "martes 28 oct" (minúsculas, sin coma ni punto).
+function normalizeDateLabel(formatted: string): string {
+  return formatted
+    .toLowerCase()
+    .replace(/[,.]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Fecha de hoy fija en la zona de la guardería, sea cual sea el TZ del servidor.
+export function formatTodayLabel(): string {
+  const label = new Intl.DateTimeFormat("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    timeZone: "America/Argentina/Buenos_Aires",
+  }).format(new Date());
+
+  return normalizeDateLabel(label);
+}
+
+// Niños activos (todas las salas) + fecha de hoy, calculados por request.
+export async function fetchFeedSummary(
+  supabase: SupabaseClient,
+): Promise<Pick<RoomSummary, "childCount" | "dateLabel">> {
+  const { count, error } = await supabase
+    .from("children")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "active");
+
+  if (error) throw error;
+
+  return { childCount: count ?? 0, dateLabel: formatTodayLabel() };
 }
 
 export const posts: Post[] = [
@@ -115,8 +156,6 @@ export const posts: Post[] = [
   },
 ];
 
-export const room: RoomSummary = {
+export const room: SidebarRoom = {
   roomName: "Sala Soles",
-  childCount: 12,
-  dateLabel: "martes 17 jun",
 };

@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { requestNewPost } from "@/app/_components/new-post-trigger";
-import type { RoomSummary } from "@/app/_data/feed";
+import type { SidebarRoom } from "@/app/_data/feed";
 import type { SidebarUser } from "@/app/_data/session";
 
 interface SidebarProps {
   user: SidebarUser;
-  room: RoomSummary;
+  room: SidebarRoom;
   activeHref: string;
 }
 

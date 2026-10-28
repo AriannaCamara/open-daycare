@@ -76,7 +76,8 @@ export function FeedView({ user, room, initialPosts }: FeedViewProps) {
               Buenas, {user.name.split(" ")[0]}
             </h1>
             <p className="mt-[5px] text-[14.5px] text-muted">
-              {room.childCount} niños · {room.dateLabel}
+              {room.childCount} {room.childCount === 1 ? "niño" : "niños"} ·{" "}
+              {room.dateLabel}
             </p>
           </div>
 

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { AppSidebar, SidebarFallback } from "@/app/_components/app-sidebar";
 import { FeedView } from "@/app/_components/feed-view";
-import { posts, room } from "@/app/_data/feed";
+import { fetchFeedSummary, posts, room } from "@/app/_data/feed";
 import { fetchSessionUser, toSidebarUser } from "@/app/_data/session";
 import { createClient } from "@/utils/supabase/server";
 
@@ -24,11 +24,12 @@ async function FeedWithSession() {
 
   const supabase = await createClient();
   const session = await fetchSessionUser(supabase);
+  const summary = await fetchFeedSummary(supabase);
 
   return (
     <FeedView
       user={toSidebarUser(session)}
-      room={room}
+      room={{ ...room, ...summary }}
       initialPosts={posts}
     />
   );
