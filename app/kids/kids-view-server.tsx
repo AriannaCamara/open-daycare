@@ -2,6 +2,7 @@ import { connection } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { KidsView } from "@/app/_components/kids-view";
 import { mapChildRow, type ChildRow } from "@/app/_data/child-mapper";
+import { fetchParentsCountByChild } from "@/app/_data/parents";
 import { fetchSessionUser, isStaffRole } from "@/app/_data/session";
 
 const CHILD_SELECT =
@@ -24,7 +25,13 @@ export async function KidsViewServer() {
   ]);
 
   const rooms = (roomsRes.data ?? []) as { id: string; name: string }[];
-  const kids = ((kidsRes.data ?? []) as unknown as ChildRow[]).map(mapChildRow);
+  const childRows = (kidsRes.data ?? []) as unknown as ChildRow[];
+  const parentsCounts = await fetchParentsCountByChild(
+    childRows.map((row) => row.id),
+  );
+  const kids = childRows.map((row, index) =>
+    mapChildRow(row, index, parentsCounts.get(row.id) ?? 0),
+  );
 
   return (
     <KidsView
