@@ -4,6 +4,10 @@ import Link from "next/link";
 
 interface PostCardProps {
   post: Post;
+  currentUserId: string;
+  // Acciones reales; el card las muestra solo si es su propio post.
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 interface KindVisual {
@@ -76,25 +80,6 @@ function CommentIcon() {
   );
 }
 
-function ImageIcon() {
-  return (
-    <svg
-      width="30"
-      height="30"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-      <circle cx="9" cy="9" r="2" />
-      <path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 21" />
-    </svg>
-  );
-}
-
 function MegaphoneIcon() {
   return (
     <svg
@@ -112,16 +97,24 @@ function MegaphoneIcon() {
   );
 }
 
-export function PostCard({ post }: PostCardProps) {
+export function PostCard({
+  post,
+  currentUserId,
+  onEdit,
+  onDelete,
+}: PostCardProps) {
   const visual = kindVisuals[post.kind];
   const kindStyle = postKindStyles[post.kind];
   const isAnnouncement = post.kind === "announcement";
+  const isAuthor = post.authorId === currentUserId;
   const hasNames = post.givenNames.length > 0;
   const headerName = hasNames
     ? post.givenNames.join(", ")
     : isAnnouncement
       ? "Anuncio general"
-      : "Toda la sala";
+      : post.roomId
+        ? "Toda la sala"
+        : "Toda la guardería";
 
   return (
     <article className="rounded-[20px] border border-border bg-surface px-[22px] py-5 shadow-[0_4px_16px_-12px_rgba(120,90,60,0.5)]">
@@ -161,22 +154,12 @@ export function PostCard({ post }: PostCardProps) {
         {post.body}
       </p>
 
-      {post.photoUrl ? (
+      {post.photos[0] && (
         <img
-          src={post.photoUrl}
-          alt={post.photoLabel ?? "Foto de la publicación"}
+          src={post.photos[0].url}
+          alt="Foto de la publicación"
           className="mt-3.5 h-[200px] w-full rounded-2xl object-cover"
         />
-      ) : (
-        post.photoLabel && (
-          <Link
-            href="/foto"
-            className="mt-3.5 flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-[#DBCDBA] bg-[#F4ECE1] text-[#B0A290]"
-          >
-            <ImageIcon />
-            <span className="text-[13.5px]">{post.photoLabel}</span>
-          </Link>
-        )
       )}
 
       <div className="mt-4 flex items-center gap-[18px] border-t border-line pt-3.5">
@@ -192,12 +175,25 @@ export function PostCard({ post }: PostCardProps) {
           {post.comments}
         </Link>
         <span className="flex-1" />
-        <Link
-          href="/create-post"
-          className="text-[14px] font-extrabold text-[#B3452E]"
-        >
-          Editar
-        </Link>
+        {isAuthor && (
+          <>
+            <button
+              type="button"
+              onClick={onEdit}
+              className="cursor-pointer border-none bg-transparent p-0 text-[14px] font-extrabold text-[#B3452E]"
+            >
+              Editar
+            </button>
+            <span className="w-[18px]" />
+            <button
+              type="button"
+              onClick={onDelete}
+              className="cursor-pointer border-none bg-transparent p-0 text-[14px] font-extrabold text-[#B3452E]"
+            >
+              Borrar
+            </button>
+          </>
+        )}
       </div>
     </article>
   );

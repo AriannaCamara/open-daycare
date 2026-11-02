@@ -129,25 +129,25 @@ deletePost(postId: string): Promise<ActionResult>
 
 ## Criterios de aceptación
 
-- [ ] `/` renderiza los 3 posts seed desde la DB, orden `published_at desc`, sin errores de consola ni de build.
-- [ ] El usuario staff ve composer y "+Nueva publicación"; un usuario parent no los ve (el feed solo lectura).
-- [ ] El modal muestra la sección SALA (dropdown con Soles/Estrellas/Lunas + "Toda la guardería", default Soles) y los pills de niños reales activos.
-- [ ] Submit sin tipo muestra "Elegí un tipo."; sin descripción "Escribí una descripción."; sin niños ni "toda la sala" "Elegí al menos un niño o Toda la sala."
-- [ ] Publicar sin fotos crea el post en la DB (`posts` + `post_children`), cierra el modal y el post aparece arriba del feed tras `router.refresh()`.
-- [ ] Publicar con 2 fotos sube los archivos al bucket `post-photos`, crea 2 filas `post_photos` y el feed muestra la primera foto vía signed URL.
-- [ ] Subir una foto de 6 MB o un GIF muestra el error inline y no llama a la action.
-- [ ] Con más de 5 fotos: "Máximo 5 fotos."
-- [ ] Si algún niño etiquetado tiene `photo_consent=false`, publicar con fotos muestra el mensaje de consentimiento y no crea el post; el mismo post sin fotos sí se publica.
-- [ ] Si la subida falla a mitad, no queda post, ni filas, ni archivos huérfanos (rollback).
-- [ ] Recargar `/` mantiene todo lo publicado (persistencia real).
-- [ ] "Editar" (solo en posts propios) abre el modal con prefill completo: tipo, sala, niños, descripción y miniaturas de las fotos existentes.
-- [ ] Editar quitando una foto borra el archivo del bucket y su fila; el resto se conserva.
-- [ ] "Borrar" muestra confirmación; al confirmar se borran la fila (cascade) y todos los archivos del bucket del post.
-- [ ] Un post sin niños etiquetados creado en "Soles" es visible para un padre con hijo en Soles, y **no** para un padre solo de Estrellas.
-- [ ] Un anuncio con "Toda la guardería" (`room_id null`) es visible para todos los padres.
-- [ ] El tipo Ánimo (`mood`) persiste y religa correctamente en la DB.
-- [ ] El post seed sin niños muestra "Toda la sala" / audience correcta en el card (sin romper el layout).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores; verificación Playwright en 1440/768/375.
+- [x] `/` renderiza los 3 posts seed desde la DB, orden `published_at desc`, sin errores de consola ni de build.
+- [x] El usuario staff ve composer y "+Nueva publicación"; un usuario parent no los ve (el feed solo lectura).
+- [x] El modal muestra la sección SALA (dropdown con Soles/Estrellas/Lunas + "Toda la guardería", default Soles) y los pills de niños reales activos.
+- [x] Submit sin tipo muestra "Elegí un tipo."; sin descripción "Escribí una descripción."; sin niños ni "toda la sala" "Elegí al menos un niño o Toda la sala."
+- [x] Publicar sin fotos crea el post en la DB (`posts` + `post_children`), cierra el modal y el post aparece arriba del feed tras `router.refresh()`.
+- [x] Publicar con 2 fotos sube los archivos al bucket `post-photos`, crea 2 filas `post_photos` y el feed muestra la primera foto vía signed URL.
+- [x] Subir una foto de 6 MB o un GIF muestra el error inline y no llama a la action.
+- [x] Con más de 5 fotos: "Máximo 5 fotos."
+- [x] Si algún niño etiquetado tiene `photo_consent=false`, publicar con fotos muestra el mensaje de consentimiento y no crea el post; el mismo post sin fotos sí se publica.
+- [x] Si la subida falla a mitad, no queda post, ni filas, ni archivos huérfanos (rollback).
+- [x] Recargar `/` mantiene todo lo publicado (persistencia real).
+- [x] "Editar" (solo en posts propios) abre el modal con prefill completo: tipo, sala, niños, descripción y miniaturas de las fotos existentes.
+- [x] Editar quitando una foto borra el archivo del bucket y su fila; el resto se conserva.
+- [x] "Borrar" muestra confirmación; al confirmar se borran la fila (cascade) y todos los archivos del bucket del post.
+- [x] Un post sin niños etiquetados creado en "Soles" es visible para un padre con hijo en Soles, y **no** para un padre solo de Estrellas.
+- [x] Un anuncio con "Toda la guardería" (`room_id null`) es visible para todos los padres.
+- [x] El tipo Ánimo (`mood`) persiste y religa correctamente en la DB.
+- [x] El post seed sin niños muestra "Toda la sala" / audience correcta en el card (sin romper el layout).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores; verificación Playwright en 1440/768/375.
 
 ## Decisiones tomadas y descartadas
 

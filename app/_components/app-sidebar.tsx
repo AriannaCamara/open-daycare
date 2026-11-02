@@ -1,7 +1,11 @@
 import { connection } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { Sidebar } from "@/app/_components/sidebar";
-import { fetchSessionUser, toSidebarUser } from "@/app/_data/session";
+import {
+  fetchSessionUser,
+  isStaffRole,
+  toSidebarUser,
+} from "@/app/_data/session";
 import type { SidebarRoom } from "@/app/_data/feed";
 
 interface AppSidebarProps {
@@ -15,12 +19,14 @@ export async function AppSidebar({ room, activeHref }: AppSidebarProps) {
 
   const supabase = await createClient();
   const session = await fetchSessionUser(supabase);
+  const canPublish = isStaffRole(session?.role ?? null);
 
   return (
     <Sidebar
       user={toSidebarUser(session)}
       room={room}
       activeHref={activeHref}
+      canPublish={canPublish}
     />
   );
 }
