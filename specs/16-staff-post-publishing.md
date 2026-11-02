@@ -1,6 +1,6 @@
 # SPEC 16 — Publicar, editar y borrar posts del staff (con fotos reales)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 06 (modal), SPEC 10 (rooms/children), migraciones `create_posts` y `create_feed_engagement`
 > **Fecha:** 2026-10-30
 > **Objetivo:** Pasar el feed de mocks a datos reales de Supabase: el staff crea publicaciones (con o sin fotos) desde el modal existente, y puede editarlas y borrarlas. Las fotos se suben a un bucket privado de Supabase Storage y el feed las renderiza con URLs firmadas.
