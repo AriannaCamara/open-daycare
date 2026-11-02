@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AvatarTone } from "./children";
 
 export type PostKind =
   | "meal"
@@ -64,17 +65,40 @@ export const postKindStyles: Record<
   },
 };
 
-export interface Post {
+export interface PostPhoto {
+  id: string; // uuid de post_photos (para keptPhotoIds al editar)
+  url: string; // signed URL (1h); la card muestra [0]
+}
+
+// Campos que el modal necesita para precargar el modo edición.
+export interface EditablePost {
   id: string;
   kind: PostKind;
-  givenNames: string[];
-  time: string;
-  audience: string;
   body: string;
-  likes: number;
-  comments: number;
-  photoLabel?: string;
-  photoUrl?: string;
+  roomId: string | null;
+  childIds: string[];
+  photos: PostPhoto[];
+}
+
+export interface Post extends EditablePost {
+  givenNames: string[]; // [] si es post de sala/día
+  time: string; // "14:20" — published_at en America/Argentina/Buenos_Aires
+  audience: string; // "familia de X, Y" | "toda la sala" | "toda la guardería"
+  authorId: string;
+  likes: number; // 0 (engagement fuera de alcance)
+  comments: number; // 0
+}
+
+// Niño activo para los pills "PARA" del modal (mismo tono por índice que /kids).
+export interface PillChild {
+  id: string;
+  fullName: string; // given name para el pill y el card
+  avatarTone: AvatarTone;
+}
+
+export interface RoomOption {
+  id: string;
+  name: string;
 }
 
 // Lo único que la sidebar necesita del cuarto: sin contadores mock.
@@ -121,40 +145,6 @@ export async function fetchFeedSummary(
 
   return { childCount: count ?? 0, dateLabel: formatTodayLabel() };
 }
-
-export const posts: Post[] = [
-  {
-    id: "orinal-mateo",
-    kind: "achievement",
-    givenNames: ["Mateo"],
-    time: "14:20",
-    audience: "familia de Mateo",
-    body: "¡Usó el orinal solito por primera vez! Estaba feliz de contárselo a todos. Un gran paso.",
-    likes: 3,
-    comments: 1,
-  },
-  {
-    id: "temperas-mateo",
-    kind: "activity",
-    givenNames: ["Mateo"],
-    time: "09:40",
-    audience: "familia de Mateo",
-    body: "Pintamos con témperas esta mañana. Mateo eligió el azul para todo y se concentró un montón mezclando colores.",
-    likes: 5,
-    comments: 2,
-    photoLabel: "Foto · pintando con témperas",
-  },
-  {
-    id: "parque-viernes",
-    kind: "announcement",
-    givenNames: [],
-    time: "07:50",
-    audience: "toda la sala",
-    body: "El viernes salimos al parque por la mañana. Recuerden mandar gorra y una botellita de agua.",
-    likes: 8,
-    comments: 0,
-  },
-];
 
 export const room: SidebarRoom = {
   roomName: "Sala Soles",

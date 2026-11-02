@@ -10,6 +10,7 @@ export interface SessionUser {
 
 // Datos de display que Sidebar/FeedView muestran del usuario logueado.
 export interface SidebarUser {
+  id: string; // uuid del usuario (para el gate autor en las acciones del post)
   name: string;
   role: string;
   initial: string;
@@ -66,9 +67,10 @@ export function initialFromName(fullName: string | null): string {
 
 // Mapea la sesión al tipo de display que Sidebar/FeedView renderizan.
 export function toSidebarUser(session: SessionUser | null): SidebarUser {
-  if (!session) return { name: "", role: "", initial: "" };
+  if (!session) return { id: "", name: "", role: "", initial: "" };
 
   return {
+    id: session.id,
     name: session.fullName ?? "",
     role: roleLabel(session.role),
     initial: initialFromName(session.fullName),

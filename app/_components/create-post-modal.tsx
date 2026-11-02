@@ -1,21 +1,50 @@
 "use client";
 
-import { avatarToneStyles, children } from "@/app/_data/children";
-import { postKindStyles, type PostKind } from "@/app/_data/feed";
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { createPost, updatePost, type PostInput } from "@/app/_actions/posts";
+import { avatarToneStyles } from "@/app/_data/children";
+import {
+  postKindStyles,
+  type EditablePost,
+  type PillChild,
+  type PostKind,
+  type PostPhoto,
+  type RoomOption,
+} from "@/app/_data/feed";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 
-export interface NewPostValues {
-  kind: PostKind;
-  givenNames: string[];
-  body: string;
-  photoUrls: string[];
-}
+type ModalMode = "create" | "edit";
 
+// Se monta por apertura ({open && …} en FeedView): el estado nace con el
+// prefill (edición) o limpio (creación) y se descarta al cerrar.
 interface CreatePostModalProps {
-  open: boolean;
+  mode: ModalMode;
+  initialPost?: EditablePost;
+  // "childPills" y no "children": React reserva ese nombre para el contenido.
+  childPills: PillChild[];
+  rooms: RoomOption[];
   onClose: () => void;
-  onPublish: (values: NewPostValues) => void;
+  onSaved: () => void;
 }
+
+interface NewPhoto {
+  file: File;
+  previewUrl: string;
+}
+
+interface FieldErrors {
+  kind?: string;
+  body?: string;
+  audience?: string;
+  photos?: string;
+}
+
+const MAX_PHOTOS = 5;
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+const MAX_PHOTOS_ERROR = "Máximo 5 fotos.";
+const PHOTO_SIZE_ERROR = "Cada foto debe pesar menos de 5 MB.";
+const PHOTO_TYPE_ERROR = "Formatos permitidos: JPG, PNG o WebP.";
 
 const kindOrder: { kind: PostKind; label: string }[] = [
   { kind: "meal", label: "Comida" },
@@ -33,65 +62,80 @@ const sectionLabelClassName =
 const childPillClassName =
   "flex cursor-pointer items-center gap-2 rounded-full border-[1.5px] px-3.5 py-1.5 text-[14px] font-bold";
 
-interface FieldErrors {
-  kind?: string;
-  body?: string;
-  audience?: string;
-}
-
 const errorTextClassName = "mb-[22px] mt-1 text-[13px] font-semibold text-[#B3452E]";
 
+const activePillClassName = "border-[#3F362E] bg-[#3F362E] text-white";
+
+const inactivePillClassName = "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]";
+
+const selectClassName =
+  "mb-[22px] w-full cursor-pointer appearance-none rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-3.5 text-[15px] font-bold text-ink focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E]";
+
 export function CreatePostModal({
-  open,
+  mode,
+  initialPost,
+  childPills,
+  rooms,
   onClose,
-  onPublish,
+  onSaved,
 }: CreatePostModalProps) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [room, setRoom] = useState(false);
-  const [kind, setKind] = useState<PostKind | null>(null);
-  const [body, setBody] = useState("");
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>(
+    initialPost?.childIds ?? [],
+  );
+  const [roomPill, setRoomPill] = useState(
+    initialPost ? initialPost.childIds.length === 0 : false,
+  );
+  const [roomId, setRoomId] = useState<string | null>(
+    initialPost?.roomId ?? rooms[0]?.id ?? null,
+  );
+  const [kind, setKind] = useState<PostKind | null>(initialPost?.kind ?? null);
+  const [body, setBody] = useState(initialPost?.body ?? "");
+  const [newPhotos, setNewPhotos] = useState<NewPhoto[]>([]);
+  const [keptPhotos, setKeptPhotos] = useState<PostPhoto[]>(
+    initialPost?.photos ?? [],
+  );
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const forcedRoom = kind === "announcement";
-  const effectiveRoom = room || forcedRoom;
+  // Anuncio: siempre "toda la sala" (sin niños etiquetados); conserva la sala.
+  const forcedRoomPill = kind === "announcement";
+  const effectiveRoomPill = roomPill || forcedRoomPill;
 
-  function clearForm() {
-    setSelectedIds([]);
-    setRoom(false);
-    setKind(null);
-    setBody("");
-    setErrors({});
-  }
-
-  function reset() {
-    photos.forEach((url) => URL.revokeObjectURL(url));
-    setPhotos([]);
-    clearForm();
-  }
-
-  function handleClose() {
-    reset();
-    onClose();
-  }
+  // Las objectURL de las miniaturas viven mientras la foto sigue en la lista;
+  // al desmontar (cierre del modal, que se monta por apertura) se revoca todo.
+  const livePreviewUrls = newPhotos.map((photo) => photo.previewUrl);
+  const previousPreviewUrls = useRef<string[]>(livePreviewUrls);
 
   useEffect(() => {
-    if (!open) {
-      return;
-    }
+    const previous = new Set(previousPreviewUrls.current);
+    const live = new Set(livePreviewUrls);
+    previousPreviewUrls.current = livePreviewUrls;
+
+    return () => {
+      previous.forEach((url) => {
+        if (!live.has(url)) {
+          URL.revokeObjectURL(url);
+        }
+      });
+    };
+  }, [livePreviewUrls]);
+
+  useEffect(() => {
+    return () => {
+      previousPreviewUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
+  useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        handleClose();
+        onClose();
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, onClose]);
-
-  if (!open) {
-    return null;
-  }
+  }, [onClose]);
 
   function clearError(field: keyof FieldErrors) {
     setErrors((current) => {
@@ -105,11 +149,11 @@ export function CreatePostModal({
   }
 
   function toggleChild(childId: string) {
-    if (forcedRoom) {
+    if (forcedRoomPill) {
       return;
     }
     clearError("audience");
-    setRoom(false);
+    setRoomPill(false);
     setSelectedIds((current) =>
       current.includes(childId)
         ? current.filter((id) => id !== childId)
@@ -117,12 +161,12 @@ export function CreatePostModal({
     );
   }
 
-  function toggleRoom() {
-    if (forcedRoom) {
+  function toggleRoomPill() {
+    if (forcedRoomPill) {
       return;
     }
     clearError("audience");
-    setRoom((current) => {
+    setRoomPill((current) => {
       if (!current) {
         setSelectedIds([]);
       }
@@ -137,16 +181,44 @@ export function CreatePostModal({
 
   function handlePhotosChange(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
-    setPhotos((current) => [
-      ...current,
-      ...files.map((file) => URL.createObjectURL(file)),
-    ]);
     event.target.value = "";
+
+    const totalKept = keptPhotos.length + newPhotos.length;
+    let error: string | null = null;
+
+    if (totalKept + files.length > MAX_PHOTOS) {
+      error = MAX_PHOTOS_ERROR;
+    } else if (files.some((file) => file.size > MAX_PHOTO_BYTES)) {
+      error = PHOTO_SIZE_ERROR;
+    } else if (files.some((file) => !ALLOWED_MIME_TYPES.includes(file.type))) {
+      error = PHOTO_TYPE_ERROR;
+    }
+
+    if (error) {
+      setErrors((current) => ({ ...current, photos: error }));
+      return;
+    }
+
+    clearError("photos");
+    setNewPhotos((current) => [
+      ...current,
+      ...files.map((file) => ({
+        file,
+        previewUrl: URL.createObjectURL(file),
+      })),
+    ]);
   }
 
-  function removePhoto(url: string) {
-    URL.revokeObjectURL(url);
-    setPhotos((current) => current.filter((item) => item !== url));
+  function removeNewPhoto(previewUrl: string) {
+    setNewPhotos((current) =>
+      current.filter((photo) => photo.previewUrl !== previewUrl),
+    );
+  }
+
+  // En edición: quitar una foto existente significa no conservarla (el action
+  // borra su fila y su archivo del bucket).
+  function removeKeptPhoto(photoId: string) {
+    setKeptPhotos((current) => current.filter((photo) => photo.id !== photoId));
   }
 
   function validate(): FieldErrors {
@@ -157,34 +229,60 @@ export function CreatePostModal({
     if (!body.trim()) {
       nextErrors.body = "Escribí una descripción.";
     }
-    if (selectedIds.length === 0 && !effectiveRoom) {
+    const needsAudience = kind !== "announcement";
+    if (needsAudience && selectedIds.length === 0 && !roomPill) {
       nextErrors.audience = "Elegí al menos un niño o Toda la sala.";
     }
     return nextErrors;
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextErrors = validate();
     setErrors(nextErrors);
+    setSubmitError(null);
     if (Object.keys(nextErrors).length > 0 || !kind) {
       return;
     }
-    const givenNames = children
-      .filter((child) => selectedIds.includes(child.id))
-      .map((child) => child.fullName.split(" ")[0]);
-    onPublish({ kind, givenNames, body: body.trim(), photoUrls: photos });
-    // Las URLs publicadas siguen vivas en el feed: no se revocan acá.
-    setPhotos([]);
-    clearForm();
+
+    setSubmitting(true);
+    try {
+      const input: PostInput = {
+        kind,
+        body: body.trim(),
+        roomId,
+        childIds: effectiveRoomPill ? [] : selectedIds,
+      };
+      const photoFiles = newPhotos.map((photo) => photo.file);
+
+      const result =
+        mode === "edit" && initialPost
+          ? await updatePost(
+              initialPost.id,
+              input,
+              photoFiles,
+              keptPhotos.map((photo) => photo.id),
+            )
+          : await createPost(input, photoFiles);
+
+      if (!result.ok) {
+        setSubmitError(result.error);
+        return;
+      }
+
+      onSaved();
+    } finally {
+      setSubmitting(false);
+    }
   }
 
-  const activePillClassName = "border-[#3F362E] bg-[#3F362E] text-white";
+  const isEdit = mode === "edit";
+  const busyLabel = isEdit ? "Guardando…" : "Publicando…";
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(63,54,46,0.45)] px-6 py-10"
-      onClick={handleClose}
+      onClick={onClose}
     >
       <form
         noValidate
@@ -195,53 +293,61 @@ export function CreatePostModal({
         <div className="flex items-center justify-between border-b border-[#ECE0D0] px-[26px] py-5">
           <button
             type="button"
-            onClick={handleClose}
-            className="cursor-pointer text-[15px] font-bold text-muted-strong"
+            onClick={onClose}
+            disabled={submitting}
+            className="cursor-pointer text-[15px] font-bold text-muted-strong disabled:cursor-not-allowed disabled:opacity-60"
           >
             Cancelar
           </button>
           <span className="font-display text-[18px] font-semibold text-ink">
-            Nueva publicación
+            {isEdit ? "Editar publicación" : "Nueva publicación"}
           </span>
           <button
             type="submit"
-            className="cursor-pointer text-[15px] font-extrabold text-[#D9583C]"
+            disabled={submitting}
+            className="cursor-pointer text-[15px] font-extrabold text-[#D9583C] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Publicar
+            {submitting ? busyLabel : isEdit ? "Guardar" : "Publicar"}
           </button>
         </div>
 
         <div className="px-[26px] py-6">
+          {submitError && (
+            <p className="mb-[22px] text-[13px] font-semibold text-[#B3452E]">
+              {submitError}
+            </p>
+          )}
+
           <div className={sectionLabelClassName}>PARA</div>
           <div
             className={`flex flex-wrap gap-[9px] ${errors.audience ? "" : "mb-[22px]"}`}
           >
-            {children.map((child) => {
-              const tone = avatarToneStyles[child.tone];
+            {childPills.map((child) => {
+              const tone = avatarToneStyles[child.avatarTone];
               const isActive = selectedIds.includes(child.id);
               return (
                 <button
                   key={child.id}
                   type="button"
-                  disabled={forcedRoom}
+                  disabled={forcedRoomPill}
                   onClick={() => toggleChild(child.id)}
-                  className={`${childPillClassName} ${isActive ? activePillClassName : "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"} ${forcedRoom ? "cursor-not-allowed opacity-60" : ""}`}
+                  className={`${childPillClassName} ${isActive ? activePillClassName : inactivePillClassName} ${forcedRoomPill ? "cursor-not-allowed opacity-60" : ""}`}
                 >
                   <span
                     className="flex size-[26px] items-center justify-center rounded-full font-display text-[13px] font-semibold"
                     style={{ backgroundColor: tone.background, color: tone.text }}
                   >
-                    {child.initial}
+                    {child.fullName.charAt(0)}
                   </span>
-                  {child.fullName.split(" ")[0]}
+                  {child.fullName}
                 </button>
               );
             })}
             <button
               type="button"
-              disabled={forcedRoom}
-              onClick={toggleRoom}
-              className={`${childPillClassName} ${effectiveRoom ? activePillClassName : "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"} px-4 ${forcedRoom ? "cursor-not-allowed" : ""}`}
+              disabled={forcedRoomPill}
+              onClick={toggleRoomPill}
+              className={`${childPillClassName} ${effectiveRoomPill ? activePillClassName : inactivePillClassName} px-4 ${forcedRoomPill ? "cursor-not-allowed" : ""}`}
             >
               Toda la sala
             </button>
@@ -249,6 +355,20 @@ export function CreatePostModal({
           {errors.audience && (
             <p className={errorTextClassName}>{errors.audience}</p>
           )}
+
+          <div className={sectionLabelClassName}>SALA</div>
+          <select
+            value={roomId ?? ""}
+            onChange={(event) => setRoomId(event.target.value || null)}
+            className={selectClassName}
+          >
+            {rooms.map((room) => (
+              <option key={room.id} value={room.id}>
+                {room.name}
+              </option>
+            ))}
+            <option value="">Toda la guardería</option>
+          </select>
 
           <div className={sectionLabelClassName}>TIPO</div>
           <div
@@ -288,17 +408,44 @@ export function CreatePostModal({
 
           <div className={sectionLabelClassName}>FOTOS</div>
           <div className="flex flex-wrap gap-3">
-            {photos.map((url) => (
-              <div key={url} className="relative size-24">
+            {keptPhotos.map((photo) => (
+              <div key={photo.id} className="relative size-24">
                 <img
-                  src={url}
+                  src={photo.url}
+                  alt="Foto de la publicación"
+                  className="size-24 rounded-[14px] border border-[#ECE0D0] object-cover"
+                />
+                <button
+                  type="button"
+                  aria-label="Quitar foto"
+                  onClick={() => removeKeptPhoto(photo.id)}
+                  className="absolute -right-2 -top-2 flex size-6 cursor-pointer items-center justify-center rounded-full border border-[#ECE0D0] bg-white text-[#B3452E] shadow-sm"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+            {newPhotos.map((photo) => (
+              <div key={photo.previewUrl} className="relative size-24">
+                <img
+                  src={photo.previewUrl}
                   alt="Foto seleccionada"
                   className="size-24 rounded-[14px] border border-[#ECE0D0] object-cover"
                 />
                 <button
                   type="button"
                   aria-label="Quitar foto"
-                  onClick={() => removePhoto(url)}
+                  onClick={() => removeNewPhoto(photo.previewUrl)}
                   className="absolute -right-2 -top-2 flex size-6 cursor-pointer items-center justify-center rounded-full border border-[#ECE0D0] bg-white text-[#B3452E] shadow-sm"
                 >
                   <svg
@@ -319,7 +466,7 @@ export function CreatePostModal({
               <input
                 type="file"
                 multiple
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp"
                 className="hidden"
                 onChange={handlePhotosChange}
               />
@@ -338,6 +485,9 @@ export function CreatePostModal({
               <span className="text-[12px]">Agregar</span>
             </label>
           </div>
+          {errors.photos && (
+            <p className={`${errorTextClassName} mt-2.5`}>{errors.photos}</p>
+          )}
         </div>
       </form>
     </div>

@@ -12,6 +12,8 @@ interface SidebarProps {
   user: SidebarUser;
   room: SidebarRoom;
   activeHref: string;
+  // Solo staff/admin ven el CTA de publicar (misma condición que en el feed).
+  canPublish?: boolean;
 }
 
 interface SidebarContentProps extends SidebarProps {
@@ -175,6 +177,7 @@ function SidebarContent({
   user,
   room,
   activeHref,
+  canPublish,
   onNavigate,
 }: SidebarContentProps) {
   const router = useRouter();
@@ -205,20 +208,22 @@ function SidebarContent({
         </div>
       </Link>
 
-      <button
-        type="button"
-        onClick={() => {
-          requestNewPost();
-          if (activeHref !== "/") {
-            router.push("/");
-          }
-          onNavigate?.();
-        }}
-        className="mb-[18px] flex w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] border-none bg-[linear-gradient(180deg,#F4977E,#EE8164)] p-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)]"
-      >
-        <PlusIcon />
-        Nueva publicación
-      </button>
+      {canPublish && (
+        <button
+          type="button"
+          onClick={() => {
+            requestNewPost();
+            if (activeHref !== "/") {
+              router.push("/");
+            }
+            onNavigate?.();
+          }}
+          className="mb-[18px] flex w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] border-none bg-[linear-gradient(180deg,#F4977E,#EE8164)] p-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,0.75)]"
+        >
+          <PlusIcon />
+          Nueva publicación
+        </button>
+      )}
 
       <nav className="flex flex-1 flex-col gap-1">
         {navItems.map((item) => {
@@ -266,7 +271,12 @@ function SidebarContent({
   );
 }
 
-export function Sidebar({ user, room, activeHref }: SidebarProps) {
+export function Sidebar({
+  user,
+  room,
+  activeHref,
+  canPublish,
+}: SidebarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -302,6 +312,7 @@ export function Sidebar({ user, room, activeHref }: SidebarProps) {
               user={user}
               room={room}
               activeHref={activeHref}
+              canPublish={canPublish}
               onNavigate={() => setOpen(false)}
             />
           </div>
@@ -313,6 +324,7 @@ export function Sidebar({ user, room, activeHref }: SidebarProps) {
           user={user}
           room={room}
           activeHref={activeHref}
+          canPublish={canPublish}
         />
       </aside>
     </>

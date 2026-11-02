@@ -1,16 +1,21 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PostCard } from "@/app/_components/post-card";
-import { CreatePostModal, type NewPostValues } from "@/app/_components/create-post-modal";
+import { CreatePostModal } from "@/app/_components/create-post-modal";
 import { setNewPostOpenListener } from "@/app/_components/new-post-trigger";
-import type { Post, RoomSummary } from "@/app/_data/feed";
+import { deletePost } from "@/app/_actions/posts";
+import type { PillChild, Post, RoomOption, RoomSummary } from "@/app/_data/feed";
 import type { SidebarUser } from "@/app/_data/session";
 
 interface FeedViewProps {
   user: SidebarUser;
   room: RoomSummary;
   initialPosts: Post[];
+  canPublish: boolean;
+  childPills: PillChild[];
+  rooms: RoomOption[];
 }
 
 function CameraIcon() {
@@ -31,37 +36,40 @@ function CameraIcon() {
   );
 }
 
-function currentTime(): string {
-  const now = new Date();
-  return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-}
-
-export function FeedView({ user, room, initialPosts }: FeedViewProps) {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+export function FeedView({
+  user,
+  room,
+  initialPosts,
+  canPublish,
+  childPills,
+  rooms,
+}: FeedViewProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Post | null>(null);
 
   useEffect(() => {
     setNewPostOpenListener(() => setOpen(true));
     return () => setNewPostOpenListener(null);
   }, []);
 
-  function handlePublish(values: NewPostValues) {
-    const post: Post = {
-      id: `post-${Date.now()}`,
-      kind: values.kind,
-      givenNames: values.givenNames,
-      time: currentTime(),
-      audience:
-        values.givenNames.length > 0
-          ? `familia de ${values.givenNames.join(", ")}`
-          : "toda la sala",
-      body: values.body,
-      likes: 0,
-      comments: 0,
-      photoUrl: values.photoUrls[0],
-    };
-    setPosts((current) => [post, ...current]);
+  // Sin optimistic UI: el server action guarda y router.refresh() trae el feed.
+  function handleSaved() {
+    setEditingPost(null);
     setOpen(false);
+    router.refresh();
+  }
+
+  // Borrado en dos pasos: el card pide confirmación (paso 8) y acá se ejecuta.
+  async function handleDelete(post: Post) {
+    const result = await deletePost(post.id);
+    setPendingDelete(null);
+    if (!result.ok) {
+      window.alert(result.error);
+      return;
+    }
+    router.refresh();
   }
 
   return (
@@ -81,21 +89,26 @@ export function FeedView({ user, room, initialPosts }: FeedViewProps) {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="mb-6 flex w-full cursor-pointer items-center gap-3.5 rounded-[18px] border border-border bg-surface px-[18px] py-3.5 text-left shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)]"
-          >
-            <div className="flex size-10 flex-none items-center justify-center rounded-full bg-[#F2937A] font-display text-[16px] font-semibold text-white">
-              {user.initial}
-            </div>
-            <span className="flex-1 text-[15px] text-muted-strong">
-              Compartí un momento…
-            </span>
-            <span className="flex size-[38px] items-center justify-center rounded-xl bg-accent-ghost text-[#E0654A]">
-              <CameraIcon />
-            </span>
-          </button>
+          {canPublish && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingPost(null);
+                setOpen(true);
+              }}
+              className="mb-6 flex w-full cursor-pointer items-center gap-3.5 rounded-[18px] border border-border bg-surface px-[18px] py-3.5 text-left shadow-[0_4px_14px_-10px_rgba(120,90,60,0.4)]"
+            >
+              <div className="flex size-10 flex-none items-center justify-center rounded-full bg-[#F2937A] font-display text-[16px] font-semibold text-white">
+                {user.initial}
+              </div>
+              <span className="flex-1 text-[15px] text-muted-strong">
+                Compartí un momento…
+              </span>
+              <span className="flex size-[38px] items-center justify-center rounded-xl bg-accent-ghost text-[#E0654A]">
+                <CameraIcon />
+              </span>
+            </button>
+          )}
 
           <div className="mb-3.5 flex items-center gap-3.5">
             <span className="text-[12.5px] font-extrabold tracking-[0.8px] text-[#8A7C6D]">
@@ -105,18 +118,70 @@ export function FeedView({ user, room, initialPosts }: FeedViewProps) {
           </div>
 
           <div className="flex flex-col gap-4">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
+            {initialPosts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                currentUserId={user.id}
+                onEdit={() => {
+                  setEditingPost(post);
+                  setOpen(true);
+                }}
+                onDelete={() => setPendingDelete(post)}
+              />
             ))}
           </div>
         </div>
       </main>
 
-      <CreatePostModal
-        open={open}
-        onClose={() => setOpen(false)}
-        onPublish={handlePublish}
-      />
+      {open && (
+        <CreatePostModal
+          mode={editingPost ? "edit" : "create"}
+          initialPost={editingPost ?? undefined}
+          childPills={childPills}
+          rooms={rooms}
+          onClose={() => {
+            setEditingPost(null);
+            setOpen(false);
+          }}
+          onSaved={handleSaved}
+        />
+      )}
+
+      {pendingDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(63,54,46,0.45)] px-6"
+          onClick={() => setPendingDelete(null)}
+        >
+          <div
+            className="w-full max-w-[420px] rounded-[24px] border border-[#ECE0D0] bg-[#FBF4EC] p-[26px] shadow-[0_20px_50px_-24px_rgba(63,54,46,0.35)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 className="m-0 font-display text-[19px] font-semibold text-ink">
+              ¿Borrar la publicación?
+            </h2>
+            <p className="mb-[22px] mt-2 text-[14.5px] leading-[1.5] text-muted-strong">
+              Se eliminarán sus fotos y no se puede deshacer.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setPendingDelete(null)}
+                className="cursor-pointer rounded-[12px] border border-[#ECE0D0] bg-white px-4 py-2.5 text-[14px] font-bold text-muted-strong"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDelete(pendingDelete)}
+                className="cursor-pointer rounded-[12px] border-none bg-[#B3452E] px-4 py-2.5 text-[14px] font-extrabold text-white"
+              >
+                Borrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
