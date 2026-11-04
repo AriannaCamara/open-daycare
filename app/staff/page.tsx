@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { AppSidebar, SidebarFallback } from "@/app/_components/app-sidebar";
 import { FeedView } from "@/app/_components/feed-view";
 import { fetchFeedSummary, room } from "@/app/_data/feed";
 import {
@@ -57,16 +56,10 @@ async function FeedWithSession() {
   );
 }
 
-export default function Home() {
+export default function StaffFeedPage() {
   return (
-    <div className="flex min-h-screen bg-cream">
-      <Suspense fallback={<SidebarFallback />}>
-        <AppSidebar room={room} activeHref="/" />
-      </Suspense>
-
-      <Suspense fallback={<FeedFallback />}>
-        <FeedWithSession />
-      </Suspense>
-    </div>
+    <Suspense fallback={<FeedFallback />}>
+      <FeedWithSession />
+    </Suspense>
   );
 }

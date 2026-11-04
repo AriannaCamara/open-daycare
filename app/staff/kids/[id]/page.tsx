@@ -2,13 +2,11 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
-import { AppSidebar, SidebarFallback } from "@/app/_components/app-sidebar";
 import { Avatar } from "@/app/_components/avatar";
 import { ParentsPanel } from "@/app/_components/parents-panel";
 import { mapChildRow, type ChildRow } from "@/app/_data/child-mapper";
 import { fetchChildParents } from "@/app/_data/parents";
 import { fetchSessionUser, isStaffRole } from "@/app/_data/session";
-import { room } from "@/app/_data/feed";
 import { createClient } from "@/utils/supabase/server";
 
 function ArrowLeftIcon() {
@@ -62,7 +60,9 @@ function ProfileSkeleton() {
   );
 }
 
-async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
+async function KidProfile({
+  params,
+}: Pick<PageProps<"/staff/kids/[id]">, "params">) {
   const { id } = await params;
 
   // Excluye el fetch y new Date() (edad) del prerender estático (cacheComponents).
@@ -170,28 +170,22 @@ async function KidProfile({ params }: Pick<PageProps<"/kids/[id]">, "params">) {
 
 export default function KidProfilePage({
   params,
-}: PageProps<"/kids/[id]">) {
+}: PageProps<"/staff/kids/[id]">) {
   return (
-    <div className="flex min-h-screen bg-cream">
-      <Suspense fallback={<SidebarFallback />}>
-        <AppSidebar room={room} activeHref="/kids" />
-      </Suspense>
+    <main className="h-screen min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
+      <div className="mx-auto w-full max-w-[820px] px-10 pb-20 pt-[34px]">
+        <Link
+          href="/staff/kids"
+          className="mb-5 inline-flex items-center gap-[7px] text-[14px] font-bold text-muted"
+        >
+          <ArrowLeftIcon />
+          Volver a Niños
+        </Link>
 
-      <main className="h-screen min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
-        <div className="mx-auto w-full max-w-[820px] px-10 pb-20 pt-[34px]">
-          <Link
-            href="/kids"
-            className="mb-5 inline-flex items-center gap-[7px] text-[14px] font-bold text-muted"
-          >
-            <ArrowLeftIcon />
-            Volver a Niños
-          </Link>
-
-          <Suspense fallback={<ProfileSkeleton />}>
-            <KidProfile params={params} />
-          </Suspense>
-        </div>
-      </main>
-    </div>
+        <Suspense fallback={<ProfileSkeleton />}>
+          <KidProfile params={params} />
+        </Suspense>
+      </div>
+    </main>
   );
 }

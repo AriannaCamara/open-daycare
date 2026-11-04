@@ -2,18 +2,20 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { requestNewPost } from "@/app/_components/new-post-trigger";
 import type { SidebarRoom } from "@/app/_data/feed";
 import type { SidebarUser } from "@/app/_data/session";
 
+type SidebarPanel = "staff" | "family";
+
 interface SidebarProps {
   user: SidebarUser;
-  room: SidebarRoom;
-  activeHref: string;
-  // Solo staff/admin ven el CTA de publicar (misma condición que en el feed).
-  canPublish?: boolean;
+  panel: SidebarPanel;
+  // Nombre de sala para el subtítulo del panel staff; el panel familia
+  // muestra "Familia" y no lo necesita.
+  room?: SidebarRoom;
 }
 
 interface SidebarContentProps extends SidebarProps {
@@ -114,41 +116,6 @@ function UsersIcon() {
   );
 }
 
-function BellIcon() {
-  return (
-    <svg
-      width="19"
-      height="19"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0" />
-    </svg>
-  );
-}
-
-function AccountIcon() {
-  return (
-    <svg
-      width="19"
-      height="19"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-}
-
 function LogoutIcon() {
   return (
     <svg
@@ -166,21 +133,40 @@ function LogoutIcon() {
   );
 }
 
-const navItems: NavItem[] = [
-  { href: "/", label: "Feed", icon: <HomeIcon /> },
-  { href: "/kids", label: "Niños", icon: <UsersIcon /> },
-  { href: "/announcements", label: "Avisos", icon: <BellIcon /> },
-  { href: "/account", label: "Mi cuenta", icon: <AccountIcon /> },
-];
+// Nav por panel: el rol ya está garantizado por el proxy (/staff/* solo
+// staff/admin, /family/* solo parent).
+const navItemsByPanel: Record<SidebarPanel, NavItem[]> = {
+  staff: [
+    { href: "/staff", label: "Feed", icon: <HomeIcon /> },
+    { href: "/staff/kids", label: "Niños", icon: <UsersIcon /> },
+  ],
+  family: [{ href: "/family", label: "Feed", icon: <HomeIcon /> }],
+};
+
+function panelHomeHref(panel: SidebarPanel): string {
+  return panel === "staff" ? "/staff" : "/family";
+}
+
+function isActivePath(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 function SidebarContent({
   user,
+  panel,
   room,
-  activeHref,
-  canPublish,
   onNavigate,
 }: SidebarContentProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const navItems = navItemsByPanel[panel];
+  // El item activo es el de href más largo que prefija el pathname:
+  // en /staff/kids se resalta "Niños", no "Feed".
+  const activeHref =
+    navItems
+      .filter((item) => isActivePath(pathname, item.href))
+      .map((item) => item.href)
+      .sort((a, b) => b.length - a.length)[0] ?? "";
 
   async function handleLogout() {
     await createClient().auth.signOut();
@@ -191,7 +177,7 @@ function SidebarContent({
   return (
     <>
       <Link
-        href="/"
+        href={panelHomeHref(panel)}
         onClick={onNavigate}
         className="flex items-center gap-[11px] px-2 pb-[22px] pt-1"
       >
@@ -203,18 +189,18 @@ function SidebarContent({
             OpenDayCare
           </div>
           <div className="mt-0.5 text-[11.5px] text-muted-strong">
-            {room.roomName}
+            {panel === "family" ? "Familia" : room?.roomName}
           </div>
         </div>
       </Link>
 
-      {canPublish && (
+      {panel === "staff" && (
         <button
           type="button"
           onClick={() => {
             requestNewPost();
-            if (activeHref !== "/") {
-              router.push("/");
+            if (pathname !== "/staff") {
+              router.push("/staff");
             }
             onNavigate?.();
           }}
@@ -271,12 +257,7 @@ function SidebarContent({
   );
 }
 
-export function Sidebar({
-  user,
-  room,
-  activeHref,
-  canPublish,
-}: SidebarProps) {
+export function Sidebar({ user, panel, room }: SidebarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -291,7 +272,7 @@ export function Sidebar({
         >
           <MenuIcon />
         </button>
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href={panelHomeHref(panel)} className="flex items-center gap-2.5">
           <div className="flex size-8 flex-none items-center justify-center rounded-lg bg-[linear-gradient(155deg,#F8C3A8,#F2937A)]">
             <SunIcon />
           </div>
@@ -310,9 +291,8 @@ export function Sidebar({
           <div className="absolute inset-y-0 left-0 flex w-[248px] flex-col border-r border-border bg-surface px-4 py-6">
             <SidebarContent
               user={user}
+              panel={panel}
               room={room}
-              activeHref={activeHref}
-              canPublish={canPublish}
               onNavigate={() => setOpen(false)}
             />
           </div>
@@ -320,12 +300,7 @@ export function Sidebar({
       )}
 
       <aside className="sticky top-0 hidden h-screen w-[248px] flex-none flex-col border-r border-border bg-surface px-4 py-6 lg:flex">
-        <SidebarContent
-          user={user}
-          room={room}
-          activeHref={activeHref}
-          canPublish={canPublish}
-        />
+        <SidebarContent user={user} panel={panel} room={room} />
       </aside>
     </>
   );
