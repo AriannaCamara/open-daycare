@@ -9,6 +9,19 @@ const PUBLIC_PATHS = ["/login", "/activate-account"];
 
 const isPublicPath = (pathname: string) => PUBLIC_PATHS.includes(pathname);
 
+// Paneles por rol: staff/admin → /staff; parent o rol desconocido → /family
+// (panel de solo lectura: evita bucles de redirect ante usuarios sin fila).
+type PanelRole = "staff" | "admin" | "parent";
+
+const isStaffRole = (role: PanelRole | null) => role === "staff" || role === "admin";
+
+function panelForRole(role: PanelRole | null): string {
+  return isStaffRole(role) ? "/staff" : "/family";
+}
+
+const matchesPrefix = (pathname: string, prefix: string) =>
+  pathname === prefix || pathname.startsWith(`${prefix}/`);
+
 // Copia cookies y headers de cache al redirect: sin eso se pierde el
 // refresh de sesión que hizo getClaims() (patrón Supabase).
 function redirectWithSession(
@@ -56,15 +69,55 @@ export const updateSession = async (request: NextRequest) => {
 
   // Verifica la firma del token y refresca la sesión si está por vencer.
   const { data } = await supabase.auth.getClaims();
-  const hasSession = Boolean(data?.claims);
-  const isPublic = isPublicPath(request.nextUrl.pathname);
+  const claims = data?.claims ?? null;
+  const hasSession = Boolean(claims);
+  const { pathname } = request.nextUrl;
+  const isPublic = isPublicPath(pathname);
 
-  // Sin sesión en ruta protegida → /login; con sesión en ruta pública → /.
+  // Sin sesión en ruta protegida → /login; con sesión en ruta pública → /
+  // (el ciclo siguiente resuelve el panel según rol).
   if (!hasSession && !isPublic) {
     return redirectWithSession(request, supabaseResponse, "/login");
   }
   if (hasSession && isPublic) {
     return redirectWithSession(request, supabaseResponse, "/");
+  }
+
+  if (!claims) {
+    return supabaseResponse;
+  }
+
+  // Guard por prefijo: el rol vive en public.users (RLS users_select_own
+  // permite leer la fila propia desde el cliente con cookies de la request).
+  const isPanelRoute =
+    pathname === "/" ||
+    matchesPrefix(pathname, "/staff") ||
+    matchesPrefix(pathname, "/family");
+
+  if (!isPanelRoute) {
+    return supabaseResponse;
+  }
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("role")
+    .eq("id", claims.sub)
+    .maybeSingle();
+  const role = (userData?.role as PanelRole | undefined) ?? null;
+
+  // Raíz → panel del rol.
+  if (pathname === "/") {
+    return redirectWithSession(request, supabaseResponse, panelForRole(role));
+  }
+
+  // /staff/* exige staff/admin; /family/* exige parent (un rol desconocido
+  // cae en /family, que es el panel de solo lectura, sin bucle de redirect).
+  if (matchesPrefix(pathname, "/staff")) {
+    if (!isStaffRole(role)) {
+      return redirectWithSession(request, supabaseResponse, "/family");
+    }
+  } else if (isStaffRole(role)) {
+    return redirectWithSession(request, supabaseResponse, "/staff");
   }
 
   return supabaseResponse;
