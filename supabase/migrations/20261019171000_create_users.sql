@@ -91,6 +91,8 @@ create trigger set_users_updated_at
 
 -- 6. Seed: staff loginable (staff@opendaycare.dev / StaffTest123!) ----------
 -- El perfil en public.users lo crea el trigger de arriba.
+-- Ojo: auth.users.confirmed_at es columna generada (LEAST(email_confirmed_at,
+-- phone_confirmed_at)) y rechaza valores explícitos (SQLSTATE 428C9).
 
 insert into auth.users (
   instance_id,
@@ -100,7 +102,6 @@ insert into auth.users (
   email,
   encrypted_password,
   email_confirmed_at,
-  confirmed_at,
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
@@ -113,7 +114,6 @@ values (
   'authenticated',
   'staff@opendaycare.dev',
   extensions.crypt('StaffTest123!', extensions.gen_salt('bf')),
-  now(),
   now(),
   '{"provider": "email", "providers": ["email"]}',
   jsonb_build_object(
@@ -130,7 +130,6 @@ insert into auth.identities (
   user_id,
   identity_data,
   provider,
-  email,
   last_sign_in_at,
   created_at,
   updated_at
@@ -146,7 +145,6 @@ select
     'provider', 'email'
   ),
   'email',
-  u.email,
   now(),
   now(),
   now()
