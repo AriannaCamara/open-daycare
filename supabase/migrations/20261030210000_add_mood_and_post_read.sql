@@ -95,7 +95,8 @@ from (values
 cross join lateral (
   select u.id
   from public.users u
-  where u.email = 'staff@opendaycare.dev'
+  join auth.users au on au.id = u.id
+  where au.email = 'staff@opendaycare.dev'
   limit 1
 ) s
 cross join lateral (

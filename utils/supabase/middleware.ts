@@ -76,10 +76,12 @@ export const updateSession = async (request: NextRequest) => {
 
   // Sin sesión en ruta protegida → /login; con sesión en ruta pública → /
   // (el ciclo siguiente resuelve el panel según rol).
+  // Excepción: /activate-account se queda accesible con sesión, porque un
+  // padre ya logueado debe poder aceptar una invitación nueva sin cerrarla.
   if (!hasSession && !isPublic) {
     return redirectWithSession(request, supabaseResponse, "/login");
   }
-  if (hasSession && isPublic) {
+  if (hasSession && isPublic && pathname !== "/activate-account") {
     return redirectWithSession(request, supabaseResponse, "/");
   }
 
