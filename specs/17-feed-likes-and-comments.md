@@ -1,6 +1,6 @@
 # SPEC 17 — Likes y comentarios en el feed (con filtro de groserías)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 16 (feed real), migración `create_feed_engagement` (tablas `reactions` y `comments` con RLS)
 > **Fecha:** 2026-11-09
 > **Objetivo:** Que cualquier persona que vea el feed pueda dar "me gusta" y comentar las publicaciones, rechazando los comentarios con groserías en el cliente, en la server action y en la base de datos.
@@ -32,9 +32,10 @@
 
 ## Modelo de datos
 
-### DB (sin tablas nuevas; solo un trigger)
+### DB (sin tablas nuevas; trigger + policy)
 
 - `reactions` y `comments` ya existen con RLS (migración `create_feed_engagement`): no cambian columnas, policies ni grants.
+- Nueva policy `users_select_same_daycare_members` en `users` (migración `users_select_same_daycare_members`): cualquier miembro autenticado de la guardería puede leer `full_name`/`role`/`avatar_url` de los demás miembros. Sin ella, el embed `comments ( …, users ( full_name ) )` devuelve `null` para comentarios ajenos cuando el lector es un parent (la policy existente `users_select_same_daycare_staff` solo cubre staff). `users` no tiene columnas sensibles (sin email ni credenciales); las policies de RLS combinan en OR, la de staff queda intacta.
 - Nueva migración `supabase/migrations/<ts>_guard_comments_profanity.sql`:
   - Array de palabras groseras en español e inglés (minúsculas, solo letras), espejo de `utils/profanity.ts`.
   - `public.has_profanity(p_text text) returns boolean`: compara `p_text` contra el array con `~*` y límites de palabra (`(^|[^[:alpha:]])` y `([^[:alpha:]]|$)`), para que `computo` no matchee `puto`.
@@ -113,19 +114,19 @@ La action no valida groserías por su cuenta: intercepta el error `comment_profa
 
 ## Criterios de aceptación
 
-- [ ] Clic en el corazón likea el post: el contador sube a 1 y el corazón queda relleno; un segundo clic quita el like, el contador vuelve a 0 y el corazón queda en contorno.
-- [ ] El corazón relleno depende del usuario: si A likea, B ve el contador en 1 y su propio corazón sin rellenar (y viceversa).
-- [ ] `likedByMe` y los contadores sobreviven a recargar la página (leen de `reactions`).
-- [ ] El ícono 💬 abre y cierra la sección de comentarios debajo del post, sin navegar a otra ruta; el contador muestra `comments.length` real.
-- [ ] Enviar un comentario válido lo guarda en `comments`, aparece en la lista con `full_name` del autor y la hora, y persiste al recargar; el input queda vacío y la sección sigue abierta.
-- [ ] Enviar un comentario vacío muestra inline `Escribí un comentario.` y no llama a la action.
-- [ ] Escribir una palabra grosera (es o en) muestra inline `Tu comentario contiene palabras no permitidas. Revisalo.`, no se guarda nada y el texto se conserva en el input.
-- [ ] Un `insert` directo en `comments` con una palabra de la lista falla con `comment_profanity_blocked` (el filtro no se salta ni con PostgREST/curl), y uno sin grosería entra sin problemas.
-- [ ] El autor ve "Editar" y "Borrar" en sus comentarios: editar reemplaza el cuerpo (y vuelve a pasar por el filtro) y borrar lo elimina.
-- [ ] En comentarios ajenos no hay botones de editar/borrar, y llamar a `updateComment`/`deleteComment` sobre uno ajeno devuelve `No podés modificar este comentario.`
-- [ ] Un usuario parent (que solo puede leer) puede dar like y comentar en los posts que ve, en `/family`.
-- [ ] El ícono 💬 no es un `Link` a `/detalle-publicacion` en el HTML resultante.
-- [ ] Sin errores de consola ni de build; `npm run lint` y `npx tsc --noEmit` sin errores; verificación Playwright en 1440/768/375.
+- [x] Clic en el corazón likea el post: el contador sube a 1 y el corazón queda relleno; un segundo clic quita el like, el contador vuelve a 0 y el corazón queda en contorno.
+- [x] El corazón relleno depende del usuario: si A likea, B ve el contador en 1 y su propio corazón sin rellenar (y viceversa).
+- [x] `likedByMe` y los contadores sobreviven a recargar la página (leen de `reactions`).
+- [x] El ícono 💬 abre y cierra la sección de comentarios debajo del post, sin navegar a otra ruta; el contador muestra `comments.length` real.
+- [x] Enviar un comentario válido lo guarda en `comments`, aparece en la lista con `full_name` del autor y la hora, y persiste al recargar; el input queda vacío y la sección sigue abierta.
+- [x] Enviar un comentario vacío muestra inline `Escribí un comentario.` y no llama a la action.
+- [x] Escribir una palabra grosera (es o en) muestra inline `Tu comentario contiene palabras no permitidas. Revisalo.`, no se guarda nada y el texto se conserva en el input.
+- [x] Un `insert` directo en `comments` con una palabra de la lista falla con `comment_profanity_blocked` (el filtro no se salta ni con PostgREST/curl), y uno sin grosería entra sin problemas.
+- [x] El autor ve "Editar" y "Borrar" en sus comentarios: editar reemplaza el cuerpo (y vuelve a pasar por el filtro) y borrar lo elimina.
+- [x] En comentarios ajenos no hay botones de editar/borrar, y llamar a `updateComment`/`deleteComment` sobre uno ajeno devuelve `No podés modificar este comentario.`
+- [x] Un usuario parent (que solo puede leer) puede dar like y comentar en los posts que ve, en `/family`.
+- [x] El ícono 💬 no es un `Link` a `/detalle-publicacion` en el HTML resultante.
+- [x] Sin errores de consola ni de build; `npm run lint` y `npx tsc --noEmit` sin errores; verificación Playwright en 1440/768/375.
 
 ## Decisiones tomadas y descartadas
 

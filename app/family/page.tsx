@@ -25,10 +25,10 @@ async function FamilyFeed() {
   await connection();
 
   const supabase = await createClient();
-  const [session, summary, initialPosts] = await Promise.all([
-    fetchSessionUser(supabase),
+  const session = await fetchSessionUser(supabase);
+  const [summary, initialPosts] = await Promise.all([
     fetchFeedSummary(supabase),
-    fetchPosts(supabase),
+    fetchPosts(supabase, session?.id ?? ""),
   ]);
 
   return (

@@ -4,6 +4,7 @@ import { fetchSessionUser, isStaffRole } from "@/app/_data/session";
 import type { PostKind } from "@/app/_data/feed";
 import { createClient } from "@/utils/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { SESSION_ERROR } from "./errors";
 
 export interface PostInput {
   kind: PostKind;
@@ -30,7 +31,6 @@ const PHOTO_TYPE_ERROR = "Formatos permitidos: JPG, PNG o WebP.";
 const STORAGE_ERROR = "No se pudieron subir las fotos. Intentá de nuevo.";
 const FORBIDDEN_ERROR =
   "Solo el personal de la guardería puede publicar.";
-const SESSION_ERROR = "Tu sesión expiró. Iniciá sesión de nuevo.";
 
 const POST_KINDS: PostKind[] = [
   "meal",

@@ -38,7 +38,7 @@ async function FeedWithSession() {
   // de solo lectura.
   const [summary, initialPosts, options] = await Promise.all([
     fetchFeedSummary(supabase),
-    fetchPosts(supabase),
+    fetchPosts(supabase, session?.id ?? ""),
     canPublish
       ? fetchPostOptions(supabase)
       : Promise.resolve({ children: [], rooms: [] } satisfies PostOptions),

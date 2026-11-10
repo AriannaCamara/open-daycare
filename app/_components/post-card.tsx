@@ -1,6 +1,8 @@
 import type { Post, PostKind } from "@/app/_data/feed";
 import { postKindLabels, postKindStyles } from "@/app/_data/feed";
-import Link from "next/link";
+import type { ActionResult } from "@/app/_actions/engagement";
+import { CommentSection } from "@/app/_components/comment-section";
+import { useState } from "react";
 
 interface PostCardProps {
   post: Post;
@@ -8,6 +10,14 @@ interface PostCardProps {
   // Acciones reales; el card las muestra solo si es su propio post.
   onEdit?: () => void;
   onDelete?: () => void;
+  // Like y comentarios (SPEC 17): los maneja FeedView.
+  onToggleLike?: () => void;
+  onAddComment?: (body: string) => Promise<ActionResult | null>;
+  onUpdateComment?: (
+    commentId: string,
+    body: string,
+  ) => Promise<ActionResult | null>;
+  onDeleteComment?: (commentId: string) => Promise<void>;
 }
 
 interface KindVisual {
@@ -46,14 +56,15 @@ const kindVisuals: Record<PostKind, KindVisual> = {
   },
 };
 
-function HeartIcon() {
+// Relleno solo si el usuario actual ya reaccionó (likedByMe); si no, contorno.
+function HeartIcon({ filled }: { filled: boolean }) {
   return (
     <svg
       width="19"
       height="19"
       viewBox="0 0 24 24"
-      fill="#E0654A"
-      stroke="currentColor"
+      fill={filled ? "#E0654A" : "none"}
+      stroke={filled ? "#E0654A" : "currentColor"}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -102,12 +113,17 @@ export function PostCard({
   currentUserId,
   onEdit,
   onDelete,
+  onToggleLike,
+  onAddComment,
+  onUpdateComment,
+  onDeleteComment,
 }: PostCardProps) {
   const visual = kindVisuals[post.kind];
   const kindStyle = postKindStyles[post.kind];
   const isAnnouncement = post.kind === "announcement";
   const isAuthor = post.authorId === currentUserId;
   const hasNames = post.givenNames.length > 0;
+  const [commentsOpen, setCommentsOpen] = useState(false);
   const headerName = hasNames
     ? post.givenNames.join(", ")
     : isAnnouncement
@@ -163,17 +179,24 @@ export function PostCard({
       )}
 
       <div className="mt-4 flex items-center gap-[18px] border-t border-line pt-3.5">
-        <span className="flex items-center gap-[7px] text-[14px] font-bold text-accent-soft">
-          <HeartIcon />
+        <button
+          type="button"
+          onClick={onToggleLike}
+          aria-label="Me gusta"
+          className="flex cursor-pointer items-center gap-[7px] border-none bg-transparent p-0 text-[14px] font-bold text-accent-soft"
+        >
+          <HeartIcon filled={post.likedByMe} />
           {post.likes}
-        </span>
-        <Link
-          href="/detalle-publicacion"
-          className="flex items-center gap-[7px] text-[14px] font-bold text-muted"
+        </button>
+        <button
+          type="button"
+          onClick={() => setCommentsOpen((open) => !open)}
+          aria-label="Comentarios"
+          className="flex cursor-pointer items-center gap-[7px] border-none bg-transparent p-0 text-[14px] font-bold text-muted"
         >
           <CommentIcon />
-          {post.comments}
-        </Link>
+          {post.commentsCount}
+        </button>
         <span className="flex-1" />
         {isAuthor && (
           <>
@@ -195,6 +218,16 @@ export function PostCard({
           </>
         )}
       </div>
+
+      {commentsOpen && (
+        <CommentSection
+          comments={post.comments}
+          currentUserId={currentUserId}
+          onAddComment={onAddComment}
+          onUpdateComment={onUpdateComment}
+          onDeleteComment={onDeleteComment}
+        />
+      )}
     </article>
   );
 }

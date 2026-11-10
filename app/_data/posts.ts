@@ -19,6 +19,18 @@ interface PostPhotoRow {
   position: number;
 }
 
+interface PostReactionRow {
+  user_id: string;
+}
+
+interface PostCommentRow {
+  id: string;
+  author_id: string;
+  body: string;
+  created_at: string;
+  users: { full_name: string } | null;
+}
+
 interface PostRow {
   id: string;
   type: PostKind;
@@ -28,6 +40,8 @@ interface PostRow {
   published_at: string;
   post_children: PostChildRow[];
   post_photos: PostPhotoRow[];
+  reactions: PostReactionRow[];
+  comments: PostCommentRow[];
 }
 
 // published_at → "14:20" en la zona horaria de la guardería.
@@ -56,14 +70,19 @@ function sortedPhotos(row: PostRow): PostPhotoRow[] {
 
 // Posts del daycare (RLS can_read_post acota por rol), más recientes primero.
 // Se firman todas las fotos (1h): la card muestra la primera y el modal de
-// edición necesita cada id + URL.
-export async function fetchPosts(supabase: SupabaseClient): Promise<Post[]> {
+// edición necesita cada id + URL. userId marca likedByMe (embed reactions).
+export async function fetchPosts(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<Post[]> {
   const { data, error } = await supabase
     .from("posts")
     .select(
       `id, type, body, room_id, author_id, published_at,
        post_children ( child_id, children ( full_name ) ),
-       post_photos ( id, url, position )`,
+       post_photos ( id, url, position ),
+       reactions ( user_id ),
+       comments ( id, author_id, body, created_at, users ( full_name ) )`,
     )
     .order("published_at", { ascending: false });
 
@@ -97,6 +116,16 @@ export async function fetchPosts(supabase: SupabaseClient): Promise<Post[]> {
       .filter((name): name is string => Boolean(name))
       .map(toGivenName);
 
+    const comments = [...row.comments]
+      .sort((a, b) => a.created_at.localeCompare(b.created_at))
+      .map((comment) => ({
+        id: comment.id,
+        authorId: comment.author_id,
+        authorName: comment.users?.full_name ?? "",
+        body: comment.body,
+        time: formatPostTime(comment.created_at),
+      }));
+
     return {
       id: row.id,
       kind: row.type,
@@ -113,8 +142,10 @@ export async function fetchPosts(supabase: SupabaseClient): Promise<Post[]> {
       givenNames,
       time: formatPostTime(row.published_at),
       audience: buildAudience(givenNames, row.room_id),
-      likes: 0,
-      comments: 0,
+      likes: row.reactions.length,
+      likedByMe: row.reactions.some((reaction) => reaction.user_id === userId),
+      commentsCount: comments.length,
+      comments,
     };
   });
 }
