@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Prototipos .dc.html: referencias de diseño, no parte del build.
     "references/**",
+    // Artefactos de verificación Playwright (gitignored): capturas y scripts.
+    ".playwright-mcp/**",
   ]),
 ]);
 

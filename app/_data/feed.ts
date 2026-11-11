@@ -80,13 +80,24 @@ export interface EditablePost {
   photos: PostPhoto[];
 }
 
+// Comentario del feed (SPEC 17), ya formateado para la sección expandible.
+export interface Comment {
+  id: string; // uuid de comments
+  authorId: string; // users.id
+  authorName: string; // users.full_name
+  body: string;
+  time: string; // "14:20" — mismo formateo TZ que los posts
+}
+
 export interface Post extends EditablePost {
   givenNames: string[]; // [] si es post de sala/día
   time: string; // "14:20" — published_at en America/Argentina/Buenos_Aires
   audience: string; // "familia de X, Y" | "toda la sala" | "toda la guardería"
   authorId: string;
-  likes: number; // 0 (engagement fuera de alcance)
-  comments: number; // 0
+  likes: number; // total real de reactions
+  likedByMe: boolean; // el usuario actual ya reaccionó
+  commentsCount: number; // comments.length
+  comments: Comment[]; // todos, ordenados created_at asc
 }
 
 // Niño activo para los pills "PARA" del modal (mismo tono por índice que /kids).

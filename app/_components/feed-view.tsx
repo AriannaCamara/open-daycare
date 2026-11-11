@@ -1,11 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PostCard } from "@/app/_components/post-card";
 import { CreatePostModal } from "@/app/_components/create-post-modal";
 import { setNewPostOpenListener } from "@/app/_components/new-post-trigger";
 import { deletePost } from "@/app/_actions/posts";
+import {
+  addComment,
+  deleteComment,
+  toggleLike,
+  updateComment,
+  type ActionResult,
+} from "@/app/_actions/engagement";
 import type { PillChild, Post, RoomOption, RoomSummary } from "@/app/_data/feed";
 import type { SidebarUser } from "@/app/_data/session";
 
@@ -48,6 +55,43 @@ export function FeedView({
   const [open, setOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Post | null>(null);
+
+  // Sin optimistic UI (mismo patrón que SPEC 16): la action guarda y
+  // router.refresh() trae el feed. El flag de pendiente ignora dobles clics:
+  // mientras hay una operación en vuelo, la siguiente se descarta (null).
+  const engagementPending = useRef(false);
+
+  async function runEngagement(
+    action: () => Promise<ActionResult>,
+  ): Promise<ActionResult | null> {
+    if (engagementPending.current) return null;
+    engagementPending.current = true;
+    try {
+      const result = await action();
+      if (result.ok) router.refresh();
+      return result;
+    } finally {
+      engagementPending.current = false;
+    }
+  }
+
+  async function handleToggleLike(postId: string): Promise<void> {
+    const result = await runEngagement(() => toggleLike(postId));
+    if (result && !result.ok) window.alert(result.error);
+  }
+
+  function handleAddComment(postId: string, body: string) {
+    return runEngagement(() => addComment(postId, body));
+  }
+
+  function handleUpdateComment(commentId: string, body: string) {
+    return runEngagement(() => updateComment(commentId, body));
+  }
+
+  async function handleDeleteComment(commentId: string): Promise<void> {
+    const result = await runEngagement(() => deleteComment(commentId));
+    if (result && !result.ok) window.alert(result.error);
+  }
 
   useEffect(() => {
     setNewPostOpenListener(() => setOpen(true));
@@ -128,6 +172,12 @@ export function FeedView({
                   setOpen(true);
                 }}
                 onDelete={() => setPendingDelete(post)}
+                onToggleLike={() => handleToggleLike(post.id)}
+                onAddComment={(body) => handleAddComment(post.id, body)}
+                onUpdateComment={(commentId, body) =>
+                  handleUpdateComment(commentId, body)
+                }
+                onDeleteComment={handleDeleteComment}
               />
             ))}
           </div>
