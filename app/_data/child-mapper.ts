@@ -51,6 +51,12 @@ function formatAdmission(iso: string): string {
   return `${monthLabels[month - 1]} ${year}`;
 }
 
+// Fecha de una aclaración (timestamptz ISO) → "11 nov 2026".
+export function formatNoteDate(iso: string): string {
+  const date = new Date(iso);
+  return `${String(date.getDate()).padStart(2, "0")} ${monthLabels[date.getMonth()]} ${date.getFullYear()}`;
+}
+
 // Fila de DB → tipo Child de la vista. tone rota por índice (no se persiste).
 export function mapChildRow(
   row: ChildRow,

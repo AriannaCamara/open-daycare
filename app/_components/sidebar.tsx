@@ -140,7 +140,10 @@ const navItemsByPanel: Record<SidebarPanel, NavItem[]> = {
     { href: "/staff", label: "Feed", icon: <HomeIcon /> },
     { href: "/staff/kids", label: "Niños", icon: <UsersIcon /> },
   ],
-  family: [{ href: "/family", label: "Feed", icon: <HomeIcon /> }],
+  family: [
+    { href: "/family", label: "Feed", icon: <HomeIcon /> },
+    { href: "/family/kids", label: "Mis hijos", icon: <UsersIcon /> },
+  ],
 };
 
 function panelHomeHref(panel: SidebarPanel): string {
