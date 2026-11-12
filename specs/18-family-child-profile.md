@@ -1,6 +1,6 @@
 # SPEC 18 — Ficha completa del hijo en el panel familiar (edición del padre)
 
-> **Estado:** Aprobado
+> **Estado:** Implemented
 > **Depende de:** SPEC 10 (tablas `rooms`/`children`), SPEC 11 (UI del perfil de niño), SPEC 12 (vínculos `parent_children`)
 > **Fecha:** 2026-11-11
 > **Objetivo:** Una pantalla en el panel familiar donde el padre ve toda la información de su hijo (datos, cuidados y aclaraciones) y puede editarla, agregar notas y borrarlas.

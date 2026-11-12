@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Avatar } from "@/app/_components/avatar";
+import { CareBlock, NotesBlock } from "@/app/_components/child-profile-blocks";
 import { ParentsPanel } from "@/app/_components/parents-panel";
-import { mapChildRow, type ChildRow } from "@/app/_data/child-mapper";
+import { fetchStaffChildProfile } from "@/app/_data/family-children";
 import { fetchChildParents } from "@/app/_data/parents";
 import { fetchSessionUser, isStaffRole } from "@/app/_data/session";
 import { createClient } from "@/utils/supabase/server";
@@ -70,24 +70,14 @@ async function KidProfile({
 
   const supabase = await createClient();
 
-  const [session, { data, error }] = await Promise.all([
+  const [session, profile] = await Promise.all([
     fetchSessionUser(supabase),
-    supabase
-      .from("children")
-      .select(
-        "id, full_name, birth_date, enrolled_at, medical_notes, allergy_tags, rooms(name)"
-      )
-      .eq("id", id)
-      .eq("status", "active")
-      .maybeSingle(),
+    fetchStaffChildProfile(supabase, id),
   ]);
 
-  // Id no-uuid o niño inexistente/archivado → 404.
-  if (error || !data) {
-    notFound();
-  }
-
-  const child = mapChildRow(data as unknown as ChildRow, 0);
+  // fetchStaffChildProfile ya llama notFound() si el niño no existe o está
+  // archivado. Id no-uuid también termina en 404 (query con error).
+  const { child, care, notes } = profile;
   const parents = await fetchChildParents(id);
 
   return (
@@ -154,6 +144,10 @@ async function KidProfile({
             </span>
           </div>
         </div>
+
+        {/* Bloques nuevos de SPEC 18: solo lectura para el staff. */}
+        <CareBlock care={care} />
+        <NotesBlock notes={notes} />
       </div>
 
       <div className="flex w-[300px] max-w-full flex-none flex-col gap-3.5">
