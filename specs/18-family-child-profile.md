@@ -1,6 +1,6 @@
 # SPEC 18 — Ficha completa del hijo en el panel familiar (edición del padre)
 
-> **Estado:** Implemented
+> **Estado:** Implementado 
 > **Depende de:** SPEC 10 (tablas `rooms`/`children`), SPEC 11 (UI del perfil de niño), SPEC 12 (vínculos `parent_children`)
 > **Fecha:** 2026-11-11
 > **Objetivo:** Una pantalla en el panel familiar donde el padre ve toda la información de su hijo (datos, cuidados y aclaraciones) y puede editarla, agregar notas y borrarlas.
@@ -140,25 +140,25 @@ deleteChildNote(noteId: string): Promise<ActionResult>
 
 ## Criterios de aceptación
 
-- [ ] El sidebar familiar tiene "Mis hijos" que navega a `/family/kids` y se resalta activo.
-- [ ] La lista muestra exactamente los hijos vinculados al padre de sesión (2 hijos → 2 tarjetas; hijo de otra familia no aparece).
-- [ ] Cada tarjeta muestra avatar, nombre, edad y pill de alergía, y navega a `/family/kids/<uuid>`.
-- [ ] Un padre sin hijos ve el estado vacío, sin errores de consola.
-- [ ] `/family/kids/<uuid>` muestra nombre, edad · sala, nacimiento, sala, ingreso + bloques CUIDADOS y ACLARACIONES con datos reales.
-- [ ] La caja roja de alertas aparece solo si hay `medical_notes` o `allergy_tags`.
-- [ ] Los campos administrativos se muestran como texto, sin input ni botón de edición para el padre.
-- [ ] "Editar" abre el modal precargado (incluido el toggle de consentimiento).
-- [ ] Guardar modifica `child_profile` y `children` (medical_notes, allergy_tags, photo_consent) y persiste al recargar.
-- [ ] Guardar con todos los campos vacíos es válido (null) sin errores.
-- [ ] El modal no contiene inputs de nombre, fecha de nacimiento ni sala.
-- [ ] Agregar una aclaración la inserta con `author_id` del padre, aparece con su fecha y persiste.
-- [ ] Aclaración vacía muestra inline `Escribí una aclaración.` sin llamar a la action.
-- [ ] Editar y borrar (con confirmación) una aclaración propia funciona.
-- [ ] `updateChildProfile` sobre un niño no vinculado devuelve `Este niño no es hijo tuyo.` y la DB queda intacta.
-- [ ] `updateChildNote`/`deleteChildNote` sobre nota ajena devuelven `No podés modificar esta aclaración.` (RLS).
-- [ ] La ficha staff muestra CUIDADOS y ACLARACIONES con los datos del padre, sin botones de edición.
-- [ ] Sin sesión, `/family/kids/*` redirige a `/login` (guard SPEC 09 intacto).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores; Playwright 1440/768/375.
+- [x] El sidebar familiar tiene "Mis hijos" que navega a `/family/kids` y se resalta activo.
+- [x] La lista muestra exactamente los hijos vinculados al padre de sesión (2 hijos → 2 tarjetas; hijo de otra familia no aparece).
+- [x] Cada tarjeta muestra avatar, nombre, edad y pill de alergía, y navega a `/family/kids/<uuid>`.
+- [x] Un padre sin hijos ve el estado vacío, sin errores de consola.
+- [x] `/family/kids/<uuid>` muestra nombre, edad · sala, nacimiento, sala, ingreso + bloques CUIDADOS y ACLARACIONES con datos reales.
+- [x] La caja roja de alertas aparece solo si hay `medical_notes` o `allergy_tags`.
+- [x] Los campos administrativos se muestran como texto, sin input ni botón de edición para el padre.
+- [x] "Editar" abre el modal precargado (incluido el toggle de consentimiento).
+- [x] Guardar modifica `child_profile` y `children` (medical_notes, allergy_tags, photo_consent) y persiste al recargar.
+- [x] Guardar con todos los campos vacíos es válido (null) sin errores.
+- [x] El modal no contiene inputs de nombre, fecha de nacimiento ni sala.
+- [x] Agregar una aclaración la inserta con `author_id` del padre, aparece con su fecha y persiste.
+- [x] Aclaración vacía muestra inline `Escribí una aclaración.` sin llamar a la action.
+- [x] Editar y borrar (con confirmación) una aclaración propia funciona.
+- [x] `updateChildProfile` sobre un niño no vinculado devuelve `Este niño no es hijo tuyo.` y la DB queda intacta.
+- [x] `updateChildNote`/`deleteChildNote` sobre nota ajena devuelven `No podés modificar esta aclaración.` (RLS).
+- [x] La ficha staff muestra CUIDADOS y ACLARACIONES con los datos del padre, sin botones de edición.
+- [x] Sin sesión, `/family/kids/*` redirige a `/login` (guard SPEC 09 intacto).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores; Playwright 1440/768/375.
 
 ## Decisiones tomadas y descartadas
 
