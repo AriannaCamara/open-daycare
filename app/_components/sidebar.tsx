@@ -116,6 +116,26 @@ function UsersIcon() {
   );
 }
 
+function BuildingIcon() {
+  return (
+    <svg
+      width="19"
+      height="19"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
+      <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
+      <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" />
+      <path d="M10 6h4M10 10h4M10 14h4M10 18h4" />
+    </svg>
+  );
+}
+
 function LogoutIcon() {
   return (
     <svg
@@ -143,6 +163,7 @@ const navItemsByPanel: Record<SidebarPanel, NavItem[]> = {
   family: [
     { href: "/family", label: "Feed", icon: <HomeIcon /> },
     { href: "/family/kids", label: "Mis hijos", icon: <UsersIcon /> },
+    { href: "/family/daycare", label: "Guardería", icon: <BuildingIcon /> },
   ],
 };
 

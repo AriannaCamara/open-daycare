@@ -1,6 +1,6 @@
 # SPEC 19 — Pantalla "Guardería" en el panel familiar (contacto + equipo)
 
-> **Estado:** Aprobado
+> **Estado:** Implemented
 > **Depende de:** SPEC 09 (protección de rutas `/family/*`), SPEC 17 (policy `users_select_same_daycare_members`), SPEC 18 (patrón de pantalla familiar y bloques)
 > **Fecha:** 2026-11-12
 > **Objetivo:** Una pantalla en el panel familiar donde el padre ve los datos de contacto de la guardería (teléfono, WhatsApp y email en un toque) y la lista del equipo que trabaja ahí.
