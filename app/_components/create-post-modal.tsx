@@ -58,7 +58,7 @@ const kindOrder: { kind: PostKind; label: string }[] = [
 ];
 
 const sectionLabelClassName =
-  "mb-2.5 text-[12px] font-extrabold tracking-[0.7px] text-muted-strong";
+  "mb-2.5 text-[12px] font-extrabold tracking-[0.7px] text-[#94887B]";
 
 const childPillClassName =
   "flex cursor-pointer items-center gap-2 rounded-full border-[1.5px] px-3.5 py-1.5 text-[14px] font-bold";
@@ -293,7 +293,7 @@ export function CreatePostModal({
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="cursor-pointer text-[15px] font-bold text-muted-strong disabled:cursor-not-allowed disabled:opacity-60"
+            className="cursor-pointer text-[15px] font-bold text-[#94887B] disabled:cursor-not-allowed disabled:opacity-60"
           >
             Cancelar
           </button>
@@ -311,7 +311,7 @@ export function CreatePostModal({
 
         <div className="px-[26px] py-6">
           {submitError && (
-            <p className="mb-[22px] text-[13px] font-semibold text-[#B3452E]">
+            <p className="mb-[22px] rounded-[12px] border border-[#F0B4A4] bg-[#F9D2DE] px-4 py-3 text-[13.5px] font-semibold text-[#B3452E]">
               {submitError}
             </p>
           )}
@@ -399,7 +399,7 @@ export function CreatePostModal({
             placeholder="Contá cómo le fue hoy…"
             value={body}
             onChange={handleBodyChange}
-            className={`min-h-[120px] w-full resize-y rounded-[14px] border-[1.5px] bg-white px-4 py-3.5 text-[15px] leading-[1.5] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${errors.body ? "border-[#D9583C]" : "border-[#EADFD0]"} ${errors.body ? "" : "mb-[22px]"}`}
+            className={`min-h-[120px] w-full resize-y rounded-[14px] border-[1.5px] bg-white px-4 py-3.5 text-[15px] leading-[1.5] text-ink placeholder:text-[#B6A99B] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${errors.body ? "border-[#D9583C]" : "border-[#EADFD0]"} ${errors.body ? "" : "mb-[22px]"}`}
           />
           {errors.body && (
             <p className={errorTextClassName}>{errors.body}</p>

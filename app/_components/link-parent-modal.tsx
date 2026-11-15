@@ -33,9 +33,9 @@ const relationOptions: { value: ParentRelation; label: string }[] = [
 ];
 
 const labelClassName =
-  "mb-2 block text-[12px] font-bold tracking-[0.7px] text-muted";
+  "mb-2 block text-[12px] font-extrabold tracking-[0.7px] text-[#94887B]";
 const baseInputClassName =
-  "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E]";
+  "w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[13px] text-[15px] text-ink placeholder:text-[#B6A99B] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E]";
 const errorTextClassName =
   "mb-2 mt-1 text-[13px] font-semibold text-[#B3452E]";
 
@@ -308,7 +308,9 @@ export function LinkParentModal({
           )}
 
           {submitError && (
-            <p className={errorTextClassName}>{submitError}</p>
+            <p className="mt-1 mb-2 rounded-[12px] border border-[#F0B4A4] bg-[#F9D2DE] px-4 py-3 text-[13.5px] font-semibold text-[#B3452E]">
+              {submitError}
+            </p>
           )}
 
           <button

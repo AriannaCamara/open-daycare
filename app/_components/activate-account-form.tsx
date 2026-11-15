@@ -247,7 +247,7 @@ export function ActivateAccountForm({
           </div>
         </div>
 
-        <label className="mb-2 block text-[12px] font-bold tracking-[.7px] text-muted">
+        <label className="mb-2 block text-[12px] font-extrabold tracking-[.7px] text-[#94887B]">
           EMAIL
         </label>
         <input
@@ -257,7 +257,7 @@ export function ActivateAccountForm({
           className="mb-1 w-full rounded-[14px] border-[1.5px] border-[#EADFD0] bg-[#F5EFE6] px-4 py-[14px] text-[15px] text-[#8A7C6D] outline-none"
         />
 
-        <label className="mb-2 mt-4 block text-[12px] font-bold tracking-[.7px] text-muted">
+        <label className="mb-2 mt-4 block text-[12px] font-extrabold tracking-[.7px] text-[#94887B]">
           {mode === "signIn" ? "CONTRASEÑA" : "CREAR CONTRASEÑA"}
         </label>
         <input
@@ -269,7 +269,7 @@ export function ActivateAccountForm({
               password: event.target.value,
             }))
           }
-          className={`mb-1 w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${
+          className={`mb-1 w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-[#B6A99B] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${
             errors.password ? "border-[#D9583C]" : "border-[#EADFD0]"
           }`}
           placeholder="••••••••"

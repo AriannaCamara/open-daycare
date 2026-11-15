@@ -1,6 +1,6 @@
 # SPEC 21 — Armonía de estilos: labels, placeholders y errores
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 20
 > **Fecha:** 2026-11-15
 > **Objetivo:** Unificar en toda la app los labels de formulario, el color de placeholder y el error global de envío según las referencias `references/pantallas/*.dc.html`.
@@ -38,14 +38,14 @@ Este feature no introduce datos ni componentes nuevos: son cambios de clases Tai
 
 ## Criterios de aceptación
 
-- [ ] Ningún label de formulario usa `font-bold` + `text-muted` ni `text-muted-strong`; todos son `text-[12px] font-extrabold tracking-[0.7px] text-[#94887B]`.
-- [ ] Ningún placeholder usa `#7E7264`; todos usan `#B6A99B`.
-- [ ] Los modales "Nueva publicación", "Agregar niño" y el de cuidados muestran "Cancelar" en `#94887B` bold 15px.
-- [ ] El error global de envío del modal de publicación se renderiza como caja rosa con texto `#B3452E` (mismo estilo que "Agregar niño").
-- [ ] Los errores de campo siguen siendo texto rojo plano (sin caja) en todos los modales.
-- [ ] Ninguna métrica de input cambió respecto a su referencia (padding 13px/14px, border 1.5px, radius 14px).
-- [ ] Capturas de `/login`, `/activate`, `/feed`, `/kids`, `/family`, perfil de niño y los 4 modales sin desviaciones de los 4 patrones.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] Ningún label de formulario usa `font-bold` + `text-muted` ni `text-muted-strong`; todos son `text-[12px] font-extrabold tracking-[0.7px] text-[#94887B]`.
+- [x] Ningún placeholder usa `#7E7264`; todos usan `#B6A99B`.
+- [x] Los modales "Nueva publicación", "Agregar niño" y el de cuidados muestran "Cancelar" en `#94887B` bold 15px.
+- [x] El error global de envío del modal de publicación se renderiza como caja rosa con texto `#B3452E` (mismo estilo que "Agregar niño").
+- [x] Los errores de campo siguen siendo texto rojo plano (sin caja) en todos los modales.
+- [x] Ninguna métrica de input cambió respecto a su referencia (padding 13px/14px, border 1.5px, radius 14px).
+- [x] Capturas de `/login`, `/activate`, `/feed`, `/kids`, `/family`, perfil de niño y los 4 modales sin desviaciones de los 4 patrones. — 19 capturas en `.playwright-mcp/spec21-*.png` (1440/768/375); **salvedad:** `/activate` solo se capturó con el estado "Código no válido" porque sin SMTP no existe una invitación `pending` válida; su formulario se verificó por revisión de código (`activate-account-form.tsx` → labels/placeholder canónicos).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
