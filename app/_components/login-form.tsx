@@ -135,7 +135,7 @@ export function LoginForm() {
 
           <label
             htmlFor="login-email"
-            className="mb-2 block text-[12px] font-bold tracking-[.7px] text-muted"
+            className="mb-2 block text-[12px] font-extrabold tracking-[.7px] text-[#94887B]"
           >
             EMAIL
           </label>
@@ -150,7 +150,7 @@ export function LoginForm() {
             placeholder="tu@email.com"
             aria-invalid={errors.email ? true : undefined}
             aria-describedby={errors.email ? "login-email-error" : undefined}
-            className={`mb-1 w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${
+            className={`mb-1 w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-[#B6A99B] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${
               errors.email ? "border-[#D9583C]" : "border-[#EADFD0]"
             }`}
           />
@@ -166,7 +166,7 @@ export function LoginForm() {
 
           <label
             htmlFor="login-password"
-            className="mb-2 mt-4 block text-[12px] font-bold tracking-[.7px] text-muted"
+            className="mb-2 mt-4 block text-[12px] font-extrabold tracking-[.7px] text-[#94887B]"
           >
             CONTRASEÑA
           </label>
@@ -184,7 +184,7 @@ export function LoginForm() {
             placeholder="••••••••"
             aria-invalid={errors.password ? true : undefined}
             aria-describedby={errors.password ? "login-password-error" : undefined}
-            className={`w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-[#7E7264] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${
+            className={`w-full rounded-[14px] border-[1.5px] bg-white px-4 py-[14px] text-[15px] text-ink placeholder:text-[#B6A99B] focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E] ${
               errors.password ? "border-[#D9583C]" : "border-[#EADFD0]"
             }`}
           />

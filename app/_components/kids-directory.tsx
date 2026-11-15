@@ -59,7 +59,7 @@ export function KidsDirectory({ kids, rooms }: KidsDirectoryProps) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Buscar niño…"
-            className="min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-[#7E7264]"
+            className="min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-[#B6A99B]"
           />
         </div>
         <SelectDropdown
