@@ -6,6 +6,7 @@ import {
   type ChangeEvent,
   type FormEvent,
 } from "react";
+import { SelectDropdown } from "@/app/_components/select-dropdown";
 
 export type AddChildValues = {
   fullName: string;
@@ -106,11 +107,8 @@ export function AddChildModal({
     onClose();
   }
 
-  function updateField(
-    field: keyof AddChildValues,
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ) {
-    setValues((current) => ({ ...current, [field]: event.target.value }));
+  function setFieldValue(field: keyof AddChildValues, value: string) {
+    setValues((current) => ({ ...current, [field]: value }));
     setSaveError(null);
     setErrors((current) => {
       if (!current[field]) {
@@ -120,6 +118,13 @@ export function AddChildModal({
       delete next[field];
       return next;
     });
+  }
+
+  function updateField(
+    field: keyof AddChildValues,
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) {
+    setFieldValue(field, event.target.value);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -217,18 +222,17 @@ export function AddChildModal({
               <label className={labelClassName} htmlFor="add-child-room">
                 SALA
               </label>
-              <select
-                id="add-child-room"
-                value={values.roomId}
-                onChange={(event) => updateField("roomId", event)}
-                className={`${inputClassName(Boolean(errors.roomId))} font-bold appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23B0A290%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[right_16px_center] bg-no-repeat pr-10`}
-              >
-                {rooms.map((room) => (
-                  <option key={room.id} value={room.id}>
-                    {room.name}
-                  </option>
-                ))}
-              </select>
+              <div id="add-child-room">
+                <SelectDropdown
+                  fullWidth
+                  hasError={Boolean(errors.roomId)}
+                  options={rooms.map((room) => ({ id: room.id, label: room.name }))}
+                  value={values.roomId}
+                  onChange={(id) => setFieldValue("roomId", id)}
+                  ariaLabel="Elegir sala"
+                  placeholder="Elegí una sala"
+                />
+              </div>
               {errors.roomId && (
                 <p className={errorTextClassName}>{errors.roomId}</p>
               )}

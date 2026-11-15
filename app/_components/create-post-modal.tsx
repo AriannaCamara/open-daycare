@@ -11,6 +11,7 @@ import {
   type RoomOption,
 } from "@/app/_data/feed";
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { SelectDropdown } from "@/app/_components/select-dropdown";
 
 type ModalMode = "create" | "edit";
 
@@ -67,9 +68,6 @@ const errorTextClassName = "mb-[22px] mt-1 text-[13px] font-semibold text-[#B345
 const activePillClassName = "border-[#3F362E] bg-[#3F362E] text-white";
 
 const inactivePillClassName = "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]";
-
-const selectClassName =
-  "mb-[22px] w-full cursor-pointer appearance-none rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-3.5 text-[15px] font-bold text-ink focus:border-[#F2937A] focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E]";
 
 export function CreatePostModal({
   mode,
@@ -357,18 +355,19 @@ export function CreatePostModal({
           )}
 
           <div className={sectionLabelClassName}>SALA</div>
-          <select
-            value={roomId ?? ""}
-            onChange={(event) => setRoomId(event.target.value || null)}
-            className={selectClassName}
-          >
-            {rooms.map((room) => (
-              <option key={room.id} value={room.id}>
-                {room.name}
-              </option>
-            ))}
-            <option value="">Toda la guardería</option>
-          </select>
+          <div className="mb-[22px]">
+            <SelectDropdown
+              fullWidth
+              options={[
+                ...rooms.map((room) => ({ id: room.id, label: room.name })),
+                { id: "", label: "Toda la guardería" },
+              ]}
+              value={roomId ?? ""}
+              onChange={(id) => setRoomId(id || null)}
+              ariaLabel="Elegir sala"
+              placeholder="Elegí una sala"
+            />
+          </div>
 
           <div className={sectionLabelClassName}>TIPO</div>
           <div

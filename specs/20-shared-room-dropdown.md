@@ -1,6 +1,6 @@
 # SPEC 20 — Dropdown de sala compartido con estilo de listbox
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 02 (lista de niños `/kids`), SPEC 16 (dropdown de sala en el modal de publicación)
 > **Fecha:** 2026-11-15
 > **Objetivo:** Reemplazar los `<select>` nativos de sala por un componente de dropdown compartido con el mismo estilo de listbox que ya usa el filtro de `/kids`.
@@ -10,7 +10,7 @@
 **Incluye:**
 
 - Nuevo archivo `app/_components/select-dropdown.tsx` que exporta `SelectDropdown`, extraído del `RoomDropdown` actual (`app/_components/kids-directory.tsx`).
-- API: `options: { id: string; label: string }[]`, `value: string`, `onChange: (id: string) => void`, `ariaLabel: string`, `placeholder: string`, `fullWidth?: boolean`.
+- API: `options: { id: string; label: string }[]`, `value: string`, `onChange: (id: string) => void`, `ariaLabel: string`, `placeholder: string`, `fullWidth?: boolean`, `hasError?: boolean` (borde `#D9583C` en reposo; ampliación aprobada en fase de implementación para conservar el borde de error de "Agregar niño").
 - Estética de la imagen 2 (literal del `RoomDropdown` actual): trigger `rounded-[14px] border-[1.5px] border-[#EADFD0] bg-white px-4 py-3 text-[15px] font-bold text-ink`, hover/foco `border-[#B3452E]` + anillo `focus:outline-2 focus:outline-offset-2 focus:outline-[#B3452E]`, chevron 16px `#B0A290` que rota 180° al abrir.
 - Menú `role="listbox"` (`rounded-[16px] border border-[#ECE0D0] bg-[#FBF4EC] p-1.5` + sombra `shadow-[0_16px_36px_-16px_rgba(63,54,46,0.28)]`), opción activa `bg-accent-ghost text-accent`, hover `bg-[#F4ECE1]`; cierra con Escape y con click afuera.
 - Tres usos: filtro de sala de `/kids` (reemplaza `RoomDropdown`), sección **SALA** de `app/_components/create-post-modal.tsx`, sección **SALA** de `app/_components/add-child-modal.tsx`.
@@ -39,17 +39,17 @@ Este feature no introduce estructuras nuevas. El componente declara localmente `
 
 ## Criterios de aceptación
 
-- [ ] Existe `app/_components/select-dropdown.tsx` exportando `SelectDropdown`; ninguno de los 3 archivos de uso contiene `<select>`.
-- [ ] El trigger muestra el nombre de la sala, texto `font-bold` 15px y chevron 16px `#B0A290` que rota al abrir.
-- [ ] El trigger tiene borde `#EADFD0` en reposo y `#B3452E` con anillo de foco al enfocar/hover (estilo imagen 2).
-- [ ] El menú tiene `role="listbox"`, cada fila `role="option"` con `aria-selected`, y `aria-expanded`/`aria-haspopup` en el trigger.
-- [ ] La opción seleccionada se resalta con fondo `bg-accent-ghost` y texto `text-accent`.
-- [ ] Escape y un click fuera del componente cierran el menú; el listener se limpia al desmontar (sin fugas).
-- [ ] El filtro de `/kids` se ve igual que antes (captura con menú abierto comparada con la actual).
-- [ ] El modal "Nueva publicación" lista las salas + "Toda la guardería" al final, arranca en la primera sala y el `roomId` que llega al action es el mismo de antes.
-- [ ] El modal "Agregar niño" lista las salas, guarda la sala elegida y la validación "Elegí una sala." sigue funcionando.
-- [ ] En 1440/768/375 el menú no se corta ni queda tapado por otros elementos dentro del modal.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] Existe `app/_components/select-dropdown.tsx` exportando `SelectDropdown`; ninguno de los 3 archivos de uso contiene `<select>`.
+- [x] El trigger muestra el nombre de la sala, texto `font-bold` 15px y chevron 16px `#B0A290` que rota al abrir.
+- [x] El trigger tiene borde `#EADFD0` en reposo y `#B3452E` con anillo de foco al enfocar/hover (estilo imagen 2).
+- [x] El menú tiene `role="listbox"`, cada fila `role="option"` con `aria-selected`, y `aria-expanded`/`aria-haspopup` en el trigger.
+- [x] La opción seleccionada se resalta con fondo `bg-accent-ghost` y texto `text-accent`.
+- [x] Escape y un click fuera del componente cierran el menú; el listener se limpia al desmontar (sin fugas).
+- [x] El filtro de `/kids` se ve igual que antes (captura con menú abierto comparada con la actual).
+- [x] El modal "Nueva publicación" lista las salas + "Toda la guardería" al final, arranca en la primera sala y el `roomId` que llega al action es el mismo de antes.
+- [x] El modal "Agregar niño" lista las salas, guarda la sala elegida y la validación "Elegí una sala." sigue funcionando.
+- [x] En 1440/768/375 el menú no se corta ni queda tapado por otros elementos dentro del modal.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
@@ -66,6 +66,7 @@ Este feature no introduce estructuras nuevas. El componente declara localmente `
 - **Sí:** extraer del `RoomDropdown` existente (la imagen 2 ya es este código). **No:** rediseñar el menú.
 - **Sí:** eliminar el `<select>` nativo. **No:** ocultarlo con CSS (sigue siendo el control pobre de estilo).
 - **Sí:** opciones como prop (`id`/`label`), así "Toda la guardería" (`id: ""`) entra sin casos especiales.
+- **Sí:** Escape manejado en el `onKeyDown` del contenedor con `stopPropagation()`. **No:** listener en `window` — se pisan con el del modal y lo cerraba junto con el menú (riesgo verificado en fase de implementación).
 - **Sí:** sin `max-h`/scroll en el menú (hay 3 salas). **No:** virtualización.
 
 ## Riesgos
