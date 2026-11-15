@@ -21,7 +21,7 @@ const careFields: Array<{
   },
 ];
 
-function BlockCard({
+export function BlockCard({
   title,
   action,
   children,
