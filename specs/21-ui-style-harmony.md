@@ -44,7 +44,7 @@ Este feature no introduce datos ni componentes nuevos: son cambios de clases Tai
 - [x] El error global de envío del modal de publicación se renderiza como caja rosa con texto `#B3452E` (mismo estilo que "Agregar niño").
 - [x] Los errores de campo siguen siendo texto rojo plano (sin caja) en todos los modales.
 - [x] Ninguna métrica de input cambió respecto a su referencia (padding 13px/14px, border 1.5px, radius 14px).
-- [ ] Capturas de `/login`, `/activate`, `/feed`, `/kids`, `/family`, perfil de niño y los 4 modales sin desviaciones de los 4 patrones. — 19 capturas en `.playwright-mcp/spec21-*.png` (1440/768/375); **salvedad:** `/activate` solo se capturó con el estado "Código no válido" porque sin SMTP no existe una invitación `pending` válida; su formulario se verificó por revisión de código (`activate-account-form.tsx` → labels/placeholder canónicos).
+- [x] Capturas de `/login`, `/activate`, `/feed`, `/kids`, `/family`, perfil de niño y los 4 modales sin desviaciones de los 4 patrones. — 19 capturas en `.playwright-mcp/spec21-*.png` (1440/768/375); **salvedad:** `/activate` solo se capturó con el estado "Código no válido" porque sin SMTP no existe una invitación `pending` válida; su formulario se verificó por revisión de código (`activate-account-form.tsx` → labels/placeholder canónicos).
 - [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
