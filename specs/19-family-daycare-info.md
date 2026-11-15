@@ -1,6 +1,6 @@
 # SPEC 19 — Pantalla "Guardería" en el panel familiar (contacto + equipo)
 
-> **Estado:** Implemented
+> **Estado:** Implementado
 > **Depende de:** SPEC 09 (protección de rutas `/family/*`), SPEC 17 (policy `users_select_same_daycare_members`), SPEC 18 (patrón de pantalla familiar y bloques)
 > **Fecha:** 2026-11-12
 > **Objetivo:** Una pantalla en el panel familiar donde el padre ve los datos de contacto de la guardería (teléfono, WhatsApp y email en un toque) y la lista del equipo que trabaja ahí.
@@ -120,19 +120,19 @@ family: [
 
 ## Criterios de aceptación
 
-- [ ] `/family/daycare` abre con sesión de parent y muestra el `h1` "Guardería".
-- [ ] El bloque CONTACTO muestra Nombre, Teléfono, Dirección, Horario y Email con los valores de la tabla `daycares`.
-- [ ] Cuyo campo sea `null` se muestra como "—" y no rompe el layout.
-- [ ] El botón "Llamar" tiene `href="tel:+541155550192"` (espacios y guiones normalizados) y solo aparece si `phone` no es null.
-- [ ] El botón "WhatsApp" tiene `href="https://wa.me/541155550192"` (solo dígitos) y solo aparece si `phone` no es null.
-- [ ] El botón "Escribir" tiene `href="mailto:hola@opendaycare.com"` y solo aparece si `email` no es null.
-- [ ] El bloque EQUIPO lista exactamente los usuarios `staff`/`admin` con `status='active'` de la guardería del padre, ordenados por nombre, con avatar/inicial y rol "Staff"/"Admin".
-- [ ] Ningún `parent` aparece en EQUIPO, ni usuarios de otra guardería (verificado con un segundo usuario).
-- [ ] Un padre sin equipo ve el estado vacío del bloque, sin errores de consola.
-- [ ] El sidebar familiar tiene "Guardería" que navega a `/family/daycare` y se resalta activo; el sidebar staff no lo muestra.
-- [ ] Un `update` sobre `daycares` desde un parent devuelve 0 filas (la policy es solo `select`).
-- [ ] Sin sesión, `/family/daycare` redirige a `/login` (guard SPEC 09 intacto).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores; verificación Playwright en 1440/768/375.
+- [x] `/family/daycare` abre con sesión de parent y muestra el `h1` "Guardería".
+- [x] El bloque CONTACTO muestra Nombre, Teléfono, Dirección, Horario y Email con los valores de la tabla `daycares`.
+- [x] Cuyo campo sea `null` se muestra como "—" y no rompe el layout.
+- [x] El botón "Llamar" tiene `href="tel:+541155550192"` (espacios y guiones normalizados) y solo aparece si `phone` no es null.
+- [x] El botón "WhatsApp" tiene `href="https://wa.me/541155550192"` (solo dígitos) y solo aparece si `phone` no es null.
+- [x] El botón "Escribir" tiene `href="mailto:hola@opendaycare.com"` y solo aparece si `email` no es null.
+- [x] El bloque EQUIPO lista exactamente los usuarios `staff`/`admin` con `status='active'` de la guardería del padre, ordenados por nombre, con avatar/inicial y rol "Staff"/"Admin".
+- [x] Ningún `parent` aparece en EQUIPO, ni usuarios de otra guardería (verificado con un segundo usuario).
+- [x] Un padre sin equipo ve el estado vacío del bloque, sin errores de consola.
+- [x] El sidebar familiar tiene "Guardería" que navega a `/family/daycare` y se resalta activo; el sidebar staff no lo muestra.
+- [x] Un `update` sobre `daycares` desde un parent devuelve 0 filas (la policy es solo `select`).
+- [x] Sin sesión, `/family/daycare` redirige a `/login` (guard SPEC 09 intacto).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores; verificación Playwright en 1440/768/375.
 
 ## Decisiones tomadas y descartadas
 
