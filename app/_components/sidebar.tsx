@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { BRAND_NAME, PawIcon } from "@/app/_components/brand";
 import { requestNewPost } from "@/app/_components/new-post-trigger";
 import type { SidebarRoom } from "@/app/_data/feed";
 import type { SidebarUser } from "@/app/_data/session";
@@ -26,24 +27,6 @@ interface NavItem {
   href: string;
   label: string;
   icon: ReactNode;
-}
-
-function SunIcon() {
-  return (
-    <svg
-      width="21"
-      height="21"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#fff"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-    </svg>
-  );
 }
 
 function PlusIcon() {
@@ -206,11 +189,11 @@ function SidebarContent({
         className="flex items-center gap-[11px] px-2 pb-[22px] pt-1"
       >
         <div className="flex size-[38px] flex-none items-center justify-center rounded-xl bg-[linear-gradient(155deg,#F8C3A8,#F2937A)]">
-          <SunIcon />
+          <PawIcon />
         </div>
         <div>
           <div className="font-display text-[17px] font-semibold leading-none text-ink">
-            OpenDayCare
+            {BRAND_NAME}
           </div>
           <div className="mt-0.5 text-[11.5px] text-muted-strong">
             {panel === "family" ? "Familia" : room?.roomName}
@@ -298,10 +281,10 @@ export function Sidebar({ user, panel, room }: SidebarProps) {
         </button>
         <Link href={panelHomeHref(panel)} className="flex items-center gap-2.5">
           <div className="flex size-8 flex-none items-center justify-center rounded-lg bg-[linear-gradient(155deg,#F8C3A8,#F2937A)]">
-            <SunIcon />
+            <PawIcon />
           </div>
           <span className="font-display text-[16px] font-semibold text-ink">
-            OpenDayCare
+            {BRAND_NAME}
           </span>
         </Link>
       </header>
