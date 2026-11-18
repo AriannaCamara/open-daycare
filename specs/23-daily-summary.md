@@ -1,6 +1,6 @@
 # SPEC 23 — Resumen del día (vista familiar + registro del staff)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 16 (staff post publishing), SPEC 18 (family child profile)
 > **Fecha:** 2026-11-18
 > **Objetivo:** Permitir a la familia ver el "Resumen del día" de cada hijo (métricas, ánimo, momento destacado y línea de momentos) y al staff registrarlo desde el perfil del niño.
@@ -70,18 +70,18 @@ create table public.daily_summaries (
 
 ## Criterios de aceptación
 
-- [ ] `/family/daily-summary` renderiza sin errores para un `parent` con sesión válida.
-- [ ] Con registro existente, se muestran comidas, siesta formateada (`1h 30`), momentos, ánimo y "lo más lindo" del día de hoy.
-- [ ] Sin registro, se ve el estado vacío "Todavía no hay resumen para hoy".
-- [ ] La línea de tiempo lista los posts de hoy etiquetados con el niño, con su hora `HH:MM`, y está vacía si no hay posts.
-- [ ] El staff guarda el resumen desde el modal y, al recargar la vista familiar, los datos persisten.
-- [ ] Un `parent` **no** puede hacer `INSERT`/`UPDATE` en `daily_summaries` (verificado por RLS, no por UI).
-- [ ] Un `parent` **no** ve resúmenes de niños no vinculados a él (verificado por RLS).
-- [ ] `anon` no tiene acceso a la tabla.
-- [ ] El botón "Resumen del día" del perfil de niño staff abre el modal (ya no navega a 404).
-- [ ] El item "Resumen del día" aparece en el sidebar familiar y se resalta en `/family/daily-summary`.
-- [ ] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/family/daily-summary` renderiza sin errores para un `parent` con sesión válida.
+- [x] Con registro existente, se muestran comidas, siesta formateada (`1h 30`), momentos, ánimo y "lo más lindo" del día de hoy.
+- [x] Sin registro, se ve el estado vacío "Todavía no hay resumen para hoy".
+- [x] La línea de tiempo lista los posts de hoy etiquetados con el niño, con su hora `HH:MM`, y está vacía si no hay posts.
+- [x] El staff guarda el resumen desde el modal y, al recargar la vista familiar, los datos persisten.
+- [x] Un `parent` **no** puede hacer `INSERT`/`UPDATE` en `daily_summaries` (verificado por RLS, no por UI).
+- [x] Un `parent` **no** ve resúmenes de niños no vinculados a él (verificado por RLS).
+- [x] `anon` no tiene acceso a la tabla.
+- [x] El botón "Resumen del día" del perfil de niño staff abre el modal (ya no navega a 404).
+- [x] El item "Resumen del día" aparece en el sidebar familiar y se resalta en `/family/daily-summary`.
+- [x] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 

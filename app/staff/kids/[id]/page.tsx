@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { Avatar } from "@/app/_components/avatar";
 import { CareBlock, NotesBlock } from "@/app/_components/child-profile-blocks";
 import { ParentsPanel } from "@/app/_components/parents-panel";
+import { getDailySummary } from "@/app/_data/daily-summary";
 import { fetchStaffChildProfile } from "@/app/_data/family-children";
 import { fetchChildParents } from "@/app/_data/parents";
 import { fetchSessionUser, isStaffRole } from "@/app/_data/session";
@@ -70,9 +71,10 @@ async function KidProfile({
 
   const supabase = await createClient();
 
-  const [session, profile] = await Promise.all([
+  const [session, profile, summary] = await Promise.all([
     fetchSessionUser(supabase),
     fetchStaffChildProfile(supabase, id),
+    getDailySummary(supabase, id),
   ]);
 
   // fetchStaffChildProfile ya llama notFound() si el niño no existe o está
@@ -156,6 +158,7 @@ async function KidProfile({
           childId={child.id}
           childName={child.fullName}
           canInvite={isStaffRole(session?.role ?? null)}
+          summary={summary}
         />
       </div>
     </div>

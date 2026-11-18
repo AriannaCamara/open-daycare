@@ -45,7 +45,8 @@ interface PostRow {
 }
 
 // published_at → "14:20" en la zona horaria de la guardería.
-function formatPostTime(iso: string): string {
+// Exportado para la línea de tiempo del resumen del día (SPEC 23).
+export function formatPostTime(iso: string): string {
   return new Intl.DateTimeFormat("es-AR", {
     hour: "2-digit",
     minute: "2-digit",
