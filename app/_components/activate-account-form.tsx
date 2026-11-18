@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import type { AuthError } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
+import { BRAND_NAME, PawIcon } from "@/app/_components/brand";
 import { Avatar } from "@/app/_components/avatar";
 import type { ActivationInvitation } from "@/app/activate-account/page";
 
@@ -31,30 +32,12 @@ function mapAuthError(error: AuthError): string {
   return GENERIC_SIGNUP_ERROR;
 }
 
-function SunIcon() {
-  return (
-    <svg
-      width="30"
-      height="30"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#fff"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M17.7 6.3l1.4-1.4M6.3 17.7l-1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4M4.9 4.9l1.4 1.4" />
-    </svg>
-  );
-}
-
 function InvalidCodeState() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#FBF4EC] px-10 py-10">
       <div className="w-full max-w-[440px]">
         <div className="mb-[22px] flex h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-[linear-gradient(155deg,#F8C3A8,#F2937A)] shadow-[0_12px_26px_-10px_rgba(238,129,100,.65)]">
-          <SunIcon />
+          <PawIcon size={30} />
         </div>
         <h1 className="mb-2 font-display text-[32px] leading-[1.15] font-semibold text-ink">
           Código no válido
@@ -216,16 +199,16 @@ export function ActivateAccountForm({
     <div className="flex min-h-screen items-center justify-center bg-[#FBF4EC] px-10 py-10">
       <form noValidate onSubmit={handleSubmit} className="w-full max-w-[440px]">
         <div className="mb-[22px] flex h-[58px] w-[58px] items-center justify-center rounded-[18px] bg-[linear-gradient(155deg,#F8C3A8,#F2937A)] shadow-[0_12px_26px_-10px_rgba(238,129,100,.65)]">
-          <SunIcon />
+          <PawIcon size={30} />
         </div>
         <h1 className="mb-2 font-display text-[32px] leading-[1.15] font-semibold text-ink">
           {mode === "signIn"
             ? "Iniciá sesión para aceptar la invitación"
-            : "Bienvenida a OpenDayCare"}
+            : `Bienvenida a ${BRAND_NAME}`}
         </h1>
         <p className="mb-[26px] text-[15.5px] leading-[1.55] text-muted">
           {mode === "signIn"
-            ? "Este email ya tiene una cuenta en OpenDayCare. Ingresá tu contraseña para aceptar la invitación."
+            ? `Este email ya tiene una cuenta en ${BRAND_NAME}. Ingresá tu contraseña para aceptar la invitación.`
             : "Te invitaron a seguir el día de tu hijo. Creá tu contraseña para activar la cuenta."}
         </p>
 

@@ -1,6 +1,6 @@
 # SPEC 22 — Rebrand visual a "Huellitas": nombre y huella
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** —
 > **Fecha:** 2026-11-16
 > **Objetivo:** Reemplazar en toda la capa visual de la app el nombre "OpenDayCare" por "Huellitas" y el logo de sol por una huella de perrito, sin tocar nada interno ni las referencias del curso.
@@ -41,16 +41,16 @@ Este feature no introduce datos ni estructuras nuevas. Es un cambio de textos, u
 
 ## Criterios de aceptación
 
-- [ ] `grep -ri "opendaycare" app/` no devuelve ningún resultado.
-- [ ] Existe `app/_components/brand.tsx` exportando `PawIcon` y `BRAND_NAME`; sidebar, login y activate los importan (sin `SunIcon` local en esos 3 archivos).
-- [ ] Sidebar desktop y header móvil muestran la huella + "Huellitas".
-- [ ] `/login` muestra la huella + "Huellitas".
-- [ ] `/activate` muestra "Bienvenida a Huellitas" y "…cuenta en Huellitas".
-- [ ] Títulos de pestaña: "Huellitas" (raíz) e "Iniciar sesión · Huellitas" (`/login`).
-- [ ] El botón "Resumen del día" de `parents-panel.tsx` sigue mostrando el sol.
-- [ ] `app/favicon.ico` muestra la huella sobre gradiente en la pestaña.
-- [ ] `git status` no muestra cambios en `references/`.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `grep -ri "opendaycare" app/` no devuelve ningún resultado.
+- [x] Existe `app/_components/brand.tsx` exportando `PawIcon` y `BRAND_NAME`; sidebar, login y activate los importan (sin `SunIcon` local en esos 3 archivos).
+- [x] Sidebar desktop y header móvil muestran la huella + "Huellitas".
+- [x] `/login` muestra la huella + "Huellitas".
+- [x] `/activate` muestra "Bienvenida a Huellitas" y "…cuenta en Huellitas".
+- [x] Títulos de pestaña: "Huellitas" (raíz) e "Iniciar sesión · Huellitas" (`/login`).
+- [x] El botón "Resumen del día" de `parents-panel.tsx` sigue mostrando el sol.
+- [x] `app/favicon.ico` muestra la huella sobre gradiente en la pestaña.
+- [x] `git status` no muestra cambios en `references/`.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 

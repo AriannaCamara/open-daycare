@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fredoka, Nunito } from "next/font/google";
+import { BRAND_NAME } from "@/app/_components/brand";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -16,7 +17,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "OpenDayCare",
+  title: BRAND_NAME,
   description: "Guardería · Sala Soles",
 };
 

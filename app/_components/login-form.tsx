@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import type { AuthError } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
+import { BRAND_NAME, PawIcon } from "@/app/_components/brand";
 
 type LoginValues = { email: string; password: string };
 type FieldErrors<K extends string> = Partial<Record<K, string>>;
@@ -19,24 +20,6 @@ function mapAuthError(error: AuthError): string {
     return "Tu email aún no está confirmado.";
   }
   return "No pudimos iniciar sesión. Intentá de nuevo.";
-}
-
-function SunIcon() {
-  return (
-    <svg
-      width="26"
-      height="26"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#fff"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-    </svg>
-  );
 }
 
 export function LoginForm() {
@@ -100,10 +83,10 @@ export function LoginForm() {
 
         <div className="relative flex items-center gap-[13px]">
           <div className="flex h-[46px] w-[46px] items-center justify-center rounded-[14px] bg-white/22">
-            <SunIcon />
+            <PawIcon size={26} />
           </div>
           <span className="font-display text-[21px] font-semibold tracking-[.5px]">
-            OpenDayCare
+            {BRAND_NAME}
           </span>
         </div>
 
