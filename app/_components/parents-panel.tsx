@@ -11,7 +11,8 @@ import {
   parentStatusStyles,
 } from "@/app/_data/children";
 import { Avatar } from "@/app/_components/avatar";
-import Link from "next/link";
+import { DailySummaryModal } from "@/app/_components/daily-summary-modal";
+import type { DailySummary } from "@/app/_data/daily-summary";
 import { LinkParentModal } from "@/app/_components/link-parent-modal";
 
 interface ParentsPanelProps {
@@ -19,6 +20,8 @@ interface ParentsPanelProps {
   childId: string;
   childName: string;
   canInvite: boolean;
+  // Registro de hoy del niño (null = sin resumen): precarga del modal.
+  summary: DailySummary | null;
 }
 
 const relationLabels: Record<ParentRelation, string> = {
@@ -72,19 +75,22 @@ export function ParentsPanel({
   childId,
   childName,
   canInvite,
+  summary,
 }: ParentsPanelProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
 
   return (
     <>
-      <Link
-        href="/daily-summary"
-        className="flex w-full items-center justify-center gap-[9px] rounded-[14px] bg-ink p-[13px] text-[15px] font-extrabold text-white"
+      <button
+        type="button"
+        onClick={() => setSummaryOpen(true)}
+        className="flex w-full cursor-pointer items-center justify-center gap-[9px] rounded-[14px] border-none bg-ink p-[13px] text-[15px] font-extrabold text-white"
       >
         <SunIcon />
         Resumen del día
-      </Link>
+      </button>
 
       <div className="rounded-[16px] border border-border bg-surface px-[18px] py-4">
         <div className="mb-3.5 text-[12.5px] font-extrabold tracking-[0.8px] text-[#8A7C6D]">
@@ -149,6 +155,13 @@ export function ParentsPanel({
           childName={childName}
         />
       )}
+
+      <DailySummaryModal
+        open={summaryOpen}
+        onClose={() => setSummaryOpen(false)}
+        childId={childId}
+        initial={summary}
+      />
     </>
   );
 }
