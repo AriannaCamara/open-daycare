@@ -92,6 +92,8 @@ export interface Comment {
 export interface Post extends EditablePost {
   givenNames: string[]; // [] si es post de sala/día
   time: string; // "14:20" — published_at en America/Argentina/Buenos_Aires
+  authorName: string; // users.full_name del autor ("" si RLS lo oculta)
+  roomName: string; // rooms.name ("" si el post no tiene sala)
   audience: string; // "familia de X, Y" | "toda la sala" | "toda la guardería"
   authorId: string;
   likes: number; // total real de reactions
