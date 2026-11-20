@@ -38,6 +38,8 @@ interface PostRow {
   room_id: string | null;
   author_id: string;
   published_at: string;
+  users: { full_name: string } | null;
+  rooms: { name: string } | null;
   post_children: PostChildRow[];
   post_photos: PostPhotoRow[];
   reactions: PostReactionRow[];
@@ -80,6 +82,8 @@ export async function fetchPosts(
     .from("posts")
     .select(
       `id, type, body, room_id, author_id, published_at,
+       users ( full_name ),
+       rooms ( name ),
        post_children ( child_id, children ( full_name ) ),
        post_photos ( id, url, position ),
        reactions ( user_id ),
@@ -142,6 +146,11 @@ export async function fetchPosts(
         .filter((photo) => photo.url),
       givenNames,
       time: formatPostTime(row.published_at),
+      // SPEC 24: autor y sala reales para la tarjeta familiar
+      // ("HH:MM · autor · sala"). RLS: users_select_same_daycare_members
+      // (SPEC 17) + rooms_select; "" si el post no tiene sala.
+      authorName: row.users?.full_name ?? "",
+      roomName: row.rooms?.name ?? "",
       audience: buildAudience(givenNames, row.room_id),
       likes: row.reactions.length,
       likedByMe: row.reactions.some((reaction) => reaction.user_id === userId),

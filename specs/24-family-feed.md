@@ -1,6 +1,6 @@
 # SPEC 24 — Feed de familia (vista propia con filtro por hijo)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 16 (staff post publishing), SPEC 17 (feed likes and comments), SPEC 18 (family child profile)
 > **Fecha:** 2026-11-19
 > **Objetivo:** Reemplazar el `/family` actual (feed genérico de solo lectura) por la vista definida en `references/pantallas/familia-feed.dc.html`: cabecera personalizada, filtro de posts por hijo y tarjetas con métricas de engagement.
@@ -45,18 +45,18 @@ Sin cambios de schema. Fuentes existentes:
 
 ## Criterios de aceptación
 
-- [ ] `/family` renderiza sin errores para un `parent` con sesión válida y muestra la cabecera `TU FAMILIA` / `Hola, {nombre}` / `Así va el día de hoy`.
-- [ ] Se muestran pills con los hijos vinculados al parent + pill `Todos` (activo por defecto, estilo oscuro).
-- [ ] Al elegir un hijo, solo se listan los posts etiquetados con él (`post_children`); al volver a `Todos` se ve el feed completo.
-- [ ] El separador de fecha muestra `HOY · …` con el día de hoy en español y mayúsculas.
-- [ ] Cada tarjeta muestra avatar, nombre del niño, `HH:MM · autor · sala`, pill del tipo y cuerpo del post.
-- [ ] Los contadores de ❤ y 💬 se ven en el footer y el like sigue funcionando (misma action que el feed staff).
-- [ ] Las tarjetas **no** son `<a>`/`<Link>` a rutas inexistentes (sin 404).
-- [ ] Sin posts (o sin resultados en el filtro), se ve el estado vacío.
-- [ ] El feed familiar sigue sin CTA de publicación ni opciones de editar/borrar.
-- [ ] `/staff` (feed staff) queda visual y funcionalmente sin cambios.
-- [ ] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/family` renderiza sin errores para un `parent` con sesión válida y muestra la cabecera `TU FAMILIA` / `Hola, {nombre}` / `Así va el día de hoy`.
+- [x] Se muestran pills con los hijos vinculados al parent + pill `Todos` (activo por defecto, estilo oscuro).
+- [x] Al elegir un hijo, solo se listan los posts etiquetados con él (`post_children`); al volver a `Todos` se ve el feed completo.
+- [x] El separador de fecha muestra `HOY · …` con el día de hoy en español y mayúsculas.
+- [x] Cada tarjeta muestra avatar, nombre del niño, `HH:MM · autor · sala`, pill del tipo y cuerpo del post.
+- [x] Los contadores de ❤ y 💬 se ven en el footer y el like sigue funcionando (misma action que el feed staff).
+- [x] Las tarjetas **no** son `<a>`/`<Link>` a rutas inexistentes (sin 404).
+- [x] Sin posts (o sin resultados en el filtro), se ve el estado vacío.
+- [x] El feed familiar sigue sin CTA de publicación ni opciones de editar/borrar.
+- [x] `/staff` (feed staff) queda visual y funcionalmente sin cambios.
+- [x] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 

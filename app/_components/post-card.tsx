@@ -7,6 +7,11 @@ import { useState } from "react";
 interface PostCardProps {
   post: Post;
   currentUserId: string;
+  // SPEC 24: línea "HH:MM · autor · sala" de la vista familiar; por defecto
+  // el copy del feed staff ("publicado por vos").
+  subtitle?: string;
+  // SPEC 24: la vista familiar no muestra la línea "Para: …".
+  showAudience?: boolean;
   // Acciones reales; el card las muestra solo si es su propio post.
   onEdit?: () => void;
   onDelete?: () => void;
@@ -111,6 +116,8 @@ function MegaphoneIcon() {
 export function PostCard({
   post,
   currentUserId,
+  subtitle,
+  showAudience = true,
   onEdit,
   onDelete,
   onToggleLike,
@@ -145,7 +152,7 @@ export function PostCard({
             {headerName}
           </div>
           <div className="text-[12.5px] text-muted-strong">
-            {post.time} · publicado por vos
+            {subtitle ?? `${post.time} · publicado por vos`}
           </div>
         </div>
         <div
@@ -162,9 +169,11 @@ export function PostCard({
         </div>
       </div>
 
-      <div className="mb-2.5 text-[12.5px] text-muted-strong">
-        Para: {post.audience}
-      </div>
+      {showAudience && (
+        <div className="mb-2.5 text-[12.5px] text-muted-strong">
+          Para: {post.audience}
+        </div>
+      )}
 
       <p className="m-0 text-[15.5px] leading-[1.55] text-ink-soft">
         {post.body}
@@ -198,7 +207,7 @@ export function PostCard({
           {post.commentsCount}
         </button>
         <span className="flex-1" />
-        {isAuthor && (
+        {isAuthor && onEdit && (
           <>
             <button
               type="button"
@@ -208,14 +217,16 @@ export function PostCard({
               Editar
             </button>
             <span className="w-[18px]" />
-            <button
-              type="button"
-              onClick={onDelete}
-              className="cursor-pointer border-none bg-transparent p-0 text-[14px] font-extrabold text-[#B3452E]"
-            >
-              Borrar
-            </button>
           </>
+        )}
+        {isAuthor && onDelete && (
+          <button
+            type="button"
+            onClick={onDelete}
+            className="cursor-pointer border-none bg-transparent p-0 text-[14px] font-extrabold text-[#B3452E]"
+          >
+            Borrar
+          </button>
         )}
       </div>
 
