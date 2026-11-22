@@ -1,6 +1,6 @@
 # SPEC 25 — Detalle de publicación (ruta única para ambos roles)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado 
 > **Depende de:** SPEC 16 (staff post publishing), SPEC 17 (feed likes and comments), SPEC 24 (family feed)
 > **Fecha:** 2026-11-21
 > **Objetivo:** Crear la ruta `/posts/[id]` que muestra una publicación completa (cabecera, cuerpo, fotos, likes y comentarios) siguiendo `references/pantallas/detalle-publicacion.dc.html`, accesible desde ambos feeds.
