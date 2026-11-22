@@ -167,6 +167,7 @@ export function FeedView({
                 key={post.id}
                 post={post}
                 currentUserId={user.id}
+                onOpen={() => router.push(`/posts/${post.id}`)}
                 onEdit={() => {
                   setEditingPost(post);
                   setOpen(true);

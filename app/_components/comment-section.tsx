@@ -3,13 +3,15 @@ import type { Comment } from "@/app/_data/feed";
 import type { ActionResult } from "@/app/_actions/engagement";
 import { COMMENT_EMPTY_ERROR } from "@/app/_actions/errors";
 import { containsProfanity, PROFANITY_ERROR } from "@/utils/profanity";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type RefObject } from "react";
 
 const toneKeys = Object.keys(avatarToneStyles) as AvatarTone[];
 
 interface CommentSectionProps {
   comments: Comment[];
   currentUserId: string;
+  // SPEC 25: el botón "Comentar" del detalle enfoca este input.
+  inputRef?: RefObject<HTMLInputElement | null>;
   onAddComment?: (body: string) => Promise<ActionResult | null>;
   onUpdateComment?: (
     commentId: string,
@@ -49,12 +51,22 @@ const inputClassName =
 const linkButtonClassName =
   "cursor-pointer border-none bg-transparent p-0 text-[13px] font-extrabold text-[#B3452E]";
 
+// Rol del comentarista para el sufijo junto al nombre (SPEC 25):
+// parent → "· familia"; staff/admin → "· staff". Sin rol legible (RLS) → sin
+// sufijo, para no romper el render del comentario.
+function roleSuffix(authorRole: string | null): string {
+  if (authorRole === "parent") return "· familia";
+  if (authorRole === "staff" || authorRole === "admin") return "· staff";
+  return "";
+}
+
 // Sección expandible bajo el post (SPEC 17): lista completa de comentarios
-// (autor, hora, cuerpo) con contador real, formulario de escritura y CRUD de
-// comentarios propios (editar/borrar).
+// (autor, sufijo de rol SPEC 25, hora, cuerpo) con contador real, formulario
+// de escritura y CRUD de comentarios propios (editar/borrar).
 export function CommentSection({
   comments,
   currentUserId,
+  inputRef,
   onAddComment,
   onUpdateComment,
   onDeleteComment,
@@ -146,6 +158,7 @@ export function CommentSection({
           const tone = avatarToneStyles[toneKeys[index % toneKeys.length]];
           const isOwn = comment.authorId === currentUserId;
           const isEditing = comment.id === editingId;
+          const suffix = roleSuffix(comment.authorRole);
 
           return (
             <div key={comment.id} className="group flex items-start gap-3">
@@ -160,6 +173,11 @@ export function CommentSection({
                   <span className="text-[14px] font-extrabold text-ink">
                     {comment.authorName}
                   </span>
+                  {suffix && (
+                    <span className="text-[12px] text-muted-strong">
+                      {suffix}
+                    </span>
+                  )}
                   <span className="flex-1" />
                   <span className="text-[12px] text-muted-strong">
                     {comment.time}
@@ -230,6 +248,7 @@ export function CommentSection({
       <form onSubmit={handleSubmit} className="mt-3.5 flex items-center gap-3">
         <input
           type="text"
+          ref={inputRef}
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder="Escribí un comentario…"
