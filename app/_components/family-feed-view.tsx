@@ -12,6 +12,7 @@ import {
   type ActionResult,
 } from "@/app/_actions/engagement";
 import type { Post } from "@/app/_data/feed";
+import { buildSubtitle } from "@/app/_data/feed";
 import type { FamilyChild } from "@/app/_data/family-children";
 import type { SidebarUser } from "@/app/_data/session";
 
@@ -30,13 +31,6 @@ const inactiveTabClassName = "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]";
 // "Mateo Fernández" → "Mateo" (mismo given name que el card del feed).
 function toGivenName(fullName: string): string {
   return fullName.trim().split(" ")[0];
-}
-
-// "HH:MM · autor · sala": la sala se omite en los anuncios sin room_id.
-function buildSubtitle(post: Post): string {
-  return [post.time, post.authorName, post.roomName]
-    .filter(Boolean)
-    .join(" · ");
 }
 
 export function FamilyFeedView({
@@ -159,6 +153,7 @@ export function FamilyFeedView({
                 currentUserId={user.id}
                 subtitle={buildSubtitle(post)}
                 showAudience={false}
+                onOpen={() => router.push(`/posts/${post.id}`)}
                 onToggleLike={() => handleToggleLike(post.id)}
                 onAddComment={(body) => handleAddComment(post.id, body)}
                 onUpdateComment={(commentId, body) =>

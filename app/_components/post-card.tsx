@@ -23,6 +23,9 @@ interface PostCardProps {
     body: string,
   ) => Promise<ActionResult | null>;
   onDeleteComment?: (commentId: string) => Promise<void>;
+  // SPEC 25: clic en la tarjeta → detalle /posts/{id}. Los botones internos
+  // detienen la propagación para no navegar desde ellos.
+  onOpen?: () => void;
 }
 
 interface KindVisual {
@@ -30,7 +33,9 @@ interface KindVisual {
   avatar: string;
 }
 
-const kindVisuals: Record<PostKind, KindVisual> = {
+// Exportado para la cabecera del detalle (SPEC 25), que reusa el mismo
+// color de avatar/punto por tipo de post.
+export const kindVisuals: Record<PostKind, KindVisual> = {
   meal: {
     dot: "bg-[#9A7B1E]",
     avatar: "bg-[#A9D9E8] text-[#1F7A93]",
@@ -124,6 +129,7 @@ export function PostCard({
   onAddComment,
   onUpdateComment,
   onDeleteComment,
+  onOpen,
 }: PostCardProps) {
   const visual = kindVisuals[post.kind];
   const kindStyle = postKindStyles[post.kind];
@@ -140,7 +146,12 @@ export function PostCard({
         : "Toda la guardería";
 
   return (
-    <article className="rounded-[20px] border border-border bg-surface px-[22px] py-5 shadow-[0_4px_16px_-12px_rgba(120,90,60,0.5)]">
+    <article
+      onClick={onOpen}
+      className={`rounded-[20px] border border-border bg-surface px-[22px] py-5 shadow-[0_4px_16px_-12px_rgba(120,90,60,0.5)]${
+        onOpen ? " cursor-pointer" : ""
+      }`}
+    >
       <div className="mb-3.5 flex items-center gap-3">
         <div
           className={`flex size-11 flex-none items-center justify-center rounded-full font-display text-[17px] font-semibold ${visual.avatar}`}
@@ -190,7 +201,10 @@ export function PostCard({
       <div className="mt-4 flex items-center gap-[18px] border-t border-line pt-3.5">
         <button
           type="button"
-          onClick={onToggleLike}
+          onClick={(event) => {
+            event.stopPropagation();
+            onToggleLike?.();
+          }}
           aria-label="Me gusta"
           className="flex cursor-pointer items-center gap-[7px] border-none bg-transparent p-0 text-[14px] font-bold text-accent-soft"
         >
@@ -199,7 +213,10 @@ export function PostCard({
         </button>
         <button
           type="button"
-          onClick={() => setCommentsOpen((open) => !open)}
+          onClick={(event) => {
+            event.stopPropagation();
+            setCommentsOpen((open) => !open);
+          }}
           aria-label="Comentarios"
           className="flex cursor-pointer items-center gap-[7px] border-none bg-transparent p-0 text-[14px] font-bold text-muted"
         >
@@ -211,7 +228,10 @@ export function PostCard({
           <>
             <button
               type="button"
-              onClick={onEdit}
+              onClick={(event) => {
+                event.stopPropagation();
+                onEdit();
+              }}
               className="cursor-pointer border-none bg-transparent p-0 text-[14px] font-extrabold text-[#B3452E]"
             >
               Editar
@@ -222,7 +242,10 @@ export function PostCard({
         {isAuthor && onDelete && (
           <button
             type="button"
-            onClick={onDelete}
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete();
+            }}
             className="cursor-pointer border-none bg-transparent p-0 text-[14px] font-extrabold text-[#B3452E]"
           >
             Borrar
@@ -231,13 +254,17 @@ export function PostCard({
       </div>
 
       {commentsOpen && (
-        <CommentSection
-          comments={post.comments}
-          currentUserId={currentUserId}
-          onAddComment={onAddComment}
-          onUpdateComment={onUpdateComment}
-          onDeleteComment={onDeleteComment}
-        />
+        // Aísla la sección de comentarios: escribir o clickear dentro no
+        // navega al detalle (SPEC 25).
+        <div onClick={(event) => event.stopPropagation()}>
+          <CommentSection
+            comments={post.comments}
+            currentUserId={currentUserId}
+            onAddComment={onAddComment}
+            onUpdateComment={onUpdateComment}
+            onDeleteComment={onDeleteComment}
+          />
+        </div>
       )}
     </article>
   );

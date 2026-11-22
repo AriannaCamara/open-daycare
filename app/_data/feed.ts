@@ -85,6 +85,7 @@ export interface Comment {
   id: string; // uuid de comments
   authorId: string; // users.id
   authorName: string; // users.full_name
+  authorRole: string | null; // users.role — sufijo "· familia" / "· staff" (SPEC 25)
   body: string;
   time: string; // "14:20" — mismo formateo TZ que los posts
 }
@@ -100,6 +101,12 @@ export interface Post extends EditablePost {
   likedByMe: boolean; // el usuario actual ya reaccionó
   commentsCount: number; // comments.length
   comments: Comment[]; // todos, ordenados created_at asc
+}
+
+// "HH:MM · autor · sala": la sala se omite en los anuncios sin room_id.
+// Línea de la tarjeta familiar (SPEC 24) y de la cabecera del detalle (SPEC 25).
+export function buildSubtitle(post: Post): string {
+  return [post.time, post.authorName, post.roomName].filter(Boolean).join(" · ");
 }
 
 // Niño activo para los pills "PARA" del modal (mismo tono por índice que /kids).
