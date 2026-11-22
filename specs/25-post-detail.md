@@ -45,20 +45,20 @@ Sin cambios de schema. Cambios de query:
 
 ## Criterios de aceptación
 
-- [ ] `/posts/{id}` renderiza sin errores para un `parent` y para un `staff` con sesión válida, cada uno con su sidebar.
-- [ ] La cabecera muestra avatar/nombre del niño, `HH:MM · autor · sala`, pill del tipo y cuerpo del post.
-- [ ] Si el post tiene fotos, se muestran como imagen y **no** son un link al visor de fotos.
-- [ ] `A N personas les gusta` refleja el contador real de reacciones.
-- [ ] `Me encanta` alterna el like (misma action de la SPEC 17) y actualiza el texto al instante.
-- [ ] `Comentar` da foco al input de comentarios.
-- [ ] Los comentarios se listan con nombre, sufijo de rol (`· familia` / `· staff`) y hora; crear, editar y borrar comentarios propios sigue funcionando.
-- [ ] Al hacer clic en una tarjeta del **feed familiar** se navega al detalle de esa publicación.
-- [ ] Al hacer clic en una tarjeta del **feed staff** se navega al detalle; Editar/Borrar de la tarjeta siguen funcionando sin navegar.
-- [ ] Los botones de like/comentario dentro de una tarjeta **no** disparan la navegación al detalle.
-- [ ] `Volver al feed` lleva a `/family` siendo parent y a `/staff` siendo staff.
-- [ ] Un id inexistente o un post no visible por RLS muestra "No se encontró la publicación." sin errores en consola.
-- [ ] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/posts/{id}` renderiza sin errores para un `parent` y para un `staff` con sesión válida, cada uno con su sidebar.
+- [x] La cabecera muestra avatar/nombre del niño, `HH:MM · autor · sala`, pill del tipo y cuerpo del post.
+- [x] Si el post tiene fotos, se muestran como imagen y **no** son un link al visor de fotos.
+- [x] `A N personas les gusta` refleja el contador real de reacciones.
+- [x] `Me encanta` alterna el like (misma action de la SPEC 17) y actualiza el texto al instante.
+- [x] `Comentar` da foco al input de comentarios.
+- [x] Los comentarios se listan con nombre, sufijo de rol (`· familia` / `· staff`) y hora; crear, editar y borrar comentarios propios sigue funcionando.
+- [x] Al hacer clic en una tarjeta del **feed familiar** se navega al detalle de esa publicación.
+- [x] Al hacer clic en una tarjeta del **feed staff** se navega al detalle; Editar/Borrar de la tarjeta siguen funcionando sin navegar.
+- [x] Los botones de like/comentario dentro de una tarjeta **no** disparan la navegación al detalle.
+- [x] `Volver al feed` lleva a `/family` siendo parent y a `/staff` siendo staff.
+- [x] Un id inexistente o un post no visible por RLS muestra "No se encontró la publicación." sin errores en consola.
+- [x] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
