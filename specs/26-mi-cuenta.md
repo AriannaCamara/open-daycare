@@ -1,6 +1,6 @@
 # SPEC 26 — Mi cuenta (perfil, notificaciones y contraseña)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01 (users table), SPEC 09 (auth y protección de rutas), SPEC 18 (family child profile)
 > **Fecha:** 2026-11-23
 > **Objetivo:** Crear la ruta `/account` con la pantalla de ajustes de cuenta (perfil, preferencias de notificación, contraseña y hijos con consentimiento de fotos) siguiendo `references/pantallas/mi-cuenta.dc.html` y `familia-cuenta.dc.html`.
@@ -48,19 +48,19 @@ Sin cambios de schema.
 
 ## Criterios de aceptación
 
-- [ ] `/account` renderiza con sesión válida para un `parent` y para un `staff`, cada uno con su sidebar y el item "Mi cuenta" activo.
-- [ ] La tarjeta muestra avatar con inicial, nombre, email y subtítulo según rol.
-- [ ] Editar el nombre y guardar actualiza `full_name`, persiste al recarga y se refleja en el sidebar.
-- [ ] Editar con nombre vacío muestra error y no envía la action.
-- [ ] Los dos toggles de notificaciones cambian de estado y persisten al recargar.
-- [ ] Un `parent` ve la sección Mis hijos con sus hijos reales y su sala; un `staff` no ve la sección.
-- [ ] El toggle Fotos de un hijo persiste `photo_consent` y se refleja en el bloqueo de fotos de la SPEC 16.
-- [ ] Un `parent` sin hijos no ve la sección Mis hijos.
-- [ ] Cambiar contraseña con contraseñas distintas o menores a 6 chars muestra error inline y no cambia nada.
-- [ ] Cambiar contraseña con datos válidos actualiza la contraseña (verificado con logout + login).
-- [ ] Cerrar sesión lleva a `/login`.
-- [ ] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/account` renderiza con sesión válida para un `parent` y para un `staff`, cada uno con su sidebar y el item "Mi cuenta" activo.
+- [x] La tarjeta muestra avatar con inicial, nombre, email y subtítulo según rol.
+- [x] Editar el nombre y guardar actualiza `full_name`, persiste al recarga y se refleja en el sidebar.
+- [x] Editar con nombre vacío muestra error y no envía la action.
+- [x] Los dos toggles de notificaciones cambian de estado y persisten al recargar.
+- [x] Un `parent` ve la sección Mis hijos con sus hijos reales y su sala; un `staff` no ve la sección.
+- [x] El toggle Fotos de un hijo persiste `photo_consent` y se refleja en el bloqueo de fotos de la SPEC 16.
+- [x] Un `parent` sin hijos no ve la sección Mis hijos.
+- [x] Cambiar contraseña con contraseñas distintas o menores a 6 chars muestra error inline y no cambia nada.
+- [x] Cambiar contraseña con datos válidos actualiza la contraseña (verificado con logout + login).
+- [x] Cerrar sesión lleva a `/login`.
+- [x] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
