@@ -24,6 +24,7 @@ export interface ChildRow {
   enrolled_at: string;
   medical_notes: string | null;
   allergy_tags: string[] | null;
+  photo_consent: boolean;
   rooms?: { name: string } | null;
 }
 

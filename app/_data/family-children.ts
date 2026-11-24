@@ -14,6 +14,7 @@ export interface FamilyChild {
   initial: string;
   tone: AvatarTone;
   allergyLabel?: string;
+  photoConsent: boolean;
 }
 
 // Bloque CUIDADOS: child_profile (1:1) + las 3 columnas que aporta children.
@@ -90,6 +91,7 @@ export async function fetchFamilyChildren(
         initial: child.initial,
         tone: child.tone,
         allergyLabel: child.allergyLabel,
+        photoConsent: row.photo_consent,
       };
     });
 }
