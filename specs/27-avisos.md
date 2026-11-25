@@ -1,6 +1,6 @@
 # SPEC 27 — Avisos (actividad reciente de familias para staff)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 12 (parent invite and activation), SPEC 16 (staff post publishing), SPEC 17 (feed likes and comments), SPEC 25 (post detail)
 > **Fecha:** 2026-11-23
 > **Objetivo:** Crear la ruta `/staff/announcements` que lista la actividad reciente de las familias (comentarios, reacciones y activaciones) siguiendo `references/pantallas/avisos.dc.html`.
@@ -67,20 +67,20 @@ RLS (verificar con query de prueba en el paso 1): `comments_select_readable` / `
 
 ## Criterios de aceptación
 
-- [ ] `/staff/announcements` renderiza con sesión staff, con sidebar staff y el item "Avisos" activo.
-- [ ] Un `parent` que navega a la URL es redirigido a `/family` (guard existente del proxy).
-- [ ] La cabecera muestra `ACTIVIDAD` y `Avisos` según la referencia.
-- [ ] Un comentario nuevo de una familia aparece como «{nombre} comentó en la publicación de {niño}.» y navega a `/posts/{id}` al hacer clic.
-- [ ] Una reacción nueva aparece como «{nombre} reaccionó a la publicación de {niño}.» y navega a `/posts/{id}`.
-- [ ] Una invitación aceptada aparece como «{nombre} activó su cuenta y ya sigue a {niño}.» **sin link**; si el nombre no se resuelve, muestra el email de la invitación.
-- [ ] Los eventos de los tres tipos están ordenados del más reciente al más antiguo, mezclados.
-- [ ] Solo se muestran eventos de familias (`role = parent`) en comentarios y reacciones.
-- [ ] Los tiempos se muestran en español (`Hace 12 min` / `Hace 1 h` / `DD/MM HH:MM`) sin errores de hidratación en consola.
-- [ ] Con 21+ eventos, "Cargar más" agrega 20 y se oculta al no haber más; con menos de 20 no se muestra.
-- [ ] Sin eventos, muestra "Todavía no hay avisos."
-- [ ] Recargar la página muestra los mismos eventos (datos reales, no estado local).
-- [ ] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/staff/announcements` renderiza con sesión staff, con sidebar staff y el item "Avisos" activo.
+- [x] Un `parent` que navega a la URL es redirigido a `/family` (guard existente del proxy).
+- [x] La cabecera muestra `ACTIVIDAD` y `Avisos` según la referencia.
+- [x] Un comentario nuevo de una familia aparece como «{nombre} comentó en la publicación de {niño}.» y navega a `/posts/{id}` al hacer clic.
+- [x] Una reacción nueva aparece como «{nombre} reaccionó a la publicación de {niño}.» y navega a `/posts/{id}`.
+- [x] Una invitación aceptada aparece como «{nombre} activó su cuenta y ya sigue a {niño}.» **sin link**; si el nombre no se resuelve, muestra el email de la invitación.
+- [x] Los eventos de los tres tipos están ordenados del más reciente al más antiguo, mezclados.
+- [x] Solo se muestran eventos de familias (`role = parent`) en comentarios y reacciones.
+- [x] Los tiempos se muestran en español (`Hace 12 min` / `Hace 1 h` / `DD/MM HH:MM`) sin errores de hidratación en consola.
+- [x] Con 21+ eventos, "Cargar más" agrega 20 y se oculta al no haber más; con menos de 20 no se muestra.
+- [x] Sin eventos, muestra "Todavía no hay avisos."
+- [x] Recargar la página muestra los mismos eventos (datos reales, no estado local).
+- [x] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
