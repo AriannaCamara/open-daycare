@@ -206,12 +206,17 @@ export function PostDetailView({
           </p>
 
           {post.photos.map((photo) => (
-            <img
+            <Link
               key={photo.id}
-              src={photo.url}
-              alt="Foto de la publicación"
-              className="mt-4 h-[280px] w-full rounded-[16px] object-cover"
-            />
+              href={`/posts/${post.id}/photos/${photo.id}`}
+              className="mt-4 block"
+            >
+              <img
+                src={photo.url}
+                alt="Foto de la publicación"
+                className="h-[280px] w-full rounded-[16px] object-cover"
+              />
+            </Link>
           ))}
 
           <div className="mt-[18px] flex items-center gap-2.5 text-[14px] text-muted">
