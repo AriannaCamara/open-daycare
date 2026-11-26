@@ -2,6 +2,7 @@ import type { Post, PostKind } from "@/app/_data/feed";
 import { postKindLabels, postKindStyles } from "@/app/_data/feed";
 import type { ActionResult } from "@/app/_actions/engagement";
 import { CommentSection } from "@/app/_components/comment-section";
+import Link from "next/link";
 import { useState } from "react";
 
 interface PostCardProps {
@@ -191,11 +192,19 @@ export function PostCard({
       </p>
 
       {post.photos[0] && (
-        <img
-          src={post.photos[0].url}
-          alt="Foto de la publicación"
-          className="mt-3.5 h-[200px] w-full rounded-2xl object-cover"
-        />
+        // La primera foto abre el visor (SPEC 28); stopPropagation evita
+        // que el clic burbujee a la navegación de la tarjeta al detalle.
+        <Link
+          href={`/posts/${post.id}/photos/${post.photos[0].id}`}
+          onClick={(event) => event.stopPropagation()}
+          className="mt-3.5 block"
+        >
+          <img
+            src={post.photos[0].url}
+            alt="Foto de la publicación"
+            className="h-[200px] w-full rounded-2xl object-cover"
+          />
+        </Link>
       )}
 
       <div className="mt-4 flex items-center gap-[18px] border-t border-line pt-3.5">

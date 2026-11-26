@@ -1,6 +1,6 @@
 # SPEC 28 — Visor de fotos (ruta propia desde detalle y tarjetas)
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 16 (staff post publishing + fotos), SPEC 24 (family feed), SPEC 25 (post detail)
 > **Fecha:** 2026-11-23
 > **Objetivo:** Crear la ruta `/posts/[id]/photos/[photoId]` con el visor de fotos a pantalla completa siguiendo `references/pantallas/foto.dc.html`, accesible desde el detalle y las tarjetas de ambos feeds.
@@ -44,18 +44,18 @@ Sin cambios de schema ni nuevas queries. Reutiliza:
 
 ## Criterios de aceptación
 
-- [ ] `/posts/{id}/photos/{photoId}` renderiza la foto a pantalla completa con fondo oscuro para un `parent` y para un `staff` con sesión válida.
-- [ ] La barra superior muestra X, nombre del niño + `HH:MM · autor · sala` y el botón de descarga.
-- [ ] X lleva a `/posts/{id}`; el botón atrás del navegador también vuelve al detalle.
-- [ ] El botón de descarga tiene `href` = signed URL de la foto y atributo `download`.
-- [ ] El pie muestra el cuerpo del post centrado, máximo 560px.
-- [ ] Al hacer clic en una foto del **detalle** se abre el visor de esa foto.
-- [ ] Al hacer clic en la primera foto de una **tarjeta** (feed staff y feed familiar) se abre el visor y **no** se navega al detalle.
-- [ ] El resto de la tarjeta sigue navegando al detalle al hacer clic (sin regresión de la SPEC 25).
-- [ ] Un `photoId` que no pertenece al post muestra "No se encontró la foto." + link a `/posts/{id}` sin errores en consola.
-- [ ] Un `postId` inexistente o no visible por RLS muestra el mismo estado sin error 500.
-- [ ] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores.
+- [x] `/posts/{id}/photos/{photoId}` renderiza la foto a pantalla completa con fondo oscuro para un `parent` y para un `staff` con sesión válida.
+- [x] La barra superior muestra X, nombre del niño + `HH:MM · autor · sala` y el botón de descarga.
+- [x] X lleva a `/posts/{id}`; el botón atrás del navegador también vuelve al detalle.
+- [x] El botón de descarga tiene `href` = signed URL de la foto y atributo `download`.
+- [x] El pie muestra el cuerpo del post centrado, máximo 560px.
+- [x] Al hacer clic en una foto del **detalle** se abre el visor de esa foto.
+- [x] Al hacer clic en la primera foto de una **tarjeta** (feed staff y feed familiar) se abre el visor y **no** se navega al detalle.
+- [x] El resto de la tarjeta sigue navegando al detalle al hacer clic (sin regresión de la SPEC 25).
+- [x] Un `photoId` que no pertenece al post muestra "No se encontró la foto." + link a `/posts/{id}` sin errores en consola.
+- [x] Un `postId` inexistente o no visible por RLS muestra el mismo estado sin error 500.
+- [x] La vista se ve correcta en 1440, 768 y 375 px (capturas en `.playwright-mcp/`).
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores.
 
 ## Decisiones tomadas y descartadas
 
