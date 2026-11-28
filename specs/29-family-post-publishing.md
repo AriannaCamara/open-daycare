@@ -52,20 +52,20 @@ Sin tablas nuevas ni columnas nuevas. Cambian las **policies** de `posts` (inser
 
 ## Criterios de aceptación
 
-- [ ] Con sesión parent, el botón "Crear publicación" aparece en el header de `/family` y abre el modal.
-- [ ] El modal familiar muestra solo los tipos Actividad, Ánimo y Foto (no Comida/Siesta/Logro/Anuncio).
-- [ ] El modal familiar no muestra pills de hijos, ni sala, ni audiencia.
-- [ ] Publicar con foto desde `/family` crea el post: se ve en el feed familiar (en la pestaña de cada hijo y en "Todos") y en el feed staff.
-- [ ] El post creado queda con `author_id` = parent, la sala del primer hijo (o sin sala) y todos sus hijos etiquetados en `post_children`.
-- [ ] La action rechaza `kind: "announcement"` (o cualquier tipo fuera del subconjunto) cuando el autor es parent.
-- [ ] En la tarjeta familiar, los posts propios del parent muestran Editar y Borrar; los posts ajenos no muestran esos botones.
-- [ ] Editar desde la tarjeta familiar abre el modal con la variante family, guarda los cambios y refresca el feed.
-- [ ] Borrar desde la tarjeta familiar elimina el post del feed familiar y del staff.
-- [ ] El staff sigue creando, editando y borrando posts igual que antes (sin regresión de la SPEC 16).
-- [ ] Un parent no puede editar ni borrar posts ajenos (action lo rechaza y la RLS lo bloquea).
-- [ ] Un parent no puede insertar un post con `type = announcement` ni con una sala que no sea la de sus hijos (verificable por la policy).
-- [ ] Si `familyChildren` está vacío, el botón "Crear publicación" no se muestra.
-- [ ] `npm run lint` y `npx tsc --noEmit` sin errores; capturas 1440/768/375 en `.playwright-mcp/`.
+- [x] Con sesión parent, el botón "Crear publicación" aparece en el header de `/family` y abre el modal.
+- [x] El modal familiar muestra solo los tipos Actividad, Ánimo y Foto (no Comida/Siesta/Logro/Anuncio).
+- [x] El modal familiar no muestra pills de hijos, ni sala, ni audiencia.
+- [x] Publicar con foto desde `/family` crea el post: se ve en el feed familiar (en la pestaña de cada hijo y en "Todos") y en el feed staff.
+- [x] El post creado queda con `author_id` = parent, la sala del primer hijo (o sin sala) y todos sus hijos etiquetados en `post_children`.
+- [x] La action rechaza `kind: "announcement"` (o cualquier tipo fuera del subconjunto) cuando el autor es parent.
+- [x] En la tarjeta familiar, los posts propios del parent muestran Editar y Borrar; los posts ajenos no muestran esos botones.
+- [x] Editar desde la tarjeta familiar abre el modal con la variante family, guarda los cambios y refresca el feed.
+- [x] Borrar desde la tarjeta familiar elimina el post del feed familiar y del staff.
+- [x] El staff sigue creando, editando y borrando posts igual que antes (sin regresión de la SPEC 16).
+- [x] Un parent no puede editar ni borrar posts ajenos (action lo rechaza y la RLS lo bloquea).
+- [x] Un parent no puede insertar un post con `type = announcement` ni con una sala que no sea la de sus hijos (verificable por la policy).
+- [x] Si `familyChildren` está vacío, el botón "Crear publicación" no se muestra.
+- [x] `npm run lint` y `npx tsc --noEmit` sin errores; capturas 1440/768/375 en `.playwright-mcp/`.
 
 ## Decisiones tomadas y descartadas
 
