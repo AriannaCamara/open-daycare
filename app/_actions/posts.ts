@@ -1,6 +1,10 @@
 "use server";
 
-import { fetchSessionUser, isStaffRole } from "@/app/_data/session";
+import {
+  fetchSessionUser,
+  isStaffRole,
+  type SessionUser,
+} from "@/app/_data/session";
 import type { PostKind } from "@/app/_data/feed";
 import { createClient } from "@/utils/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -31,6 +35,9 @@ const PHOTO_TYPE_ERROR = "Formatos permitidos: JPG, PNG o WebP.";
 const STORAGE_ERROR = "No se pudieron subir las fotos. Intentá de nuevo.";
 const FORBIDDEN_ERROR =
   "Solo el personal de la guardería puede publicar.";
+const PARENT_KIND_ERROR = "Solo podés publicar Actividad, Ánimo o Foto.";
+const NO_CHILDREN_ERROR = "No tenés hijos vinculados para publicar.";
+const PARENT_CHILDREN_ERROR = "No pudimos cargar tus hijos. Intentá de nuevo.";
 
 const POST_KINDS: PostKind[] = [
   "meal",
@@ -42,6 +49,10 @@ const POST_KINDS: PostKind[] = [
   "announcement",
 ];
 
+// Tipos que un parent puede publicar (SPEC 29): meal/nap/achievement son
+// datos operativos del staff y announcement es exclusivo del staff.
+const PARENT_KINDS: PostKind[] = ["activity", "mood", "photo"];
+
 interface ChildCheckRow {
   id: string;
   full_name: string;
@@ -51,6 +62,58 @@ interface ChildCheckRow {
 interface PhotoRow {
   id: string;
   url: string;
+}
+
+interface ParentLinkRow {
+  child_id: string;
+  children: { room_id: string | null; status: string } | null;
+}
+
+type ResolvedAudience =
+  | { ok: true; input: PostInput }
+  | { ok: false; error: string };
+
+// Gate de rol + audiencia resuelta en el servidor (SPEC 29):
+//   - staff/admin: el input pasa tal cual (SPEC 16 sin cambios);
+//   - parent: solo PARENT_KINDS y la audiencia son sus hijos activos con la
+//     sala del primero (nunca se confía en childIds/roomId del cliente);
+//   - cualquier otro rol: rechazado.
+async function resolvePostAudience(
+  supabase: SupabaseClient,
+  session: SessionUser,
+  input: PostInput,
+): Promise<ResolvedAudience> {
+  if (isStaffRole(session.role)) {
+    return { ok: true, input };
+  }
+  if (session.role !== "parent") {
+    return { ok: false, error: FORBIDDEN_ERROR };
+  }
+  if (!PARENT_KINDS.includes(input.kind)) {
+    return { ok: false, error: PARENT_KIND_ERROR };
+  }
+
+  const { data, error } = await supabase
+    .from("parent_children")
+    .select("child_id, children!inner(room_id, status)")
+    .eq("parent_id", session.id)
+    .eq("children.status", "active")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    return { ok: false, error: PARENT_CHILDREN_ERROR };
+  }
+
+  const rows = (data ?? []) as unknown as ParentLinkRow[];
+  const childIds = rows.map((row) => row.child_id);
+  if (childIds.length === 0) {
+    return { ok: false, error: NO_CHILDREN_ERROR };
+  }
+
+  return {
+    ok: true,
+    input: { ...input, childIds, roomId: rows[0].children?.room_id ?? null },
+  };
 }
 
 function validateInput(input: PostInput): string | null {
@@ -224,11 +287,6 @@ export async function createPost(
   input: PostInput,
   photoFiles: File[],
 ): Promise<ActionResult> {
-  const inputError = validateInput(input);
-  if (inputError) {
-    return { ok: false, error: inputError };
-  }
-
   const photoError = validatePhotos(photoFiles);
   if (photoError) {
     return { ok: false, error: photoError };
@@ -240,13 +298,21 @@ export async function createPost(
   if (!session) {
     return { ok: false, error: SESSION_ERROR };
   }
-  if (!isStaffRole(session.role)) {
-    return { ok: false, error: FORBIDDEN_ERROR };
+
+  // Rol + audiencia (parent: hijos propios resueltos en el servidor).
+  const audience = await resolvePostAudience(supabase, session, input);
+  if (!audience.ok) {
+    return audience;
+  }
+
+  const inputError = validateInput(audience.input);
+  if (inputError) {
+    return { ok: false, error: inputError };
   }
 
   const childrenCheck = await checkChildren(
     supabase,
-    input.childIds,
+    audience.input.childIds,
     photoFiles.length > 0,
   );
   if (!childrenCheck.ok) {
@@ -258,8 +324,8 @@ export async function createPost(
     return { ok: false, error: SESSION_ERROR };
   }
 
-  const childIds = [...new Set(input.childIds)];
-  const body = input.body.trim();
+  const childIds = [...new Set(audience.input.childIds)];
+  const body = audience.input.body.trim();
 
   // El id se pregenera porque INSERT ... RETURNING aplica también la policy de
   // SELECT (can_read_post), que hace un self-lookup a posts: la fila nueva no
@@ -269,8 +335,8 @@ export async function createPost(
   const { error: insertError } = await supabase.from("posts").insert({
     id: postId,
     author_id: session.id,
-    room_id: input.roomId,
-    type: input.kind,
+    room_id: audience.input.roomId,
+    type: audience.input.kind,
     body,
   });
 
@@ -323,11 +389,6 @@ export async function updatePost(
   photoFiles: File[],
   keptPhotoIds: string[],
 ): Promise<ActionResult> {
-  const inputError = validateInput(input);
-  if (inputError) {
-    return { ok: false, error: inputError };
-  }
-
   const photoError = validatePhotos(photoFiles);
   if (photoError) {
     return { ok: false, error: photoError };
@@ -339,8 +400,16 @@ export async function updatePost(
   if (!session) {
     return { ok: false, error: SESSION_ERROR };
   }
-  if (!isStaffRole(session.role)) {
-    return { ok: false, error: FORBIDDEN_ERROR };
+
+  // Rol + audiencia (parent: hijos propios resueltos en el servidor).
+  const audience = await resolvePostAudience(supabase, session, input);
+  if (!audience.ok) {
+    return audience;
+  }
+
+  const inputError = validateInput(audience.input);
+  if (inputError) {
+    return { ok: false, error: inputError };
   }
 
   // La RLS (posts_update_author) también lo exige; acá mejora el mensaje.
@@ -360,7 +429,7 @@ export async function updatePost(
 
   const childrenCheck = await checkChildren(
     supabase,
-    input.childIds,
+    audience.input.childIds,
     photoFiles.length > 0,
   );
   if (!childrenCheck.ok) {
@@ -395,9 +464,9 @@ export async function updatePost(
   const { error: updateError } = await supabase
     .from("posts")
     .update({
-      room_id: input.roomId,
-      type: input.kind,
-      body: input.body.trim(),
+      room_id: audience.input.roomId,
+      type: audience.input.kind,
+      body: audience.input.body.trim(),
     })
     .eq("id", postId);
 
@@ -406,7 +475,11 @@ export async function updatePost(
     return { ok: false, error: "No pudimos guardar los cambios. Intentá de nuevo." };
   }
 
-  const childrenOk = await replacePostChildren(supabase, postId, input.childIds);
+  const childrenOk = await replacePostChildren(
+    supabase,
+    postId,
+    audience.input.childIds,
+  );
   if (!childrenOk) {
     if (upload) await removePhotos(supabase, upload.paths);
     return { ok: false, error: "No pudimos guardar los cambios. Intentá de nuevo." };
@@ -450,11 +523,9 @@ export async function deletePost(postId: string): Promise<ActionResult> {
   if (!session) {
     return { ok: false, error: SESSION_ERROR };
   }
-  if (!isStaffRole(session.role)) {
-    return { ok: false, error: FORBIDDEN_ERROR };
-  }
 
-  // La RLS (posts_delete_author) también lo exige; acá mejora el mensaje.
+  // Sin guard de staff: la RLS (posts_delete_author) acota al autor, y la
+  // query por author_id de abajo mejora el mensaje (SPEC 29).
   const { data: existing } = await supabase
     .from("posts")
     .select("id")
