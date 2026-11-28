@@ -15,11 +15,17 @@ import { SelectDropdown } from "@/app/_components/select-dropdown";
 
 type ModalMode = "create" | "edit";
 
+// "staff" (default): modal completo de la SPEC 16.
+// "family": variante acotada de la SPEC 29 — solo Actividad/Ánimo/Foto y sin
+// pills de hijos, sala ni audiencia (la resuelve el servidor).
+type ModalVariant = "staff" | "family";
+
 // Se monta por apertura ({open && …} en FeedView): el estado nace con el
 // prefill (edición) o limpio (creación) y se descarta al cerrar.
 interface CreatePostModalProps {
   mode: ModalMode;
   initialPost?: EditablePost;
+  variant?: ModalVariant;
   // "childPills" y no "children": React reserva ese nombre para el contenido.
   childPills: PillChild[];
   rooms: RoomOption[];
@@ -57,6 +63,9 @@ const kindOrder: { kind: PostKind; label: string }[] = [
   { kind: "announcement", label: "Anuncio" },
 ];
 
+// Subconjunto del parent (SPEC 29): el mismo que PARENT_KINDS de la action.
+const familyKinds = new Set<PostKind>(["activity", "mood", "photo"]);
+
 const sectionLabelClassName =
   "mb-2.5 text-[12px] font-extrabold tracking-[0.7px] text-[#94887B]";
 
@@ -72,11 +81,13 @@ const inactivePillClassName = "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]";
 export function CreatePostModal({
   mode,
   initialPost,
+  variant = "staff",
   childPills,
   rooms,
   onClose,
   onSaved,
 }: CreatePostModalProps) {
+  const isFamily = variant === "family";
   const [selectedIds, setSelectedIds] = useState<string[]>(
     initialPost?.childIds ?? [],
   );
@@ -227,7 +238,8 @@ export function CreatePostModal({
     if (!body.trim()) {
       nextErrors.body = "Escribí una descripción.";
     }
-    const needsAudience = kind !== "announcement";
+    // En variante family no hay pills: la audiencia la resuelve el servidor.
+    const needsAudience = kind !== "announcement" && !isFamily;
     if (needsAudience && selectedIds.length === 0 && !roomPill) {
       nextErrors.audience = "Elegí al menos un niño o Toda la sala.";
     }
@@ -248,8 +260,13 @@ export function CreatePostModal({
       const input: PostInput = {
         kind,
         body: body.trim(),
-        roomId,
-        childIds: effectiveRoomPill ? [] : selectedIds,
+        // Family: audiencia automática; la action la resuelve en el servidor.
+        roomId: isFamily ? null : roomId,
+        childIds: isFamily
+          ? []
+          : effectiveRoomPill
+            ? []
+            : selectedIds,
       };
       const photoFiles = newPhotos.map((photo) => photo.file);
 
@@ -316,81 +333,87 @@ export function CreatePostModal({
             </p>
           )}
 
-          <div className={sectionLabelClassName}>PARA</div>
-          <div
-            className={`flex flex-wrap gap-[9px] ${errors.audience ? "" : "mb-[22px]"}`}
-          >
-            {childPills.map((child) => {
-              const tone = avatarToneStyles[child.avatarTone];
-              const isActive = selectedIds.includes(child.id);
-              return (
+          {!isFamily && (
+            <>
+              <div className={sectionLabelClassName}>PARA</div>
+              <div
+                className={`flex flex-wrap gap-[9px] ${errors.audience ? "" : "mb-[22px]"}`}
+              >
+                {childPills.map((child) => {
+                  const tone = avatarToneStyles[child.avatarTone];
+                  const isActive = selectedIds.includes(child.id);
+                  return (
+                    <button
+                      key={child.id}
+                      type="button"
+                      disabled={forcedRoomPill}
+                      onClick={() => toggleChild(child.id)}
+                      className={`${childPillClassName} ${isActive ? activePillClassName : inactivePillClassName} ${forcedRoomPill ? "cursor-not-allowed opacity-60" : ""}`}
+                    >
+                      <span
+                        className="flex size-[26px] items-center justify-center rounded-full font-display text-[13px] font-semibold"
+                        style={{ backgroundColor: tone.background, color: tone.text }}
+                      >
+                        {child.fullName.charAt(0)}
+                      </span>
+                      {child.fullName}
+                    </button>
+                  );
+                })}
                 <button
-                  key={child.id}
                   type="button"
                   disabled={forcedRoomPill}
-                  onClick={() => toggleChild(child.id)}
-                  className={`${childPillClassName} ${isActive ? activePillClassName : inactivePillClassName} ${forcedRoomPill ? "cursor-not-allowed opacity-60" : ""}`}
+                  onClick={toggleRoomPill}
+                  className={`${childPillClassName} ${effectiveRoomPill ? activePillClassName : inactivePillClassName} px-4 ${forcedRoomPill ? "cursor-not-allowed" : ""}`}
                 >
-                  <span
-                    className="flex size-[26px] items-center justify-center rounded-full font-display text-[13px] font-semibold"
-                    style={{ backgroundColor: tone.background, color: tone.text }}
-                  >
-                    {child.fullName.charAt(0)}
-                  </span>
-                  {child.fullName}
+                  Toda la sala
                 </button>
-              );
-            })}
-            <button
-              type="button"
-              disabled={forcedRoomPill}
-              onClick={toggleRoomPill}
-              className={`${childPillClassName} ${effectiveRoomPill ? activePillClassName : inactivePillClassName} px-4 ${forcedRoomPill ? "cursor-not-allowed" : ""}`}
-            >
-              Toda la sala
-            </button>
-          </div>
-          {errors.audience && (
-            <p className={errorTextClassName}>{errors.audience}</p>
-          )}
+              </div>
+              {errors.audience && (
+                <p className={errorTextClassName}>{errors.audience}</p>
+              )}
 
-          <div className={sectionLabelClassName}>SALA</div>
-          <div className="mb-[22px]">
-            <SelectDropdown
-              fullWidth
-              options={[
-                ...rooms.map((room) => ({ id: room.id, label: room.name })),
-                { id: "", label: "Toda la guardería" },
-              ]}
-              value={roomId ?? ""}
-              onChange={(id) => setRoomId(id || null)}
-              ariaLabel="Elegir sala"
-              placeholder="Elegí una sala"
-            />
-          </div>
+              <div className={sectionLabelClassName}>SALA</div>
+              <div className="mb-[22px]">
+                <SelectDropdown
+                  fullWidth
+                  options={[
+                    ...rooms.map((room) => ({ id: room.id, label: room.name })),
+                    { id: "", label: "Toda la guardería" },
+                  ]}
+                  value={roomId ?? ""}
+                  onChange={(id) => setRoomId(id || null)}
+                  ariaLabel="Elegir sala"
+                  placeholder="Elegí una sala"
+                />
+              </div>
+            </>
+          )}
 
           <div className={sectionLabelClassName}>TIPO</div>
           <div
             className={`flex flex-wrap gap-[9px] ${errors.kind ? "" : "mb-[22px]"}`}
           >
-            {kindOrder.map(({ kind: option, label }) => {
-              const style = postKindStyles[option].solid;
-              const isActive = kind === option;
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => {
-                    clearError("kind");
-                    setKind(option);
-                  }}
-                  className={`cursor-pointer rounded-full border-none px-4 py-2 text-[13.5px] font-extrabold ${isActive ? "shadow-[0_0_0_2px_#3F362E]" : ""}`}
-                  style={{ backgroundColor: style.bg, color: style.text }}
-                >
-                  {label}
-                </button>
-              );
-            })}
+            {kindOrder
+              .filter(({ kind: option }) => !isFamily || familyKinds.has(option))
+              .map(({ kind: option, label }) => {
+                const style = postKindStyles[option].solid;
+                const isActive = kind === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => {
+                      clearError("kind");
+                      setKind(option);
+                    }}
+                    className={`cursor-pointer rounded-full border-none px-4 py-2 text-[13.5px] font-extrabold ${isActive ? "shadow-[0_0_0_2px_#3F362E]" : ""}`}
+                    style={{ backgroundColor: style.bg, color: style.text }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
           </div>
           {errors.kind && <p className={errorTextClassName}>{errors.kind}</p>}
 
